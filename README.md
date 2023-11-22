@@ -4,7 +4,7 @@
 
 # Noir Playground
 
-This package packages several Noir tools with Monaco, and allows you to embed a simple Noir Playground in your website. [Try the live demo!](noir-playground.netlify.app)
+This package packages several Noir tools with Monaco, and allows you to embed a simple Noir Playground in your website. [Try the live demo!](https://noir-playground.netlify.app/)
 
 ## Getting started
 
