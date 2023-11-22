@@ -1,5 +1,4 @@
-
-[![NPM](https://nodei.co/npm/@signorecello/noir_playground.png?downloads=true)](https://www.npmjs.com/package/@signorecello/noir_playground)  
+[![NPM](https://nodei.co/npm/@signorecello/noir_playground.png?downloads=true)](https://www.npmjs.com/package/@signorecello/noir_playground)
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/a4e5229d-923b-437e-ad5c-8a8e131b5863/deploy-status)](https://app.netlify.com/sites/noir-playground/deploys)
 
@@ -35,8 +34,8 @@ You can pass all the options in [Monaco editor](https://github.com/suren-atoyan/
 
 There are some additional options related with Noir:
 
-| Name | Type  | Default | Description |
-| :--- | :---- | :------ | :---------- |
+| Name    | Type   | Default                         | Description                                                                               |
+| :------ | :----- | :------------------------------ | :---------------------------------------------------------------------------------------- |
 | threads | number | `navigator.hardwareConcurrency` | the number of threads to use in NoirJS. Defaults to the maximum available in your machine |
 
 ## How to build

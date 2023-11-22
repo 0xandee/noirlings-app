@@ -14,7 +14,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,
-    "declaration": true,
+    "declaration": true
   },
   "include": ["**/*.d.ts", "**/*.ts", "**/*.tsx", "**/*.json"],
   "exclude": ["dist", "node_modules", "**/*.nr", "**/*.wasm"]

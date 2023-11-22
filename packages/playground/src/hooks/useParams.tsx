@@ -1,4 +1,3 @@
-
 import { compileCode } from "../utils/generateProof";
 import { useEffect, useState } from "react";
 import { InputMap } from "@noir-lang/noirc_abi";

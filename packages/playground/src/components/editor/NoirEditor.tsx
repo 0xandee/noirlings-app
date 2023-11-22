@@ -1,9 +1,10 @@
 import Editor, { EditorProps } from "@monaco-editor/react";
 import {
-  ButtonContainer,
+  ActionsContainer,
   EditorContainer,
-  InnerButtonContainer,
   InputsContainer,
+  InnerButtonContainer,
+  ParamsContainer,
   StyledButton,
 } from "./NoirEditor.styles";
 import { generateProof } from "../../utils/generateProof";
@@ -17,13 +18,16 @@ import { RenderInputs } from "../inputs/inputs";
 import { prepareInputs } from "../../utils/serializeParams";
 import { LoadGrammar } from "../../hooks/loadGrammar";
 import { useParams } from "../../hooks/useParams";
+import { decodeSnippet, shareSnippet } from "../../utils/shareSnippet";
+import examples from "../../syntax/examples.json";
 
 export interface NoirEditorProps extends EditorProps {
-  threads?: number
+  threads?: number;
+  baseUrl?: string;
+  initialCode?: string;
 }
 
 function NoirEditor(props: NoirEditorProps) {
-  const [defaultCode, setDefaultCode] = useState<string | undefined>(undefined)
   const [code, setCode] = useState<string | undefined>();
   const [proof, setProof] = useState<ProofData | null>(null);
   const [pending, setPending] = useState<boolean>(false);
@@ -70,7 +74,11 @@ function NoirEditor(props: NoirEditorProps) {
   const prove = async () => {
     const inputMap = prepareInputs(params!, inputs);
     const proofData = await toast.promise(
-      generateProof({ circuit: compiledCode!, input: inputMap as InputMap, threads: props.threads ?? navigator.hardwareConcurrency }),
+      generateProof({
+        circuit: compiledCode!,
+        input: inputMap as InputMap,
+        threads: props.threads ?? navigator.hardwareConcurrency,
+      }),
       {
         pending: "Calculating proof...",
         success: "Proof calculated!",
@@ -81,20 +89,27 @@ function NoirEditor(props: NoirEditorProps) {
     console.log(proof);
   };
 
+  const share = async () => {
+    if (code) {
+      shareSnippet({ code, baseUrl: props.baseUrl });
+      toast.success("Copied to clipboard");
+    }
+  };
+
   useEffect(() => {
     setCompiledCode(null);
   }, [code]);
 
   useEffect(() => {
-    if (!defaultCode) {
-      (async () => fetch(new URL("./main.nr", import.meta.url)).then(res => res.text()).then(code => {
-        setDefaultCode(code)
-        setCode(code)
-      }))()
+    if (!code) {
+      const code = decodeSnippet({
+        encoded: props.initialCode || examples.default,
+      });
+      setCode(code);
     }
-  }, [defaultCode])
+  }, [code, props.initialCode]);
 
-  if (!defaultCode) return <div>Loading...</div>
+  if (!code) return <div>Loading...</div>;
   return (
     <EditorContainer>
       <LoadGrammar>
@@ -102,28 +117,35 @@ function NoirEditor(props: NoirEditorProps) {
         <Editor
           {...props}
           defaultLanguage="noir"
-          defaultValue={defaultCode}
+          defaultValue={code}
           onChange={(value) => setCode(value)}
         />
-        <ButtonContainer {...props}>
+        <ActionsContainer {...props}>
           <InnerButtonContainer>
             <StyledButton onClick={() => submit()} disabled={pending}>
-              Compile
+              🔄 Compile
+            </StyledButton>
+            <StyledButton onClick={() => share()} disabled={pending}>
+              ✉️ Share
             </StyledButton>
           </InnerButtonContainer>
           {params && (
-            <InputsContainer>
-              <RenderInputs
-                params={params}
-                inputs={inputs}
-                handleInput={handleInput}
-              />
-              <StyledButton onClick={() => prove()} disabled={pending}>
-                Prove
-              </StyledButton>
-            </InputsContainer>
+            <ParamsContainer>
+              <InputsContainer id="inputs-container">
+                <RenderInputs
+                  params={params}
+                  inputs={inputs}
+                  handleInput={handleInput}
+                />
+              </InputsContainer>
+              <InnerButtonContainer>
+                <StyledButton onClick={() => prove()} disabled={pending}>
+                  📜 Prove
+                </StyledButton>
+              </InnerButtonContainer>
+            </ParamsContainer>
           )}
-        </ButtonContainer>
+        </ActionsContainer>
       </LoadGrammar>
     </EditorContainer>
   );

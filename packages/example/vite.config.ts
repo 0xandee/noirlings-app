@@ -1,13 +1,13 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
-import { wasm } from '@rollup/plugin-wasm';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react-swc";
+import { wasm } from "@rollup/plugin-wasm";
 
 const wasmContentTypePlugin = {
-  name: 'wasm-content-type-plugin',
+  name: "wasm-content-type-plugin",
   configureServer(server) {
     server.middlewares.use(async (req, res, next) => {
-      if (req.url.endsWith('.wasm')) {
-        res.setHeader('Content-Type', 'application/wasm');
+      if (req.url.endsWith(".wasm")) {
+        res.setHeader("Content-Type", "application/wasm");
       }
       next();
     });
@@ -15,13 +15,13 @@ const wasmContentTypePlugin = {
 };
 
 export default defineConfig(({ command }) => {
-  if (command === 'serve') {
+  if (command === "serve") {
     return {
-      assetsInclude: ['**/*.ttf'],
+      assetsInclude: ["**/*.ttf"],
       plugins: [
         react(),
         wasm(),
-        command === 'serve' ? wasmContentTypePlugin : [],
+        command === "serve" ? wasmContentTypePlugin : [],
       ],
     };
   }
