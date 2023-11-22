@@ -2,17 +2,19 @@ import { compressSync, decompressSync, strFromU8, strToU8 } from "fflate";
 
 import { fromUint8Array, toUint8Array, extendString } from "js-base64";
 
-const constructUrl = ({
+const constructUrl = async ({
   encoded,
   baseUrl,
 }: {
   encoded: string;
   baseUrl: string;
 }) => {
-  navigator.clipboard.writeText(`${baseUrl}?share=${encoded}`);
+  console.log(`${baseUrl}?share=${encoded}`);
+  await navigator.clipboard.writeText(`${baseUrl}?share=${encoded}`);
+  console.log(await navigator.clipboard.readText());
 };
 
-export const shareSnippet = ({
+export const shareSnippet = async ({
   code,
   baseUrl,
 }: {
@@ -22,7 +24,11 @@ export const shareSnippet = ({
   const codeBytes = strToU8(code);
   const compressed = compressSync(codeBytes);
   const base64 = fromUint8Array(compressed, true);
-  if (baseUrl) constructUrl({ encoded: base64, baseUrl });
+  console.log(base64);
+  console.log(baseUrl);
+  if (baseUrl) {
+    await constructUrl({ encoded: base64, baseUrl });
+  }
 };
 
 export const decodeSnippet = ({ encoded }: { encoded: string }) => {

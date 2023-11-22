@@ -1,6 +1,6 @@
 {
     "name": "@signorecello/noir_playground",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "type": "module",
     "main": "src/index.ts",
     "exports": {
@@ -20,7 +20,8 @@
         "dev": "rollup -c rollup.config.esm.js -w",
         "lint": "eslint --ext .ts,.tsx src",
         "format": "prettier --write \"src/**/*.{ts,tsx}\"",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "publish": "yarn npm publish --access public"
     },
     "dependencies": {
         "@monaco-editor/react": "4.6.0",
