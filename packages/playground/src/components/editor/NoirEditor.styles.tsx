@@ -8,6 +8,7 @@ export const EditorContainer = styled.div`
   flex-direction: column;
   box-sizing: border-box;
   font-size: 14px;
+  font-family: "Fira Code Variable", sans-serif;
 `;
 
 export const TitleBox = styled.div`

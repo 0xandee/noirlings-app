@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const ButtonContainer = styled.div<{ column?: boolean }>`
+export const ButtonContainer = styled.div`
   flex: 0;
   width: 100%;
   display: flex;
@@ -15,13 +15,12 @@ export const InputsContainer = styled.div`
 `;
 
 export const StyledButton = styled.button.attrs({ tabIndex: -1 })<{
-  fullWidth?: boolean;
-  disabled?: boolean;
-  primary?: boolean;
+  $disabled?: boolean;
+  $primary?: boolean;
 }>`
   margin: 10px;
   border: none;
-  background-color: ${(props) => (props.primary ? "#2B2A4C" : "#EA906C")};
+  background-color: ${(props) => (props.$primary ? "#2B2A4C" : "#EA906C")};
   max-height: 40px;
   text-align: right;
   font-size: 15px;
@@ -32,8 +31,8 @@ export const StyledButton = styled.button.attrs({ tabIndex: -1 })<{
   padding: 20px;
   justify-content: center;
   align-items: center;
-  opacity: ${(props) => (props.disabled ? 0.5 : 1)};
-  width: ${(props) => (props.fullWidth ? "100%" : "auto")};
+  opacity: ${(props) => (props.$disabled ? 0.5 : 1)};
+  width: "auto";
   color: #eee2de;
   min-width: 200px;
 `;

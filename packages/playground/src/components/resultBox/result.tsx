@@ -32,7 +32,7 @@ export const ResultBox = ({
           <StyledHeader>Proof</StyledHeader>
           <TextProofContainer>{proof.proof.toString()}</TextProofContainer>
           <StyledButton
-            primary={true}
+            $primary={true}
             onClick={() => copyToClipboard(proof.proof)}
           >
             Copy to clipboard
@@ -44,7 +44,7 @@ export const ResultBox = ({
             {proof.publicInputs.toString()}
           </TextProofContainer>
           <StyledButton
-            primary={true}
+            $primary={true}
             onClick={() =>
               copyToClipboard(
                 proof.publicInputs.reduce((acc, curr) =>
@@ -59,7 +59,7 @@ export const ResultBox = ({
       </ResultsContainer>
 
       <BackButtonContainer>
-        <BackButton primary={true} onClick={() => setProof(null)}>
+        <BackButton $primary={true} onClick={() => setProof(null)}>
           Back
         </BackButton>
       </BackButtonContainer>

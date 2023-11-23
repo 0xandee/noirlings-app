@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "@fontsource-variable/nunito";
 import "./index.css";
 import { NoirEditor } from "@signorecello/noir_playground";
 

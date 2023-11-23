@@ -112,8 +112,8 @@ export const ActionsBox = ({
     <ActionsContainer {...props}>
       <ButtonsForm onSubmit={(e) => submit(e)}>
         <input type="text" style={{ display: "none" }} />
-        <ButtonContainer column={!!params}>
-          <StyledButton type="submit" disabled={pending} primary={true}>
+        <ButtonContainer>
+          <StyledButton type="submit" disabled={pending} $primary={true}>
             🔄 Compile
           </StyledButton>
           <StyledButton onClick={(e) => share(e)} disabled={pending}>
@@ -125,7 +125,7 @@ export const ActionsBox = ({
         <ParamsForm onSubmit={(e) => prove(e)}>
           <InputsContainer>
             <ButtonContainer>
-              <StyledButton type="submit" disabled={pending} primary={true}>
+              <StyledButton type="submit" disabled={pending} $primary={true}>
                 📜 Prove
               </StyledButton>
             </ButtonContainer>

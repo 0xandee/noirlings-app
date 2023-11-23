@@ -8,52 +8,79 @@ import initACVM from "@noir-lang/acvm_js";
 import { loadWASM } from "onigasm";
 import loader from "@monaco-editor/loader";
 import lightTheme from "../syntax/lightTheme.json";
+import { useEffect, useState } from "react";
 
-export async function loadGrammar() {
-  await loadWASM(new URL("./onigasm.wasm", import.meta.url).toString()); // You can also pass ArrayBuffer of onigasm.wasm file
-  await initNoirWasm(
-    new URL(
-      "@noir-lang/noir_wasm/web/noir_wasm_bg.wasm",
-      import.meta.url,
-    ).toString(),
-  );
-  await initNoirC(
-    new URL(
-      "@noir-lang/noirc_abi/web/noirc_abi_wasm_bg.wasm",
-      import.meta.url,
-    ).toString(),
-  );
-  await initACVM(
-    new URL(
-      "@noir-lang/acvm_js/web/acvm_js_bg.wasm",
-      import.meta.url,
-    ).toString(),
-  );
+export const useMonaco = () => {
+  const [monaco, setMonaco] = useState<typeof import("monaco-editor")>();
+  const [loaded, setLoaded] = useState(false);
+  const [promises, setPromises] = useState<Promise<unknown>[]>([]);
 
-  // Create a registry that can create a grammar from a scope name.
-  const registry = new Registry({
-    getGrammarDefinition: async () => {
-      return {
-        format: "json", // can also be `plist`
-        content: tmLanguage, // when format is 'json', parsed JSON also works
-      };
-    },
-  });
+  useEffect(() => {
+    if (promises.length) return;
 
-  const grammars = new Map();
-  grammars.set("noir", "main.nr");
+    const promArray = [];
+    promArray.push(
+      loadWASM(new URL("./onigasm.wasm", import.meta.url).toString()),
+    );
+    promArray.push(
+      initNoirWasm(
+        new URL(
+          "@noir-lang/noir_wasm/web/noir_wasm_bg.wasm",
+          import.meta.url,
+        ).toString(),
+      ),
+    );
+    promArray.push(
+      initNoirC(
+        new URL(
+          "@noir-lang/noirc_abi/web/noirc_abi_wasm_bg.wasm",
+          import.meta.url,
+        ).toString(),
+      ),
+    );
+    promArray.push(
+      initACVM(
+        new URL(
+          "@noir-lang/acvm_js/web/acvm_js_bg.wasm",
+          import.meta.url,
+        ).toString(),
+      ),
+    );
+    promArray.push(
+      loader.init().then((monaco) => {
+        setMonaco(monaco);
+      }),
+    );
+    setPromises(promArray);
+  }, [promises]);
 
-  const monaco = await loader.init();
+  useEffect(() => {
+    if (!monaco || loaded || !promises) return;
 
-  monaco.editor.defineTheme("noirLight", {
-    base: "vs",
-    inherit: true,
-    colors: lightTheme.colors,
-    rules: lightTheme.rules,
-  });
-  monaco.languages.register({ id: "noir" });
+    monaco.editor.defineTheme("noirLight", {
+      base: "vs",
+      inherit: true,
+      colors: lightTheme.colors,
+      rules: lightTheme.rules,
+    });
+    monaco.languages.register({ id: "noir" });
+    monaco.editor.setTheme("noirLight");
+    const registry = new Registry({
+      getGrammarDefinition: async () => {
+        return {
+          format: "json", // can also be `plist`
+          content: tmLanguage, // when format is 'json', parsed JSON also works
+        };
+      },
+    });
 
-  monaco.editor.setTheme("noirLight");
-  await wireTmGrammars(monaco, registry, grammars);
-  return monaco;
-}
+    const grammars = new Map();
+    grammars.set("noir", "main.nr");
+
+    Promise.all([...promises, wireTmGrammars(monaco, registry, grammars)]).then(
+      () => setLoaded(true),
+    );
+  }, [monaco, promises]);
+
+  return { monaco, loaded };
+};

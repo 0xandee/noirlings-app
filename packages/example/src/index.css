@@ -1,9 +1,8 @@
-* {
-  font-family: "Nunito", sans-serif;
-}
+@import url("https://fonts.googleapis.com/css2?family=Fira+Code&family=Nunito+Sans:ital,opsz@1,6..12&display=swap");
 
 body {
   background-color: #2b2a4c;
+  font-family: "Nunito", sans-serif;
 }
 
 #root {
