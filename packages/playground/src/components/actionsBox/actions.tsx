@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
 import { RenderInputs } from "../inputs/inputs";
 import { compileCode, generateProof } from "../../utils/generateProof";
@@ -12,8 +12,9 @@ import { NoirEditorProps } from "../../types";
 import { ButtonContainer, StyledButton } from "../../globals/buttons.styles";
 import {
   ActionsContainer,
-  ParamsContainer,
+  ParamsForm,
   InputsContainer,
+  ButtonsForm,
 } from "./actions.styles";
 
 export const ActionsBox = ({
@@ -26,11 +27,12 @@ export const ActionsBox = ({
   setProof: React.Dispatch<React.SetStateAction<ProofData | null>>;
 }) => {
   const [pending, setPending] = useState<boolean>(false);
-
   const [compiledCode, setCompiledCode] = useState<CompiledCircuit | null>(
     null,
   );
   const [inputs, setInputs] = useState<{ [key: string]: string }>({});
+
+  const params = useParams({ compiledCode });
 
   const handleInput = ({
     event,
@@ -47,11 +49,15 @@ export const ActionsBox = ({
     setCompiledCode(null);
   }, [code]);
 
-  const params = useParams({ compiledCode });
+  const compile = async (code: string | undefined) => {
+    const compiledCode = await compileCode(code);
+    setCompiledCode(compiledCode);
+  };
 
-  const submit = async () => {
+  const submit = async (e: FormEvent) => {
+    console.log("sub");
+    e.preventDefault();
     setPending(true);
-
     const compileTO = new Promise((resolve, reject) =>
       setTimeout(async () => {
         try {
@@ -71,12 +77,9 @@ export const ActionsBox = ({
     });
   };
 
-  const compile = async (code: string | undefined) => {
-    const compiledCode = await compileCode(code);
-    setCompiledCode(compiledCode);
-  };
-
-  const prove = async () => {
+  const prove = async (e: FormEvent) => {
+    e.preventDefault();
+    setPending(true);
     const inputMap = prepareInputs(params!, inputs);
     const proofData = await toast.promise(
       generateProof({
@@ -91,9 +94,10 @@ export const ActionsBox = ({
       },
     );
     setProof(proofData);
+    setPending(true);
   };
 
-  const share = async (e) => {
+  const share = async (e: FormEvent) => {
     e.preventDefault();
     if (code) {
       await toast.promise(shareSnippet({ code, baseUrl: props.baseUrl }), {
@@ -106,20 +110,26 @@ export const ActionsBox = ({
 
   return (
     <ActionsContainer {...props}>
-      <ButtonContainer column={!!params}>
-        <StyledButton
-          onClick={() => submit()}
-          disabled={pending}
-          primary={true}
-        >
-          🔄 Compile
-        </StyledButton>
-        <StyledButton onClick={(e) => share(e)} disabled={pending}>
-          ✉️ Share
-        </StyledButton>
-      </ButtonContainer>
+      <ButtonsForm onSubmit={(e) => submit(e)}>
+        <input type="text" style={{ display: "none" }} />
+        <ButtonContainer column={!!params}>
+          <StyledButton type="submit" disabled={pending} primary={true}>
+            🔄 Compile
+          </StyledButton>
+          <StyledButton onClick={(e) => share(e)} disabled={pending}>
+            ✉️ Share
+          </StyledButton>
+        </ButtonContainer>
+      </ButtonsForm>
       {params && (
-        <ParamsContainer>
+        <ParamsForm onSubmit={(e) => prove(e)}>
+          <InputsContainer>
+            <ButtonContainer>
+              <StyledButton type="submit" disabled={pending} primary={true}>
+                📜 Prove
+              </StyledButton>
+            </ButtonContainer>
+          </InputsContainer>
           <InputsContainer id="inputs-container">
             <RenderInputs
               params={params}
@@ -127,16 +137,7 @@ export const ActionsBox = ({
               handleInput={handleInput}
             />
           </InputsContainer>
-          <ButtonContainer>
-            <StyledButton
-              onClick={() => prove()}
-              disabled={pending}
-              primary={true}
-            >
-              📜 Prove
-            </StyledButton>
-          </ButtonContainer>
-        </ParamsContainer>
+        </ParamsForm>
       )}
     </ActionsContainer>
   );

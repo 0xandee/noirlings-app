@@ -10,7 +10,10 @@ export function useParams({
   const [params, setParams] = useState<{ name: string }[] | null>(null);
 
   useEffect(() => {
-    if (!compiledCode) return;
+    if (!compiledCode) {
+      setParams(null);
+      return;
+    }
     const params = compiledCode!.abi.parameters.map((param: InputMap) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       function unroll(param: any) {

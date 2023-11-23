@@ -1,14 +1,20 @@
 import styled from "styled-components";
 
 export const ButtonContainer = styled.div<{ column?: boolean }>`
+  flex: 0;
   width: 100%;
   display: flex;
-  flex-direction: ${(props) => (props.column ? "column" : "row")};
-  justify-content: ${(props) => (props.column ? "flex-start" : "center")};
-  margin-top: 20px;
+  justify-content: flex-start;
 `;
 
-export const StyledButton = styled.button<{
+export const InputsContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+`;
+
+export const StyledButton = styled.button.attrs({ tabIndex: -1 })<{
   fullWidth?: boolean;
   disabled?: boolean;
   primary?: boolean;
@@ -29,6 +35,13 @@ export const StyledButton = styled.button<{
   opacity: ${(props) => (props.disabled ? 0.5 : 1)};
   width: ${(props) => (props.fullWidth ? "100%" : "auto")};
   color: #eee2de;
+  min-width: 200px;
+`;
+
+export const BackButtonContainer = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: center;
 `;
 
 export const BackButton = styled(StyledButton)`

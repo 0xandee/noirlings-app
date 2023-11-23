@@ -5,7 +5,11 @@ import {
   ResultsContainer,
   TextProofContainer,
 } from "./result.styles";
-import { StyledButton, BackButton } from "../../globals/buttons.styles";
+import {
+  StyledButton,
+  BackButton,
+  BackButtonContainer,
+} from "../../globals/buttons.styles";
 import { StyledHeader } from "../../globals/text.styles";
 import { toast } from "react-toastify";
 
@@ -22,42 +26,43 @@ export const ResultBox = ({
   };
 
   return (
-    <ResultsContainer>
-      <ProofDataContainer>
-        <StyledHeader>Proof</StyledHeader>
-        <TextProofContainer>{proof.proof.toString()}</TextProofContainer>
-        <StyledButton
-          fullWidth={true}
-          primary={true}
-          onClick={() => copyToClipboard(proof.proof)}
-        >
-          Copy to clipboard
-        </StyledButton>
-      </ProofDataContainer>
-      <ProofDataContainer>
-        <StyledHeader>Public Inputs</StyledHeader>
-        <TextProofContainer>{proof.publicInputs.toString()}</TextProofContainer>
-        <StyledButton
-          fullWidth={true}
-          primary={true}
-          onClick={() =>
-            copyToClipboard(
-              proof.publicInputs.reduce((acc, curr) =>
-                Uint8Array.from([...acc, ...curr]),
-              ),
-            )
-          }
-        >
-          Copy to clipboard
-        </StyledButton>
-        <BackButton
-          fullWidth={true}
-          primary={true}
-          onClick={() => setProof(null)}
-        >
+    <>
+      <ResultsContainer>
+        <ProofDataContainer>
+          <StyledHeader>Proof</StyledHeader>
+          <TextProofContainer>{proof.proof.toString()}</TextProofContainer>
+          <StyledButton
+            primary={true}
+            onClick={() => copyToClipboard(proof.proof)}
+          >
+            Copy to clipboard
+          </StyledButton>
+        </ProofDataContainer>
+        <ProofDataContainer>
+          <StyledHeader>Public Inputs</StyledHeader>
+          <TextProofContainer>
+            {proof.publicInputs.toString()}
+          </TextProofContainer>
+          <StyledButton
+            primary={true}
+            onClick={() =>
+              copyToClipboard(
+                proof.publicInputs.reduce((acc, curr) =>
+                  Uint8Array.from([...acc, ...curr]),
+                ),
+              )
+            }
+          >
+            Copy to clipboard
+          </StyledButton>
+        </ProofDataContainer>
+      </ResultsContainer>
+
+      <BackButtonContainer>
+        <BackButton primary={true} onClick={() => setProof(null)}>
           Back
         </BackButton>
-      </ProofDataContainer>
-    </ResultsContainer>
+      </BackButtonContainer>
+    </>
   );
 };

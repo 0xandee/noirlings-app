@@ -10,26 +10,19 @@ function getQueryParam(param: string) {
 }
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <div className="container">
+  <div className="container">
+    <div className="title-container">
       <h1>Noir Playground</h1>
       <p>This playground works entirely client-side. Enjoy!</p>
-      <p>
-        Visit the&nbsp;
-        <a href="https://github.com/signorecello/noir-playground">
-          Github Repo
-        </a>
-        &nbsp;to know more
-      </p>
-      <NoirEditor
-        height="300px"
-        baseUrl={
-          process.env.NODE_ENV === "development"
-            ? window.location.host
-            : "https://noir-playground.netlify.app"
-        }
-        initialCode={getQueryParam("share") || undefined}
-      />
     </div>
-  </React.StrictMode>,
+    <NoirEditor
+      height="300px"
+      baseUrl={
+        process.env.NODE_ENV === "development"
+          ? window.location.host
+          : "https://noir-playground.netlify.app"
+      }
+      initialCode={getQueryParam("share") || undefined}
+    />
+  </div>,
 );

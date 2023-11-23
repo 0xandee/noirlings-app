@@ -8,13 +8,12 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "react-jsx",
+    "jsx": "react",
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "allowSyntheticDefaultImports": true,
-    "declaration": true
+    "allowSyntheticDefaultImports": true
   },
   "include": ["**/*.d.ts", "**/*.ts", "**/*.tsx", "**/*.json"],
   "exclude": ["dist", "node_modules", "**/*.nr", "**/*.wasm"]

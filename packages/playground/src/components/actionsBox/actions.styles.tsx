@@ -10,18 +10,24 @@ export const ActionsContainer = styled.div<EditorProps>`
   width: ${(props) => props.width || "100%"};
 `;
 
-export const ParamsContainer = styled.div`
+export const ParamsForm = styled.form`
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
   background-color: white;
-  margin: 10px;
   box-sizing: border-box;
   padding: 0 2%;
 `;
 
+export const ButtonsForm = styled.form``;
+
 export const InputsContainer = styled.div`
+  flex: 1;
   width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 `;

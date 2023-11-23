@@ -1,10 +1,9 @@
 import styled from "styled-components";
 
-export const InputSection = styled.div<{ $indent?: boolean }>`
+export const InputSection = styled.div`
   display: flex;
   flex-direction: column;
   align-self: flex-start;
-  padding-left: ${(props) => (props.$indent ? "2&" : "0")};
   width: 100%;
 `;
 
@@ -15,8 +14,9 @@ export const InputGroupBox = styled.div`
   align-items: center;
   border: ${(props) =>
     props.className === "group" ? "1px solid #dadedf" : "none"};
-  margin: ${(props) => (props.className === "group" ? "20px 0" : "")};
+  margin: ${(props) => (props.className === "group" ? "20px 10px" : "0 10px")};
   padding: ${(props) => (props.className === "group" ? "20px" : "")};
+  max-width: 300px;
 `;
 
 export const Label = styled.label<{ $isParent?: boolean }>`

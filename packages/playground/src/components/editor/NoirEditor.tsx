@@ -65,7 +65,7 @@ function NoirEditor(props: NoirEditorProps) {
   }, [monacoEditor]);
 
   useEffect(() => {
-    console.log(code);
+    console.log(props);
   }, [code, props]);
 
   return (
@@ -74,7 +74,10 @@ function NoirEditor(props: NoirEditorProps) {
       <TitleBox>
         <StyledHeader>Noir Playground</StyledHeader>
       </TitleBox>
-      <div ref={editorRef} style={{ width: "100%", height: "400px" }}></div>
+      <div
+        ref={editorRef}
+        style={{ width: props.width || "100%", height: props.height || "100%" }}
+      ></div>
       {!proof && code && (
         <ActionsBox code={code} props={props} setProof={setProof} />
       )}

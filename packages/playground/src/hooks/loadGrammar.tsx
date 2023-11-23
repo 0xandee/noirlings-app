@@ -1,5 +1,4 @@
 import tmLanguage from "../syntax/noir.tmLanguage.json";
-import React, { ReactElement } from "react";
 import { Registry } from "monaco-textmate";
 import { wireTmGrammars } from "monaco-editor-textmate";
 
@@ -7,18 +6,8 @@ import initNoirWasm from "@noir-lang/noir_wasm";
 import initNoirC from "@noir-lang/noirc_abi";
 import initACVM from "@noir-lang/acvm_js";
 import { loadWASM } from "onigasm";
-import * as monaco from "monaco-editor";
 import loader from "@monaco-editor/loader";
-import { useEffect, useState } from "react";
 import lightTheme from "../syntax/lightTheme.json";
-
-// export const LoadGrammar = ({ children }: { children: React.ReactNode }) => {
-
-//   if (!grammar) return <div>Loading...</div>; // Or some loading indicator
-
-//   // Assuming children is a single React element
-//   return <>{children}</>;
-// };
 
 export async function loadGrammar() {
   await loadWASM(new URL("./onigasm.wasm", import.meta.url).toString()); // You can also pass ArrayBuffer of onigasm.wasm file

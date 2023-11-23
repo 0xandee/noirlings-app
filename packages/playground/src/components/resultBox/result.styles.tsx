@@ -6,6 +6,7 @@ export const ResultsContainer = styled.div<EditorProps>`
   flex-direction: row;
   justify-content: center;
   box-sizing: border-box;
+  height: 400px;
   width: ${(props) => props.width || "100%"};
   align-items: flex-start;
 `;
@@ -20,13 +21,12 @@ export const ProofDataContainer = styled.div`
   background-color: white;
   margin: 10px 0;
   padding: 5%;
-  box-sizing: border-box;
 `;
 
 export const TextProofContainer = styled.div`
   text-align: center;
   border: 1px solid grey;
-  height: 80px;
+  height: 150px;
   color: black;
   overflow: hidden;
   text-overflow: ellipsis;

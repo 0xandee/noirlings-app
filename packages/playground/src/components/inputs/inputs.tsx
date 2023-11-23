@@ -33,8 +33,10 @@ export function RenderInputs({ params, inputs, handleInput }: InputsBoxTypes) {
       }
 
       return (
-        <InputSection $indent={!!param.children} key={componentKey}>
-          <InputGroupBox className={firstChild ? "group" : ""}>
+        <InputSection key={componentKey}>
+          <InputGroupBox
+            className={!!param.children || firstChild ? "group" : ""}
+          >
             <Label $isParent={!!param.children || firstChild}>
               {param.name}
             </Label>
