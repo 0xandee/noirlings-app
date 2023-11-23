@@ -1,10 +1,13 @@
 import styled from "styled-components";
 
 export const ButtonContainer = styled.div`
-  flex: 0;
   width: 100%;
   display: flex;
   justify-content: flex-start;
+
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
 `;
 
 export const InputsContainer = styled.div`
@@ -32,9 +35,8 @@ export const StyledButton = styled.button.attrs({ tabIndex: -1 })<{
   justify-content: center;
   align-items: center;
   opacity: ${(props) => (props.$disabled ? 0.5 : 1)};
-  width: "auto";
+  width: auto;
   color: #eee2de;
-  min-width: 200px;
 `;
 
 export const BackButtonContainer = styled.div`

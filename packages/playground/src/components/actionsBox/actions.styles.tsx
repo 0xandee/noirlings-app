@@ -8,6 +8,7 @@ export const ActionsContainer = styled.div<EditorProps>`
   box-sizing: border-box;
   background-color: white;
   width: ${(props) => props.width || "100%"};
+  flex-wrap: wrap;
 `;
 
 export const ParamsForm = styled.form`
@@ -30,4 +31,8 @@ export const InputsContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
+
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
 `;

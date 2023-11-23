@@ -6,9 +6,9 @@ export const ResultsContainer = styled.div<EditorProps>`
   flex-direction: row;
   justify-content: center;
   box-sizing: border-box;
-  height: 400px;
   width: ${(props) => props.width || "100%"};
   align-items: flex-start;
+  flex-wrap: wrap;
 `;
 
 export const ProofDataContainer = styled.div`
