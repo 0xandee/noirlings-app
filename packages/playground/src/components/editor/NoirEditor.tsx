@@ -38,6 +38,7 @@ function NoirEditor(props: NoirEditorProps) {
           language: "noir",
           fontFamily: "Fira Code Variable",
           roundedSelection: false,
+          automaticLayout: true,
           lineNumbers: "off",
           scrollBeyondLastLine: false,
           minimap: { enabled: false },
