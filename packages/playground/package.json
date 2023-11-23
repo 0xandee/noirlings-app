@@ -24,6 +24,7 @@
         "publish": "yarn build && yarn npm publish --access public"
     },
     "dependencies": {
+        "@fontsource-variable/nunito": "^5.0.16",
         "@monaco-editor/react": "4.6.0",
         "@noir-lang/backend_barretenberg": "^0.19.2",
         "@noir-lang/noir_js": "^0.19.2",

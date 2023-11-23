@@ -252,6 +252,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fontsource-variable/nunito@npm:^5.0.16":
+  version: 5.0.16
+  resolution: "@fontsource-variable/nunito@npm:5.0.16"
+  checksum: 1233be7fb2c6fa291046669c463203be5e0ad69b950df5cee02692a8b7a99f055bab7d36460984265b65568033c9fff113f712b9dec34e7208c75ae60b4aaebf
+  languageName: node
+  linkType: hard
+
 "@humanwhocodes/config-array@npm:^0.11.13":
   version: 0.11.13
   resolution: "@humanwhocodes/config-array@npm:0.11.13"
@@ -583,6 +590,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@signorecello/noir_playground@workspace:packages/playground"
   dependencies:
+    "@fontsource-variable/nunito": "npm:^5.0.16"
     "@monaco-editor/react": "npm:4.6.0"
     "@noir-lang/backend_barretenberg": "npm:^0.19.2"
     "@noir-lang/noir_js": "npm:^0.19.2"

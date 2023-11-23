@@ -1,11 +1,5 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-import {
-  ActionsContainer,
-  InnerButtonContainer,
-  StyledButton,
-  ParamsContainer,
-  InputsContainer,
-} from "../editor/NoirEditor.styles";
+
 import { RenderInputs } from "../inputs/inputs";
 import { compileCode, generateProof } from "../../utils/generateProof";
 import { prepareInputs } from "../../utils/serializeParams";
@@ -15,16 +9,22 @@ import { ProofData, CompiledCircuit } from "@noir-lang/types";
 import { useParams } from "../../hooks/useParams";
 import { InputMap } from "@noir-lang/noirc_abi";
 import { NoirEditorProps } from "../../types";
+import { ButtonContainer, StyledButton } from "../../globals/buttons.styles";
+import {
+  ActionsContainer,
+  ParamsContainer,
+  InputsContainer,
+} from "./actions.styles";
 
 export const ActionsBox = ({
   code,
   props,
+  setProof,
 }: {
   code: string;
   props: NoirEditorProps;
+  setProof: React.Dispatch<React.SetStateAction<ProofData | null>>;
 }) => {
-  console.log(props);
-  const [proof, setProof] = useState<ProofData | null>(null);
   const [pending, setPending] = useState<boolean>(false);
 
   const [compiledCode, setCompiledCode] = useState<CompiledCircuit | null>(
@@ -91,26 +91,33 @@ export const ActionsBox = ({
       },
     );
     setProof(proofData);
-    console.log(proof);
   };
 
-  const share = async () => {
+  const share = async (e) => {
+    e.preventDefault();
     if (code) {
-      await shareSnippet({ code, baseUrl: props.baseUrl });
-      toast.success("Copied to clipboard");
+      await toast.promise(shareSnippet({ code, baseUrl: props.baseUrl }), {
+        pending: "Copying to clipboard...",
+        success: "Copied!",
+        error: "Error sharing",
+      });
     }
   };
 
   return (
     <ActionsContainer {...props}>
-      <InnerButtonContainer>
-        <StyledButton onClick={() => submit()} disabled={pending}>
+      <ButtonContainer column={!!params}>
+        <StyledButton
+          onClick={() => submit()}
+          disabled={pending}
+          primary={true}
+        >
           🔄 Compile
         </StyledButton>
-        <StyledButton onClick={() => share()} disabled={pending}>
+        <StyledButton onClick={(e) => share(e)} disabled={pending}>
           ✉️ Share
         </StyledButton>
-      </InnerButtonContainer>
+      </ButtonContainer>
       {params && (
         <ParamsContainer>
           <InputsContainer id="inputs-container">
@@ -120,11 +127,15 @@ export const ActionsBox = ({
               handleInput={handleInput}
             />
           </InputsContainer>
-          <InnerButtonContainer>
-            <StyledButton onClick={() => prove()} disabled={pending}>
+          <ButtonContainer>
+            <StyledButton
+              onClick={() => prove()}
+              disabled={pending}
+              primary={true}
+            >
               📜 Prove
             </StyledButton>
-          </InnerButtonContainer>
+          </ButtonContainer>
         </ParamsContainer>
       )}
     </ActionsContainer>

@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "@fontsource-variable/inter";
+import "@fontsource-variable/nunito";
 import "./index.css";
 import { NoirEditor } from "@signorecello/noir_playground";
 
@@ -25,7 +25,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         height="300px"
         baseUrl={
           process.env.NODE_ENV === "development"
-            ? window.location.href.slice(0, -1)
+            ? window.location.host
             : "https://noir-playground.netlify.app"
         }
         initialCode={getQueryParam("share") || undefined}

@@ -1,5 +1,5 @@
 import tmLanguage from "../syntax/noir.tmLanguage.json";
-import React from "react";
+import React, { ReactElement } from "react";
 import { Registry } from "monaco-textmate";
 import { wireTmGrammars } from "monaco-editor-textmate";
 
@@ -8,20 +8,19 @@ import initNoirC from "@noir-lang/noirc_abi";
 import initACVM from "@noir-lang/acvm_js";
 import { loadWASM } from "onigasm";
 import * as monaco from "monaco-editor";
-import { loader } from "@monaco-editor/react";
+import loader from "@monaco-editor/loader";
 import { useEffect, useState } from "react";
+import lightTheme from "../syntax/lightTheme.json";
 
-export const LoadGrammar = ({ children }: { children: React.ReactNode }) => {
-  const [loaded, setLoaded] = useState(false);
-  useEffect(() => {
-    (async () => await loadGrammar())();
-    setLoaded(true);
-  }, []);
-  if (loaded) return <>{children}</>;
-};
+// export const LoadGrammar = ({ children }: { children: React.ReactNode }) => {
 
-async function loadGrammar() {
-  loader.config({ monaco });
+//   if (!grammar) return <div>Loading...</div>; // Or some loading indicator
+
+//   // Assuming children is a single React element
+//   return <>{children}</>;
+// };
+
+export async function loadGrammar() {
   await loadWASM(new URL("./onigasm.wasm", import.meta.url).toString()); // You can also pass ArrayBuffer of onigasm.wasm file
   await initNoirWasm(
     new URL(
@@ -42,7 +41,6 @@ async function loadGrammar() {
     ).toString(),
   );
 
-  console.log("loading grammar");
   // Create a registry that can create a grammar from a scope name.
   const registry = new Registry({
     getGrammarDefinition: async () => {
@@ -55,6 +53,18 @@ async function loadGrammar() {
 
   const grammars = new Map();
   grammars.set("noir", "main.nr");
+
+  const monaco = await loader.init();
+
+  monaco.editor.defineTheme("noirLight", {
+    base: "vs",
+    inherit: true,
+    colors: lightTheme.colors,
+    rules: lightTheme.rules,
+  });
   monaco.languages.register({ id: "noir" });
+
+  monaco.editor.setTheme("noirLight");
   await wireTmGrammars(monaco, registry, grammars);
+  return monaco;
 }

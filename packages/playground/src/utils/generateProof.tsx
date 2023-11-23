@@ -28,7 +28,6 @@ export async function generateProof({
   input: InputMap;
   threads: number;
 }) {
-  console.log(threads);
   const backend = new BarretenbergBackend(
     circuit as unknown as CompiledCircuit,
     { threads },

@@ -9,9 +9,7 @@ const constructUrl = async ({
   encoded: string;
   baseUrl: string;
 }) => {
-  console.log(`${baseUrl}?share=${encoded}`);
   await navigator.clipboard.writeText(`${baseUrl}?share=${encoded}`);
-  console.log(await navigator.clipboard.readText());
 };
 
 export const shareSnippet = async ({
@@ -24,8 +22,6 @@ export const shareSnippet = async ({
   const codeBytes = strToU8(code);
   const compressed = compressSync(codeBytes);
   const base64 = fromUint8Array(compressed, true);
-  console.log(base64);
-  console.log(baseUrl);
   if (baseUrl) {
     await constructUrl({ encoded: base64, baseUrl });
   }

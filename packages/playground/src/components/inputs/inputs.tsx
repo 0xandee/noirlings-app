@@ -15,7 +15,6 @@ export function RenderInputs({ params, inputs, handleInput }: InputsBoxTypes) {
 
   if (!params) return <></>;
 
-  console.log(params);
   return params.map((p: ParamType) => {
     function unroll(
       param: ParamType,
@@ -41,6 +40,7 @@ export function RenderInputs({ params, inputs, handleInput }: InputsBoxTypes) {
             </Label>
             {param.name && (
               <Input
+                autoComplete="off"
                 name={param.name}
                 type="text"
                 onChange={(e) => handleInput({ event: e, key: componentKey })}

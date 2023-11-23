@@ -1,9 +1,9 @@
-body {
-  font-family: "Inter Variable", sans-serif;
+* {
+  font-family: "Nunito", sans-serif;
 }
 
 body {
-  background-color: #32204f;
+  background-color: #2b2a4c;
 }
 
 #root {
@@ -31,7 +31,7 @@ body {
 
 p,
 h1 {
-  color: #fff;
+  color: #eee2de;
   align-self: center;
   display: flex;
   line-height: 116%; /* 17.4px */
