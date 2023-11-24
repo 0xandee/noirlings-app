@@ -676,7 +676,6 @@ __metadata:
     "@types/react": "npm:18.2.38"
     "@typescript-eslint/eslint-plugin": "npm:^6.12.0"
     "@typescript-eslint/parser": "npm:^6.12.0"
-    add: "npm:^2.0.6"
     eslint: "npm:^8.54.0"
     eslint-config-prettier: "npm:^9.0.0"
     eslint-plugin-react-hooks: "npm:^4.6.0"
@@ -697,7 +696,6 @@ __metadata:
     rollup-plugin-terser: "npm:^7.0.2"
     styled-components: "npm:^6.1.1"
     typescript: "npm:^5.3.2"
-    yarn: "npm:^1.22.21"
   languageName: unknown
   linkType: soft
 
@@ -1097,13 +1095,6 @@ __metadata:
   bin:
     acorn: bin/acorn
   checksum: a3ed76c761b75ec54b1ec3068fb7f113a182e95aea7f322f65098c2958d232e3d211cb6dac35ff9c647024b63714bc528a26d54a925d1fef2c25585b4c8e4017
-  languageName: node
-  linkType: hard
-
-"add@npm:^2.0.6":
-  version: 2.0.6
-  resolution: "add@npm:2.0.6"
-  checksum: 6b21d5f2e58cf5e15d56cc6f9ebce04f04f4c33ae25f09d600ddacf8df00036ba521f17feb1b3f81307b7c6d2ef0bed8b511a0f86f062eb90c2f909b48b588ae
   languageName: node
   linkType: hard
 
@@ -4053,16 +4044,6 @@ __metadata:
   version: 4.0.0
   resolution: "yallist@npm:4.0.0"
   checksum: 2286b5e8dbfe22204ab66e2ef5cc9bbb1e55dfc873bbe0d568aa943eb255d131890dfd5bf243637273d31119b870f49c18fcde2c6ffbb7a7a092b870dc90625a
-  languageName: node
-  linkType: hard
-
-"yarn@npm:^1.22.21":
-  version: 1.22.21
-  resolution: "yarn@npm:1.22.21"
-  bin:
-    yarn: bin/yarn.js
-    yarnpkg: bin/yarn.js
-  checksum: 0fcb99d0db16c3e7962b2dab81d9e3d997a8d99f9d841360cd68bfc15b61f4a58ae3d5aec043b92c5598af721e7a1b33c0c57317c6c92a137e76664d21908e2e
   languageName: node
   linkType: hard
 
