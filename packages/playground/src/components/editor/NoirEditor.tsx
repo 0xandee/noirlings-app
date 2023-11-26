@@ -1,3 +1,4 @@
+import "react-toastify/dist/ReactToastify.css";
 import React, { useRef } from "react";
 import { EditorContainer } from "./NoirEditor.styles";
 import { useEffect, useState } from "react";

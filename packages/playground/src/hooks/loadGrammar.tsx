@@ -20,7 +20,7 @@ export const useMonaco = () => {
 
     const promArray = [];
     promArray.push(
-      loadWASM(new URL("./onigasm.wasm", import.meta.url).toString()),
+      loadWASM(new URL("onigasm/lib/onigasm.wasm", import.meta.url).toString()),
     );
     promArray.push(
       initNoirWasm(
