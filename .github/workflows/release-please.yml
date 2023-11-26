@@ -18,5 +18,4 @@ jobs:
           release-type: node
           package-name: "@signorecello/noir_playground"
           default-branch: main
-          command: manifest
           token: ${{secrets.GITHUB_TOKEN}}
