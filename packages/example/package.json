@@ -2,14 +2,14 @@
     "name": "example",
     "main": "index.jsx",
     "version": "0.1.0",
-    "type": "module",
     "license": "MIT",
+    "type": "module",
     "scripts": {
         "dev": "vite",
         "build": "tsc && vite build",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-        "preview": "vite preview",
-        "serve": "serve dist"
+        "preview": "node scripts/testModules.mjs esm && vite preview --mode development",
+        "preview:cjs": "node scripts/testModules.mjs cjs && vite preview --mode development"
     },
     "dependencies": {
         "@signorecello/noir_playground": "workspace:*",
@@ -20,7 +20,6 @@
         "eslint-plugin-react-refresh": "^0.4.4",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
-        "serve": "^14.2.1",
         "vite": "^5.0.0"
     },
     "packageManager": "yarn@4.0.2",

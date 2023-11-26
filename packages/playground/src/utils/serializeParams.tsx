@@ -10,17 +10,16 @@ export function prepareInputs(
       const key = parent ? `${parent}-${param.name}` : param.name;
       if (!param.children) {
         return { [param.name]: JSON.parse(inputs[key]) };
-      } else if (param.children) {
-        return {
-          [param.parent!]: (() => {
-            const children = {};
-            param.children.map((p: ParamType) =>
-              Object.assign(children, aggregateParams(p, param.parent)),
-            );
-            return children;
-          })(),
-        };
       }
+      return {
+        [param.parent!]: (() => {
+          const children = {};
+          param.children.map((p: ParamType) =>
+            Object.assign(children, aggregateParams(p, param.parent)),
+          );
+          return children;
+        })(),
+      };
     }
     Object.assign(inputMap, aggregateParams(param, param.parent));
   });
