@@ -1,5 +1,8 @@
 {
     "packages": {
-        "packages/playground": "0.2.7"
+        "packages/playground": {
+            "releaseType": "node",
+            "packageName": "@signorecello/noir_playground"
+        }
     }
 }

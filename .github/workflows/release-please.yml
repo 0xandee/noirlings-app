@@ -20,6 +20,8 @@ jobs:
           package-name: "@signorecello/noir_playground"
           default-branch: main
           token: ${{secrets.GITHUB_TOKEN}}
+          monorepo-tags: true
+          path: "packages/playground"
       - uses: actions/checkout@v2
         if: ${{ steps.release.outputs.release_created }}
       - uses: actions/setup-node@v1
