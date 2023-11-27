@@ -1,3 +1,4 @@
+import themes from "../themes/index";
 import tmLanguage from "../syntax/noir.tmLanguage.json";
 import { Registry } from "monaco-textmate";
 import { wireTmGrammars } from "monaco-editor-textmate";
@@ -6,9 +7,21 @@ import initNoirWasm from "@noir-lang/noir_wasm";
 import initNoirC from "@noir-lang/noirc_abi";
 import initACVM from "@noir-lang/acvm_js";
 import { loadWASM } from "onigasm";
-import loader from "@monaco-editor/loader";
-import lightTheme from "../syntax/lightTheme.json";
 import { useEffect, useState } from "react";
+
+import { loader } from "@monaco-editor/react";
+import * as monacoEditor from "monaco-editor";
+
+import editorWorker from "monaco-editor/esm/vs/editor/editor.worker.js?worker";
+
+self.MonacoEnvironment = {
+  getWorker(_, label) {
+    console.log(label);
+    return new editorWorker();
+  },
+};
+
+loader.config({ monaco: monacoEditor });
 
 export const useMonaco = () => {
   const [monaco, setMonaco] = useState<typeof import("monaco-editor")>();
@@ -20,7 +33,19 @@ export const useMonaco = () => {
 
     const promArray = [];
     promArray.push(
-      loadWASM(new URL("onigasm/lib/onigasm.wasm", import.meta.url).toString()),
+      loadWASM(
+        new URL("onigasm/lib/onigasm.wasm", import.meta.url).toString(),
+      ).catch((error) => {
+        if (
+          error.message !==
+          "Onigasm#init has been called and was succesful, subsequent calls are not allowed once initialized"
+        ) {
+          // If it's not the specific error we're expecting, rethrow it
+          throw error;
+        }
+        // Otherwise, ignore the error as onigasm is already initialized
+        console.log("Onigasm already initialized, skipping re-initialization.");
+      }),
     );
     promArray.push(
       initNoirWasm(
@@ -48,6 +73,15 @@ export const useMonaco = () => {
     );
     promArray.push(
       loader.init().then((monaco) => {
+        Object.keys(themes).forEach((theme: string) => {
+          monaco.editor.defineTheme(
+            theme as keyof typeof themes,
+            themes[
+              theme as keyof typeof themes
+            ] as monacoEditor.editor.IStandaloneThemeData,
+          );
+        });
+        monaco.languages.register({ id: "noir" });
         setMonaco(monaco);
       }),
     );
@@ -57,14 +91,7 @@ export const useMonaco = () => {
   useEffect(() => {
     if (!monaco || loaded || !promises) return;
 
-    monaco.editor.defineTheme("noirLight", {
-      base: "vs",
-      inherit: true,
-      colors: lightTheme.colors,
-      rules: lightTheme.rules,
-    });
-    monaco.languages.register({ id: "noir" });
-    monaco.editor.setTheme("noirLight");
+    monaco.editor.setTheme("solarizedLight");
     const registry = new Registry({
       getGrammarDefinition: async () => {
         return {
@@ -76,10 +103,12 @@ export const useMonaco = () => {
 
     const grammars = new Map();
     grammars.set("noir", "main.nr");
+    console.log("editor loaded");
 
-    Promise.all([...promises, wireTmGrammars(monaco, registry, grammars)]).then(
-      () => setLoaded(true),
-    );
+    Promise.all([...promises]).then(() => {
+      wireTmGrammars(monaco, registry, grammars);
+      setLoaded(true);
+    });
   }, [monaco, promises]);
 
   return { monaco, loaded };

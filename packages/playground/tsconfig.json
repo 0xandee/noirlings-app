@@ -21,7 +21,8 @@
     "outDir": "dist",
     "rootDir": "./",
     "preserveConstEnums": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["vite/client"]
   },
   "include": ["src", "**/*.css"]
 }

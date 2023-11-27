@@ -18,6 +18,7 @@
     "types": "./dist/index.d.ts",
     "scripts": {
         "build": "tsc && vite build",
+        "build:watch": "tsc && vite build -w",
         "dev": "vite",
         "preview": "vite preview",
         "publish": "yarn build && yarn npm publish --access public"

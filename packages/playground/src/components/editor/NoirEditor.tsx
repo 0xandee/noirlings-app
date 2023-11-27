@@ -12,13 +12,14 @@ import { ProofData } from "@noir-lang/types";
 import { ResultBox } from "../resultBox/result";
 import { editor } from "monaco-editor";
 
+type editorType = editor.IStandaloneCodeEditor;
+
 function NoirEditor(props: NoirEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
 
   const { monaco, loaded } = useMonaco();
 
-  const [monacoEditor, setMonacoEditor] =
-    useState<editor.IStandaloneCodeEditor | null>(null); // To track the editor instance
+  const [monacoEditor, setMonacoEditor] = useState<editorType | null>(null); // To track the editor instance
   const [code, setCode] = useState<string | undefined>();
   const [proof, setProof] = useState<ProofData | null>(null);
 
