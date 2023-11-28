@@ -1,6 +1,4 @@
-import darkTheme from "./darkTheme.json";
-import solarizedDark from "./Solarized-dark.json";
-import solarizedLight from "./Solarized-light.json";
-import lightTheme from "./lightTheme.json";
+import darkTheme from "./dark.json";
+import lightTheme from "./light.json";
 
-export default { darkTheme, solarizedDark, solarizedLight, lightTheme };
+export default { darkTheme, lightTheme };

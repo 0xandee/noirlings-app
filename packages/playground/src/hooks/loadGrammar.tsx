@@ -73,14 +73,9 @@ export const useMonaco = () => {
     );
     promArray.push(
       loader.init().then((monaco) => {
-        Object.keys(themes).forEach((theme: string) => {
-          monaco.editor.defineTheme(
-            theme as keyof typeof themes,
-            themes[
-              theme as keyof typeof themes
-            ] as monacoEditor.editor.IStandaloneThemeData,
-          );
-        });
+        const { darkTheme, lightTheme } = themes;
+        monaco.editor.defineTheme("dark", darkTheme as monacoEditor.editor.IStandaloneThemeData);
+        monaco.editor.defineTheme("light", lightTheme as monacoEditor.editor.IStandaloneThemeData);
         monaco.languages.register({ id: "noir" });
         setMonaco(monaco);
       }),
@@ -91,7 +86,7 @@ export const useMonaco = () => {
   useEffect(() => {
     if (!monaco || loaded || !promises) return;
 
-    monaco.editor.setTheme("solarizedLight");
+    monaco.editor.setTheme("light");
     const registry = new Registry({
       getGrammarDefinition: async () => {
         return {

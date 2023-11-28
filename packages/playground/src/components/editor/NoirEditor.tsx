@@ -1,20 +1,19 @@
 import "react-toastify/dist/ReactToastify.css";
 import React, { useRef } from "react";
-import { EditorContainer } from "./NoirEditor.styles";
 import { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import { useMonaco } from "../../hooks/loadGrammar";
 import { decodeSnippet } from "../../utils/shareSnippet";
 import examples from "../../syntax/examples.json";
 import { ActionsBox } from "../actionsBox/actions";
-import { NoirEditorProps } from "../../types";
+import { PlaygroundProps } from "../../types";
 import { ProofData } from "@noir-lang/types";
 import { ResultBox } from "../resultBox/result";
 import { editor } from "monaco-editor";
 
 type editorType = editor.IStandaloneCodeEditor;
 
-function NoirEditor(props: NoirEditorProps) {
+function NoirEditor(props: PlaygroundProps) {
   const editorRef = useRef<HTMLDivElement>(null);
 
   const { monaco, loaded } = useMonaco();
@@ -66,17 +65,21 @@ function NoirEditor(props: NoirEditorProps) {
   }, [monacoEditor]);
 
   return (
-    <EditorContainer id="main">
+    <div
+      className="h-full w-full flex items-center flex-col box-border text-sm font-fira-code"
+      id="main"
+    >
       <ToastContainer />
       <div
         ref={editorRef}
-        style={{ width: props.width || "100%", height: props.height || "100%" }}
+        id="editor"
+        style={{ width: props.width || '100%', height: props.height || '100%' }}
       ></div>
       {loaded && !proof && code && (
         <ActionsBox code={code} props={props} setProof={setProof} />
       )}
       {loaded && proof && <ResultBox proof={proof} setProof={setProof} />}
-    </EditorContainer>
+    </div>
   );
 }
 

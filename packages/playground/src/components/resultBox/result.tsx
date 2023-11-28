@@ -1,17 +1,17 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { ProofData } from "@noir-lang/types";
+import { toast } from "react-toastify";
 import {
   ProofDataContainer,
   ResultsContainer,
   TextProofContainer,
-} from "./result.styles";
-import {
-  StyledButton,
-  BackButton,
-  BackButtonContainer,
-} from "../../globals/buttons.styles";
-import { StyledHeader } from "../../globals/text.styles";
-import { toast } from "react-toastify";
+} from "./containers";
+import { Button, BackButton } from "../buttons/buttons";
+import { BackButtonContainer } from "../buttons/containers";
+
+const StyledHeader = ({ children }: { children: ReactNode }) => (
+  <h1 className="text-black text-lg">{children}</h1>
+);
 
 export const ResultBox = ({
   proof,
@@ -31,19 +31,16 @@ export const ResultBox = ({
         <ProofDataContainer>
           <StyledHeader>Proof</StyledHeader>
           <TextProofContainer>{proof.proof.toString()}</TextProofContainer>
-          <StyledButton
-            $primary={true}
-            onClick={() => copyToClipboard(proof.proof)}
-          >
+          <Button $primary={true} onClick={() => copyToClipboard(proof.proof)}>
             Copy to clipboard
-          </StyledButton>
+          </Button>
         </ProofDataContainer>
         <ProofDataContainer>
           <StyledHeader>Public Inputs</StyledHeader>
           <TextProofContainer>
             {proof.publicInputs.toString()}
           </TextProofContainer>
-          <StyledButton
+          <Button
             $primary={true}
             onClick={() =>
               copyToClipboard(
@@ -54,7 +51,7 @@ export const ResultBox = ({
             }
           >
             Copy to clipboard
-          </StyledButton>
+          </Button>
         </ProofDataContainer>
       </ResultsContainer>
 
