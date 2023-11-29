@@ -9,19 +9,23 @@ function getQueryParam(param: string) {
 }
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <div className="container">
-    <div className="title-container">
-      <h1>Noir Playground</h1>
-      <p>This playground works entirely client-side. Enjoy!</p>
+  <div className="container flex flex-col w-full h-full py-12 px-6">
+    <div className="title-container py-4">
+      <h1 className="text-[#eee2de] self-center flex text-2xl font-normal font-bold">
+        Noir Playground
+      </h1>
+      <p className="text-[#eee2de] self-center flex">
+        This playground works entirely client-side. Enjoy!
+      </p>
     </div>
     <NoirEditor
-      height="300px"
       baseUrl={
         process.env.NODE_ENV === "development"
           ? window.location.host
           : "https://noir-playground.netlify.app"
       }
       initialCode={getQueryParam("share") || undefined}
+      style={{ width: "100%", height: "300px" }}
     />
-  </div>,
+  </div>
 );

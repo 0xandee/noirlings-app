@@ -2,12 +2,11 @@ import "react-toastify/dist/ReactToastify.css";
 import React, { useRef } from "react";
 import { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
-import { useMonaco } from "../../hooks/loadGrammar";
+import { useMonaco } from "../../hooks/useMonaco";
 import { decodeSnippet } from "../../utils/shareSnippet";
 import examples from "../../syntax/examples.json";
 import { ActionsBox } from "../actionsBox/actions";
-import { PlaygroundProps } from "../../types";
-import { ProofData } from "@noir-lang/types";
+import { PlaygroundProps, ProofData } from "../../types";
 import { ResultBox } from "../resultBox/result";
 import { editor } from "monaco-editor";
 
@@ -47,7 +46,7 @@ function NoirEditor(props: PlaygroundProps) {
         const editor = monaco.editor.create(
           editorRef.current!,
           // @ts-expect-error - monaco types are not up to date
-          monacoProperties,
+          monacoProperties
         );
 
         setMonacoEditor(editor);
@@ -70,15 +69,16 @@ function NoirEditor(props: PlaygroundProps) {
       id="main"
     >
       <ToastContainer />
-      <div
-        ref={editorRef}
-        id="editor"
-        style={{ width: props.width || '100%', height: props.height || '100%' }}
-      ></div>
-      {loaded && !proof && code && (
-        <ActionsBox code={code} props={props} setProof={setProof} />
-      )}
-      {loaded && proof && <ResultBox proof={proof} setProof={setProof} />}
+      <section style={props.style}>
+        <div ref={editorRef} id="editor" className="w-full h-full"></div>
+      </section>
+
+      <div className="w-full bg-yellow-4 shadow rounded-b-lg flex flex-row flex-wrap">
+        {loaded && !proof && code && (
+          <ActionsBox code={code} props={props} setProof={setProof} />
+        )}
+        {loaded && proof && <ResultBox proof={proof} setProof={setProof} />}
+      </div>
     </div>
   );
 }

@@ -1,5 +1,4 @@
 import React, { FormEvent, ReactNode } from "react";
-import { EditorStyleProps } from "src/types";
 
 export const Button = ({
   type = "button",
@@ -16,7 +15,6 @@ export const Button = ({
   $primary?: boolean;
   onClick?: (e: FormEvent) => void;
   children?: React.ReactNode;
-  props?: EditorStyleProps;
 }) => {
   const buttonClasses = `${className} px-6 px-3 m-2 rounded-md max-w-xs ${
     $primary ? "bg-purple-1" : "bg-pink-3"
@@ -38,22 +36,15 @@ export const Button = ({
 };
 
 export const BackButton = ({
-  props,
   children,
   $primary,
   onClick,
 }: {
-  props?: EditorStyleProps;
   children?: ReactNode;
   $primary?: boolean;
   onClick?: (e: FormEvent) => void;
 }) => (
-  <Button
-    onClick={onClick}
-    $primary={$primary}
-    props={props}
-    className="bg-[#b31312]"
-  >
+  <Button onClick={onClick} $primary={$primary} className="bg-[#b31312]">
     {children}
   </Button>
 );

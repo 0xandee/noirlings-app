@@ -1,6 +1,11 @@
 import { InputMap } from "@noir-lang/noirc_abi";
 import { EditorProps as MonacoEditorProps } from "@monaco-editor/react";
 
+export type ProofData = {
+  proof: string;
+  publicInputs: string[];
+};
+
 export type ParamType = {
   name: string;
   parent?: string;
@@ -19,17 +24,11 @@ export type InputsBoxTypes = {
   }) => void;
 };
 
-// types for the monaco editor itself
-export interface EditorStyleProps {
-  width?: EditorProps["width"];
-  height?: EditorProps["height"];
-  className?: EditorProps["className"];
-}
-
 // types related with the Editor work
 export interface EditorProps extends NoirProps, MonacoEditorProps {
   baseUrl?: string;
   initialCode?: string;
+  style?: object;
 }
 
 // types related with Noir work
