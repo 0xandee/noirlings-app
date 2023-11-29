@@ -1,9 +1,9 @@
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { LibraryFormats, defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 import path from "path";
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode }: { mode: string }) => {
   console.log("Building in mode:", mode);
   const base = {
     build: {
@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => {
         // Could also be a dictionary or array of multiple entry points
         entry: path.resolve("src/index.ts"),
         name: "Noir Playground",
-        formats: ["es", "cjs"],
+        formats: ["es", "cjs"] as LibraryFormats[],
         // the proper extensions will be added
         fileName: "index",
       },
