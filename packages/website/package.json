@@ -1,5 +1,5 @@
 {
-    "name": "example",
+    "name": "playground_website",
     "main": "index.jsx",
     "version": "0.1.0",
     "license": "MIT",
@@ -24,8 +24,8 @@
     },
     "packageManager": "yarn@4.0.2",
     "devDependencies": {
-        "@rollup/plugin-wasm": "^6.2.2",
         "@types/react-dom": "^18.2.16",
-        "eslint": "^8.54.0"
+        "eslint": "^8.54.0",
+        "tailwindcss": "^3.3.5"
     }
 }

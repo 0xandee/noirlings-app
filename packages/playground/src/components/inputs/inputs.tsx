@@ -1,58 +1,62 @@
-import React, { ReactNode, useEffect } from "react";
+import React, { ChangeEvent, ReactNode } from "react";
 import { InputsBoxTypes, ParamType } from "../../types";
-import { Label, InputSection, Input, InputGroupBox } from "./inputs.styles";
 
 export function RenderInputs({ params, inputs, handleInput }: InputsBoxTypes) {
-  // Just ramming the DOM like a caveman. React people would kill me for this
-  useEffect(() => {
-    const elements = document.querySelectorAll(".group");
-    const container = document.getElementById("inputs-container");
-    elements.forEach((el) => {
-      const childElement = el;
-      container?.append(childElement);
-    });
-  }, []);
-
   if (!params) return <></>;
 
   return params.map((p: ParamType) => {
     function unroll(
       param: ParamType,
       parent?: string,
-      firstChild = false,
+      rounded = ""
     ): ReactNode {
       const componentKey = parent ? `${parent}-${param.name}` : param.name;
 
       if (param.children) {
+        // console.log(param)
         return (
-          <InputGroupBox className="group" key={componentKey}>
-            <Label $isParent={true}>{param.parent}</Label>
-            {param.children.map((p: ParamType) => unroll(p, param.parent))}
-          </InputGroupBox>
+          <>
+            <legend className="block text-sm font-medium text-gray-700">
+              {param.parent}
+            </legend>
+            {param.children.map((p: ParamType, index: number) => {
+              {
+                console.log(p);
+              }
+              // console.log(param.children!.length - 1)
+              let rounded = "";
+              if (index === 0) {
+                rounded = "rounded-t-md";
+              } else if (index === param.children!.length - 1) {
+                rounded = "rounded-b-md";
+              }
+              // console.log(rounded)
+
+              return unroll(p, param.parent, rounded);
+            })}
+          </>
         );
       }
 
       return (
-        <InputSection key={componentKey}>
-          <InputGroupBox
-            className={!!param.children || firstChild ? "group" : ""}
-          >
-            <Label $isParent={!!param.children || firstChild}>
-              {param.name}
-            </Label>
-            {param.name && (
-              <Input
-                autoComplete="off"
-                name={param.name}
-                type="text"
-                onChange={(e) => handleInput({ event: e, key: componentKey })}
-                value={inputs ? inputs[p.name] : ""}
-              />
-            )}
-          </InputGroupBox>
-        </InputSection>
+        <>
+          {param.name && (
+            <input
+              autoComplete="off"
+              type="text"
+              name={param.name}
+              placeholder={param.name}
+              id={param.name}
+              value={inputs ? inputs[p.name] : ""}
+              className={`${rounded} focus:ring-indigo-500 focus:border-indigo-500 relative block w-full rounded-none bg-yellow-7 focus:z-10 sm:text-sm border-gray-300`}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                handleInput({ event: e, key: componentKey })
+              }
+            />
+          )}
+        </>
       );
     }
-    return unroll(p as ParamType, p.parent, true);
+    return unroll(p as ParamType, p.parent, "");
   });
 }

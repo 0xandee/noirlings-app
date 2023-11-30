@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body:not(#editor) {
+  font-family: "Inter", sans-serif;
+}

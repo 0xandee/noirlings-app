@@ -5,17 +5,13 @@ import { compileCode, generateProof } from "../../utils/generateProof";
 import { prepareInputs } from "../../utils/serializeParams";
 import { shareSnippet } from "../../utils/shareSnippet";
 import { toast } from "react-toastify";
-import { ProofData, CompiledCircuit } from "@noir-lang/types";
+import { CompiledCircuit } from "@noir-lang/types";
 import { useParams } from "../../hooks/useParams";
 import { InputMap } from "@noir-lang/noirc_abi";
-import { NoirEditorProps } from "../../types";
-import { ButtonContainer, StyledButton } from "../../globals/buttons.styles";
-import {
-  ActionsContainer,
-  ParamsForm,
-  InputsContainer,
-  ButtonsForm,
-} from "./actions.styles";
+import { Button } from "../buttons/buttons";
+import { ButtonContainer } from "../buttons/containers";
+import { NoirProps, PlaygroundProps, ProofData } from "../../types";
+import { toHex } from "../..//utils/toHex";
 
 export const ActionsBox = ({
   code,
@@ -23,12 +19,12 @@ export const ActionsBox = ({
   setProof,
 }: {
   code: string;
-  props: NoirEditorProps;
+  props: PlaygroundProps;
   setProof: React.Dispatch<React.SetStateAction<ProofData | null>>;
 }) => {
   const [pending, setPending] = useState<boolean>(false);
   const [compiledCode, setCompiledCode] = useState<CompiledCircuit | null>(
-    null,
+    null
   );
   const [inputs, setInputs] = useState<{ [key: string]: string }>({});
 
@@ -55,7 +51,6 @@ export const ActionsBox = ({
   };
 
   const submit = async (e: FormEvent) => {
-    console.log("sub");
     e.preventDefault();
     setPending(true);
     const compileTO = new Promise((resolve, reject) =>
@@ -67,7 +62,7 @@ export const ActionsBox = ({
         } catch (err) {
           reject(err);
         }
-      }, 100),
+      }, 100)
     );
 
     await toast.promise(compileTO, {
@@ -85,16 +80,21 @@ export const ActionsBox = ({
       generateProof({
         circuit: compiledCode!,
         input: inputMap as InputMap,
-        threads: props.threads ?? navigator.hardwareConcurrency,
+        threads: (props as NoirProps).threads ?? navigator.hardwareConcurrency,
       }),
       {
         pending: "Calculating proof...",
         success: "Proof calculated!",
         error: "Error calculating proof",
-      },
+      }
     );
-    setProof(proofData);
-    setPending(true);
+
+    const proofDataHex = {
+      proof: toHex(proofData.proof),
+      publicInputs: proofData.publicInputs.map(toHex),
+    };
+    setProof(proofDataHex);
+    setPending(false);
   };
 
   const share = async (e: FormEvent) => {
@@ -109,36 +109,53 @@ export const ActionsBox = ({
   };
 
   return (
-    <ActionsContainer {...props}>
-      <ButtonsForm onSubmit={(e) => submit(e)}>
+    <>
+      {params && (
+        <div className="px-4 py-5 sm:p-6 flex flex-col flex-auto">
+          <h3 className="text-lg leading-6 font-medium text-gray-900">
+            Inputs
+          </h3>
+          <form
+            onSubmit={(e) => prove(e)}
+            className="flex-col mt-5 sm:flex sm:items-center"
+            id="inputs-container"
+          >
+            <div
+              className="sm:max-w-xs flex flex-auto flex-col w-full"
+              id="inputs-container"
+            >
+              <RenderInputs
+                params={params}
+                inputs={inputs}
+                handleInput={handleInput}
+              />
+            </div>
+            <ButtonContainer>
+              <Button type="submit" disabled={pending} $primary={true}>
+                📜 Prove
+              </Button>
+            </ButtonContainer>
+          </form>
+        </div>
+      )}
+      <form
+        className="flex flex-auto flex-col justify-center"
+        onSubmit={(e) => submit(e)}
+      >
         <input type="text" style={{ display: "none" }} />
         <ButtonContainer>
-          <StyledButton type="submit" disabled={pending} $primary={true}>
+          <Button type="submit" disabled={pending} $primary={true}>
             🔄 Compile
-          </StyledButton>
-          <StyledButton onClick={(e) => share(e)} disabled={pending}>
+          </Button>
+          <Button
+            onClick={(e: FormEvent) => share(e)}
+            disabled={pending}
+            $primary={undefined}
+          >
             ✉️ Share
-          </StyledButton>
+          </Button>
         </ButtonContainer>
-      </ButtonsForm>
-      {params && (
-        <ParamsForm onSubmit={(e) => prove(e)}>
-          <InputsContainer>
-            <ButtonContainer>
-              <StyledButton type="submit" disabled={pending} $primary={true}>
-                📜 Prove
-              </StyledButton>
-            </ButtonContainer>
-          </InputsContainer>
-          <InputsContainer id="inputs-container">
-            <RenderInputs
-              params={params}
-              inputs={inputs}
-              handleInput={handleInput}
-            />
-          </InputsContainer>
-        </ParamsForm>
-      )}
-    </ActionsContainer>
+      </form>
+    </>
   );
 };
