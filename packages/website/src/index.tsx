@@ -22,7 +22,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       baseUrl={
         process.env.NODE_ENV === "development"
           ? window.location.host
-          : "https://noir-playground.netlify.app"
+          : "https://play.noir-lang.org"
       }
       initialCode={getQueryParam("share") || undefined}
       style={{ width: "100%", height: "300px" }}
