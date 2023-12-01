@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/signorecello/noir-playground/compare/noir_playground-v0.4.1...noir_playground-v0.4.2) (2023-12-01)
+
+
+### Bug Fixes
+
+* making editor worker inline for webpack compatibility, exporting editor as default ([80d83f3](https://github.com/signorecello/noir-playground/commit/80d83f3c45e1c7621d8859ea7183965b04c8d369))
+
 ## [0.3.0](https://github.com/signorecello/noir-playground/compare/v0.2.7...v0.3.0) (2023-11-27)
 
 
