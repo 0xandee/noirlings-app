@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { loader } from "@monaco-editor/react";
 import * as monacoEditor from "monaco-editor";
 
-import editorWorker from "monaco-editor/esm/vs/editor/editor.worker.js?worker";
+import editorWorker from "monaco-editor/esm/vs/editor/editor.worker.js?worker&inline";
 
 self.MonacoEnvironment = {
   getWorker(_, label) {
@@ -34,7 +34,7 @@ export const useMonaco = () => {
     const promArray = [];
     promArray.push(
       loadWASM(
-        new URL("onigasm/lib/onigasm.wasm", import.meta.url).toString(),
+        new URL("onigasm/lib/onigasm.wasm", import.meta.url).toString()
       ).catch((error) => {
         if (
           error.message !==
@@ -45,40 +45,46 @@ export const useMonaco = () => {
         }
         // Otherwise, ignore the error as onigasm is already initialized
         console.log("Onigasm already initialized, skipping re-initialization.");
-      }),
+      })
     );
     promArray.push(
       initNoirWasm(
         new URL(
           "@noir-lang/noir_wasm/web/noir_wasm_bg.wasm",
-          import.meta.url,
-        ).toString(),
-      ),
+          import.meta.url
+        ).toString()
+      )
     );
     promArray.push(
       initNoirC(
         new URL(
           "@noir-lang/noirc_abi/web/noirc_abi_wasm_bg.wasm",
-          import.meta.url,
-        ).toString(),
-      ),
+          import.meta.url
+        ).toString()
+      )
     );
     promArray.push(
       initACVM(
         new URL(
           "@noir-lang/acvm_js/web/acvm_js_bg.wasm",
-          import.meta.url,
-        ).toString(),
-      ),
+          import.meta.url
+        ).toString()
+      )
     );
     promArray.push(
       loader.init().then((monaco) => {
         const { darkTheme, lightTheme } = themes;
-        monaco.editor.defineTheme("dark", darkTheme as monacoEditor.editor.IStandaloneThemeData);
-        monaco.editor.defineTheme("light", lightTheme as monacoEditor.editor.IStandaloneThemeData);
+        monaco.editor.defineTheme(
+          "dark",
+          darkTheme as monacoEditor.editor.IStandaloneThemeData
+        );
+        monaco.editor.defineTheme(
+          "light",
+          lightTheme as monacoEditor.editor.IStandaloneThemeData
+        );
         monaco.languages.register({ id: "noir" });
         setMonaco(monaco);
-      }),
+      })
     );
     setPromises(promArray);
   }, [promises]);

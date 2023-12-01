@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import { NoirEditor } from "@signorecello/noir_playground";
+import NoirEditor from "@signorecello/noir_playground";
 
 function getQueryParam(param: string) {
   const searchParams = new URLSearchParams(window.location.search);
