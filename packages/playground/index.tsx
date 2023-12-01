@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { NoirEditor } from "./src/index";
+import NoirEditor from "./src/index";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <NoirEditor
