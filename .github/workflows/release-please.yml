@@ -17,10 +17,9 @@ jobs:
         id: release
         with:
           release-type: node
-          package-name: "@signorecello/noir_playground"
           default-branch: main
           token: ${{secrets.GITHUB_TOKEN}}
-          monorepo-tags: true
+          command: manifest
       - uses: actions/checkout@v2
         if: ${{ steps.release.outputs.release_created }}
       - uses: actions/setup-node@v1
