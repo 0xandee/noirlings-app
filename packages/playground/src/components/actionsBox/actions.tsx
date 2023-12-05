@@ -52,24 +52,29 @@ export const ActionsBox = ({
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
-    setPending(true);
-    const compileTO = new Promise((resolve, reject) =>
-      setTimeout(async () => {
-        try {
-          setPending(false);
-          await compile(code);
-          resolve(code);
-        } catch (err) {
-          reject(err);
-        }
-      }, 100)
-    );
 
-    await toast.promise(compileTO, {
-      pending: "Compiling...",
-      success: "Compiled!",
-      error: "Error compiling",
-    });
+    if (!compiledCode) {
+      setPending(true);
+      const compileTO = new Promise((resolve, reject) =>
+        setTimeout(async () => {
+          try {
+            setPending(false);
+            await compile(code);
+            resolve(code);
+          } catch (err) {
+            reject(err);
+          }
+        }, 100)
+      );
+
+      await toast.promise(compileTO, {
+        pending: "Compiling...",
+        success: "Compiled!",
+        error: "Error compiling",
+      });
+    } else {
+      await prove(e);
+    }
   };
 
   const prove = async (e: FormEvent) => {
@@ -116,7 +121,6 @@ export const ActionsBox = ({
             Inputs
           </h3>
           <form
-            onSubmit={(e) => prove(e)}
             className="flex-col mt-5 sm:flex sm:items-center"
             id="inputs-container"
           >
@@ -130,11 +134,6 @@ export const ActionsBox = ({
                 handleInput={handleInput}
               />
             </div>
-            <ButtonContainer>
-              <Button type="submit" disabled={pending} $primary={true}>
-                📜 Prove
-              </Button>
-            </ButtonContainer>
           </form>
         </div>
       )}
@@ -145,7 +144,7 @@ export const ActionsBox = ({
         <input type="text" style={{ display: "none" }} />
         <ButtonContainer>
           <Button type="submit" disabled={pending} $primary={true}>
-            🔄 Compile
+            {compiledCode ? "📜 Prove" : "🔄 Compile"}
           </Button>
           <Button
             onClick={(e: FormEvent) => share(e)}

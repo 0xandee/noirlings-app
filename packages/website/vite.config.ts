@@ -1,15 +1,10 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 
+import vitePluginFaviconsInject from "vite-plugin-favicons-inject";
+
 export default defineConfig({
-  build: {
-    lib: {
-      entry: "index.html",
-      formats: ["cjs", "es"],
-      fileName: "index",
-    },
-  },
-  plugins: [react()],
+  plugins: [react(), vitePluginFaviconsInject("./public/noir_logo.svg")],
   define: {
     "process.env": process.env,
   },
