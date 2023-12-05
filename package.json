@@ -9,5 +9,6 @@
     "dev": "yarn workspaces foreach --all --parallel run dev",
     "serve": "yarn workspace playground_website serve",
     "publish": "yarn workspace @signorecello/noir_playground run publish"
-  }
+  },
+  "version": "0.6.0"
 }
