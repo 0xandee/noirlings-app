@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.0](https://github.com/signorecello/noir-playground/compare/noir_playground-v0.4.2...noir_playground-v0.5.0) (2023-12-05)
+
+
+### Features
+
+* adding some styling suggestions and a favicon :) ([96814df](https://github.com/signorecello/noir-playground/commit/96814df89fdc973dc601f3a96730ff9cdd7f191a))
+
+
+### Bug Fixes
+
+* removing preflight since it will spill to other components when imported ([4a4f96e](https://github.com/signorecello/noir-playground/commit/4a4f96e37bbe13faa65336441d837320fe7efd9c))
+
 ## [0.4.2](https://github.com/signorecello/noir-playground/compare/noir_playground-v0.4.1...noir_playground-v0.4.2) (2023-12-01)
 
 
