@@ -5,3 +5,9 @@
 body:not(#editor) {
   font-family: "Inter", sans-serif;
 }
+
+*,
+#noir__playground {
+  border-width: 0;
+  border-style: solid;
+}
