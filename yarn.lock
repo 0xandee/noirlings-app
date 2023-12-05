@@ -3877,8 +3877,6 @@ __metadata:
 "noir-playground-root@workspace:.":
   version: 0.0.0-use.local
   resolution: "noir-playground-root@workspace:."
-  dependencies:
-    react: "npm:^18.2.0"
   languageName: unknown
   linkType: soft
 
