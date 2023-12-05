@@ -1,12 +1,19 @@
 {
     "packages": {
-        "packages/playground": {
+        ".": {
             "changelog-path": "CHANGELOG.md",
             "bump-minor-pre-major": false,
             "bump-patch-for-minor-pre-major": false,
             "draft": false,
             "prerelease": false,
-            "packageName": "@signorecello/noir_playground"
+            "packageName": "@signorecello/noir_playground",
+            "extra-files": [
+                {
+                    "type": "json",
+                    "path": "packages/playground/package.json",
+                    "jsonpath": "$.version"
+                }
+            ]
         }
     },
     "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
