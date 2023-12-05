@@ -1,9 +1,6 @@
 export default {
   relative: true,
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       colors: {
@@ -66,11 +63,12 @@ export default {
       },
     },
     fontFamily: {
-      'body': ['"Inter"', 'sans-serif'],
-    }
+      body: ['"Inter"', "sans-serif"],
+    },
   },
-  plugins: [
-      require('@tailwindcss/forms'),
-  ],
+  plugins: [require("@tailwindcss/forms")],
   important: true,
-}
+  corePlugins: {
+    preflight: false,
+  },
+};
