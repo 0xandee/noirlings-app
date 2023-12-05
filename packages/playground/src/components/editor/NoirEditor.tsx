@@ -66,7 +66,7 @@ function NoirEditor(props: PlaygroundProps) {
   return (
     <div
       className="h-full w-full flex items-center flex-col box-border text-sm font-fira-code"
-      id="main"
+      id="noir__playground"
     >
       <ToastContainer />
       <section style={props.style}>
