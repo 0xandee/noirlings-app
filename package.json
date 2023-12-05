@@ -9,9 +9,5 @@
     "dev": "yarn workspaces foreach --all --parallel run dev",
     "serve": "yarn workspace playground_website serve",
     "publish": "yarn workspace @signorecello/noir_playground run publish"
-  },
-  "dependencies": {
-    "react": "^18.2.0"
-  },
-  "version": "0.5.1"
+  }
 }
