@@ -6,7 +6,6 @@
             "bump-patch-for-minor-pre-major": false,
             "draft": false,
             "prerelease": false,
-            "packageName": "@signorecello/noir_playground",
             "extra-files": [
                 {
                     "type": "json",
