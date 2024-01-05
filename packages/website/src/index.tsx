@@ -24,8 +24,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           ? window.location.host
           : "https://play.noir-lang.org"
       }
-      initialCode={getQueryParam("share") || undefined}
-      style={{ width: "100%", height: "300px" }}
+      initialProject={getQueryParam("share") || undefined}
+      style={{ width: "100%", height: "500px" }}
     />
   </div>
 );

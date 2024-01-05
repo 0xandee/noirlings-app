@@ -27,7 +27,7 @@ export type InputsBoxTypes = {
 // types related with the Editor work
 export interface EditorProps extends NoirProps, MonacoEditorProps {
   baseUrl?: string;
-  initialCode?: string;
+  initialProject?: string;
   style?: object;
 }
 
@@ -38,3 +38,10 @@ export interface NoirProps {
 
 // all types
 export interface PlaygroundProps extends NoirProps, EditorProps {}
+
+export interface File {
+  items?: File[];
+  name: string;
+  content?: string;
+  type: "file" | "folder";
+}

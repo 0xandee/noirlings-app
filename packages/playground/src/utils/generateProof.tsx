@@ -3,20 +3,30 @@ import { BarretenbergBackend } from "@noir-lang/backend_barretenberg";
 import { Noir } from "@noir-lang/noir_js";
 import { InputMap } from "@noir-lang/noirc_abi";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { initializeResolver } from "@noir-lang/source-resolver";
-import { compile } from "@noir-lang/noir_wasm";
+import { compile, createFileManager } from "@noir-lang/noir_wasm";
+import { FileSystem } from "./fileSystem";
+import { decodeSnippet } from "./shareSnippet";
 
-export const compileCode = (code: string | undefined) => {
-  if (!code) return;
-  initializeResolver(() => {
-    return code;
-  });
+const stringToStream = (data: string) => {
+  return new Response(data).body as ReadableStream<Uint8Array>;
+};
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const compiled: any = compile("main");
-  return compiled.program;
+export const compileCode = async (fileSystem: FileSystem) => {
+  console.log("compile");
+  const fm = createFileManager("/");
+
+  for (const file of fileSystem
+    .flatten()
+    .filter((item) => item.type === "file")) {
+    const data = decodeSnippet(file.content as string);
+    await fm.writeFile(`./${file.name}`, stringToStream(data));
+  }
+
+  const [compiled] = await compile(fm, "/root");
+  if (!("program" in compiled)) {
+    throw new Error("Invalid compilation result");
+  }
+  return compiled.program as CompiledCircuit;
 };
 
 export async function generateProof({
@@ -30,7 +40,7 @@ export async function generateProof({
 }) {
   const backend = new BarretenbergBackend(
     circuit as unknown as CompiledCircuit,
-    { threads },
+    { threads }
   );
   const noir = new Noir(circuit as unknown as CompiledCircuit, backend);
   const proof = noir!.generateFinalProof(input);
