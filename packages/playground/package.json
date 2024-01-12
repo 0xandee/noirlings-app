@@ -27,7 +27,7 @@
         "@monaco-editor/react": "4.6.0",
         "@noir-lang/backend_barretenberg": "^0.22.0",
         "@noir-lang/noir_js": "^0.22.0",
-        "@noir-lang/noir_wasm": "portal:../../../noir/compiler/wasm",
+        "@noir-lang/noir_wasm": "0.22.0-179c90d.nightly",
         "@noir-lang/types": "^0.22.0",
         "fflate": "^0.8.1",
         "js-base64": "^3.7.5",
