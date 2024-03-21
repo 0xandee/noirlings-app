@@ -28,16 +28,18 @@ const Directory = ({
             {isExpanded ? "[-]" : "[+]"}&nbsp;{files.name}/
           </p>
           {isExpanded &&
-            files.items?.map((item) => (
-              <div className="pl-6" key={`${root}${item.name}`}>
-                <Directory
-                  root={`${root}${files.name}/`}
-                  selectFile={selectFile}
-                  files={item}
-                  currentPath={currentPath}
-                />
-              </div>
-            ))}
+            files.items?.map((item) => {
+              return (
+                <div className="pl-6" key={`${root}${item.name}`}>
+                  <Directory
+                    root={`${root}${files.name}/`}
+                    selectFile={selectFile}
+                    files={item}
+                    currentPath={currentPath}
+                  />
+                </div>
+              );
+            })}
         </div>
       </div>
     );

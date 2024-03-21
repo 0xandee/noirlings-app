@@ -22,7 +22,7 @@ export const compileCode = async (fileSystem: FileSystem) => {
     await fm.writeFile(`./${file.name}`, stringToStream(data));
   }
 
-  const [compiled] = await compile(fm, "/root");
+  const compiled = await compile(fm, "/root");
   if (!("program" in compiled)) {
     throw new Error("Invalid compilation result");
   }
@@ -43,6 +43,6 @@ export async function generateProof({
     { threads }
   );
   const noir = new Noir(circuit as unknown as CompiledCircuit, backend);
-  const proof = noir!.generateFinalProof(input);
+  const proof = noir!.generateProof(input);
   return proof;
 }

@@ -11,6 +11,9 @@ export default defineConfig({
   define: {
     "process.env": process.env,
   },
+  build: {
+    target: "esnext",
+  },
   optimizeDeps: {
     exclude: ["@signorecello/noir_playground"],
   },

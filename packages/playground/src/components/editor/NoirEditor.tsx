@@ -31,7 +31,7 @@ function NoirEditor(props: PlaygroundProps) {
   const [fileSystem, setFilesystem] = useState<FileSystem>(
     new FileSystem(rootFs)
   );
-  const [currentPath, setCurrentPath] = useState<string>("root/src/main.nr");
+  const [currentPath, setCurrentPath] = useState<string>("src/main.nr");
   const [oldPath, setOldPath] = useState<string | undefined>();
   const [codeInBuffer, setCodeInBuffer] = useState<string | undefined>("");
 

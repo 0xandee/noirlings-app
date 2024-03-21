@@ -7,7 +7,7 @@
   "scripts": {
     "build": "yarn workspaces foreach --all --parallel --topological-dev --verbose run build",
     "dev": "yarn workspaces foreach --all --parallel run dev",
-    "serve": "yarn workspace playground_website serve",
+    "serve": "yarn workspace playground_website run preview",
     "publish": "yarn workspace @signorecello/noir_playground run publish"
   },
   "version": "0.6.0"
