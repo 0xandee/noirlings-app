@@ -3,6 +3,7 @@ import { BarretenbergBackend } from "@noir-lang/backend_barretenberg";
 import { Noir } from "@noir-lang/noir_js";
 import { InputMap } from "@noir-lang/noirc_abi";
 
+<<<<<<< HEAD
 import { compile, createFileManager } from "@noir-lang/noir_wasm";
 import { FileSystem } from "./fileSystem";
 import { decodeSnippet } from "./shareSnippet";
@@ -27,6 +28,18 @@ export const compileCode = async (fileSystem: FileSystem) => {
     throw new Error("Invalid compilation result");
   }
   return compiled.program as CompiledCircuit;
+=======
+import { compile, PathToFileSourceMap } from "@noir-lang/noir_wasm";
+
+export const compileCode = (code: string | undefined) => {
+  if (!code) return;
+  const sourceMap = new PathToFileSourceMap();
+  sourceMap.add_source_code("main.nr", code);
+  const compiled = compile("main.nr", undefined, undefined, sourceMap);
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  return compiled.program;
+>>>>>>> origin
 };
 
 export async function generateProof({
