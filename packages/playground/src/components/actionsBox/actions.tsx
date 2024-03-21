@@ -8,7 +8,6 @@ import { toast } from "react-toastify";
 import { CompiledCircuit } from "@noir-lang/types";
 import { useParams } from "../../hooks/useParams";
 import { InputMap } from "@noir-lang/noirc_abi";
-import { flattenPublicInputs } from "@noir-lang/backend_barretenberg";
 import { Button } from "../buttons/buttons";
 import { ButtonContainer } from "../buttons/containers";
 import { NoirProps, PlaygroundProps, ProofData } from "../../types";
@@ -88,11 +87,7 @@ export const ActionsBox = ({
 
     const proofDataHex = {
       proof: toHex(proofData.proof),
-<<<<<<< HEAD
       publicInputs: Array.from(proofData.publicInputs.values()),
-=======
-      publicInputs: flattenPublicInputs(proofData.publicInputs),
->>>>>>> origin
     };
     setProof(proofDataHex);
     setPending(false);
