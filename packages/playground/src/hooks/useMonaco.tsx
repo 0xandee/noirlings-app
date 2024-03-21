@@ -3,9 +3,8 @@ import tmLanguage from "../syntax/noir.tmLanguage.json";
 import { Registry } from "monaco-textmate";
 import { wireTmGrammars } from "monaco-editor-textmate";
 
-import initNoirWasm from "@noir-lang/noir_wasm";
 import initNoirC from "@noir-lang/noirc_abi";
-import initACVM from "@noir-lang/acvm_js";
+import initACVM from "@noir-lang/acvm_js"; 
 import { loadWASM } from "onigasm";
 import { useEffect, useState } from "react";
 
@@ -46,14 +45,6 @@ export const useMonaco = () => {
         // Otherwise, ignore the error as onigasm is already initialized
         console.log("Onigasm already initialized, skipping re-initialization.");
       })
-    );
-    promArray.push(
-      initNoirWasm(
-        new URL(
-          "@noir-lang/noir_wasm/web/noir_wasm_bg.wasm",
-          import.meta.url
-        ).toString()
-      )
     );
     promArray.push(
       initNoirC(

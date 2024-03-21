@@ -3,23 +3,23 @@ import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { RenderInputs } from "../inputs/inputs";
 import { compileCode, generateProof } from "../../utils/generateProof";
 import { prepareInputs } from "../../utils/serializeParams";
-import { shareSnippet } from "../../utils/shareSnippet";
+import { shareProject } from "../../utils/shareSnippet";
 import { toast } from "react-toastify";
 import { CompiledCircuit } from "@noir-lang/types";
 import { useParams } from "../../hooks/useParams";
 import { InputMap } from "@noir-lang/noirc_abi";
-import { flattenPublicInputs } from "@noir-lang/backend_barretenberg";
 import { Button } from "../buttons/buttons";
 import { ButtonContainer } from "../buttons/containers";
 import { NoirProps, PlaygroundProps, ProofData } from "../../types";
-import { toHex } from "../..//utils/toHex";
+import { toHex } from "../../utils/toHex";
+import { FileSystem } from "../../utils/fileSystem";
 
 export const ActionsBox = ({
-  code,
+  project,
   props,
   setProof,
 }: {
-  code: string;
+  project: FileSystem;
   props: PlaygroundProps;
   setProof: React.Dispatch<React.SetStateAction<ProofData | null>>;
 }) => {
@@ -44,10 +44,10 @@ export const ActionsBox = ({
 
   useEffect(() => {
     setCompiledCode(null);
-  }, [code]);
+  }, [project]);
 
-  const compile = async (code: string | undefined) => {
-    const compiledCode = await compileCode(code);
+  const compile = async (project: FileSystem) => {
+    const compiledCode = await compileCode(project);
     setCompiledCode(compiledCode);
   };
 
@@ -56,26 +56,16 @@ export const ActionsBox = ({
 
     if (!compiledCode) {
       setPending(true);
-      const compileTO = new Promise((resolve, reject) =>
-        setTimeout(async () => {
-          try {
-            setPending(false);
-            await compile(code);
-            resolve(code);
-          } catch (err) {
-            reject(err);
-          }
-        }, 100)
-      );
 
-      await toast.promise(compileTO, {
+      await toast.promise(compile(project), {
         pending: "Compiling...",
         success: "Compiled!",
-        error: "Error compiling",
+        error: { render: ({ data }) => `${data}` },
       });
     } else {
       await prove(e);
     }
+    setPending(false);
   };
 
   const prove = async (e: FormEvent) => {
@@ -97,7 +87,7 @@ export const ActionsBox = ({
 
     const proofDataHex = {
       proof: toHex(proofData.proof),
-      publicInputs: flattenPublicInputs(proofData.publicInputs),
+      publicInputs: Array.from(proofData.publicInputs.values()),
     };
     setProof(proofDataHex);
     setPending(false);
@@ -105,8 +95,8 @@ export const ActionsBox = ({
 
   const share = async (e: FormEvent) => {
     e.preventDefault();
-    if (code) {
-      await toast.promise(shareSnippet({ code, baseUrl: props.baseUrl }), {
+    if (project) {
+      await toast.promise(shareProject({ project, baseUrl: props.baseUrl }), {
         pending: "Copying to clipboard...",
         success: "Copied!",
         error: "Error sharing",

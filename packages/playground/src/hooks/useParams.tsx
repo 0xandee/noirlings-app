@@ -5,7 +5,7 @@ import { InputMap } from "@noir-lang/noirc_abi";
 export function useParams({
   compiledCode,
 }: {
-  compiledCode: ReturnType<typeof compileCode> | null;
+  compiledCode: Awaited<ReturnType<typeof compileCode>> | null;
 }) {
   const [params, setParams] = useState<{ name: string }[] | null>(null);
 
@@ -14,7 +14,7 @@ export function useParams({
       setParams(null);
       return;
     }
-    const params = compiledCode!.abi.parameters.map((param: InputMap) => {
+    const params = compiledCode!.abi.parameters.map((param) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       function unroll(param: any) {
         if (param.type.kind !== "struct") {
@@ -32,7 +32,7 @@ export function useParams({
       return unroll(param);
     });
 
-    setParams(params);
+    setParams(params as { name: string }[] | null);
   }, [compiledCode]);
 
   return params;

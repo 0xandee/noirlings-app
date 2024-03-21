@@ -1,6 +1,10 @@
 import { compressSync, decompressSync, strFromU8, strToU8 } from "fflate";
 
 import { fromUint8Array, toUint8Array, extendString } from "js-base64";
+import { FileSystem } from "./fileSystem";
+import { File } from "../types";
+
+extendString();
 
 const constructUrl = async ({
   encoded,
@@ -12,23 +16,34 @@ const constructUrl = async ({
   await navigator.clipboard.writeText(`${baseUrl}?share=${encoded}`);
 };
 
-export const shareSnippet = async ({
-  code,
+export const shareProject = async ({
+  project,
   baseUrl,
 }: {
-  code: string;
+  project: FileSystem;
   baseUrl?: string;
 }) => {
-  const codeBytes = strToU8(code);
-  const compressed = compressSync(codeBytes);
-  const base64 = fromUint8Array(compressed, true);
+  const data = JSON.stringify(project.root);
+  const base64 = encodeSnippet(data);
   if (baseUrl) {
     await constructUrl({ encoded: base64, baseUrl });
   }
 };
 
-export const decodeSnippet = ({ encoded }: { encoded: string }) => {
-  extendString();
+export const decodeProject = (encoded: string) => {
+  const compressed = toUint8Array(encoded);
+  const codeBytes = decompressSync(compressed);
+  const code = strFromU8(codeBytes);
+  return JSON.parse(code) as File;
+};
+
+export const encodeSnippet = (code: string) => {
+  const codeBytes = strToU8(code);
+  const compressed = compressSync(codeBytes);
+  return fromUint8Array(compressed, true);
+};
+
+export const decodeSnippet = (encoded: string) => {
   const compressed = toUint8Array(encoded);
   const codeBytes = decompressSync(compressed);
   const code = strFromU8(codeBytes);

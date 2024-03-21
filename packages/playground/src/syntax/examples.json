@@ -1,3 +1,24 @@
 {
-    "default": "H4sIAMooXmUAA0vLU8hNzMzTqLBScMtMzUnRUai0UigoTYLwNBWquRSAILG4OLWoRKNCQdFWoVLTmqsWAJCM2nw3AAAA"
+    "main": {
+        "name": "root",
+        "type": "folder",
+        "items": [
+            {
+                "name": "src",
+                "type": "folder",
+                "items": [
+                    {
+                        "name": "main.nr",
+                        "type": "file",
+                        "content": "H4sIAMooXmUAA0vLU8hNzMzTqLBScMtMzUnRUai0UigoTYLwNBWquRSAILG4OLWoRKNCQdFWoVLTmqsWAJCM2nw3AAAA"
+                    }
+                ]
+            },
+            {
+                "name": "Nargo.toml",
+                "type": "file",
+                "content": "H4sIAIV_mGUAAx3LSwqAIBRG4fldRdwFRM2a1EZEwvSnpLyKWtDue0wP51PJ2N2s0CQmoBkbriiVyZx1i7m8QTFrsjEkfyDPF3LxUb5xGru2H9qOqd7pp4sXJlIOCeIg1qNoegCFqwRkYgAAAA"
+            }
+        ]
+    }
 }

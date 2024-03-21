@@ -6,13 +6,18 @@ import path from "path";
 export default defineConfig(({ mode }: { mode: string }) => {
   console.log("Building in mode:", mode);
   const base = {
+    optimizeDeps: {
+      esbuildOptions: {
+        target: "esnext",
+      },
+    },
     build: {
       target: "esnext",
       lib: {
         // Could also be a dictionary or array of multiple entry points
         entry: path.resolve("src/index.ts"),
         name: "Noir Playground",
-        formats: ["es", "cjs"] as LibraryFormats[],
+        formats: ["es"] as LibraryFormats[],
         // the proper extensions will be added
         fileName: "index",
       },

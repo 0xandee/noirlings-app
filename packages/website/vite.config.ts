@@ -5,7 +5,16 @@ import vitePluginFaviconsInject from "vite-plugin-favicons-inject";
 
 export default defineConfig({
   plugins: [react(), vitePluginFaviconsInject("./public/noir_logo.svg")],
+  server: {
+    host: true,
+  },
   define: {
     "process.env": process.env,
+  },
+  build: {
+    target: "esnext",
+  },
+  optimizeDeps: {
+    exclude: ["@signorecello/noir_playground"],
   },
 });
