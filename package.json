@@ -5,10 +5,18 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "yarn workspaces foreach --all --parallel --topological-dev --verbose run build",
-    "dev": "yarn workspaces foreach --all --parallel run dev",
-    "serve": "yarn workspace playground_website run preview",
-    "publish": "yarn workspace @signorecello/noir_playground run publish"
+    "build": "yarn workspace @signorecello/noir_playground run build",
+    "dev": "yarn workspace @signorecello/noir_playground run dev",
+    "serve": "yarn workspace @signorecello/noir_playground run preview",
+    "publish": "yarn workspace @signorecello/noir_playground run publish",
+    "server": "yarn workspace @signorecello/noir_playground run server",
+    "vercel-build": "yarn build"
   },
-  "version": "0.8.0"
+  "version": "0.8.0",
+  "packageManager": "yarn@4.8.1+sha512.bc946f2a022d7a1a38adfc15b36a66a3807a67629789496c3714dd1703d2e6c6b1c69ff9ec3b43141ac7a1dd853b7685638eb0074300386a59c18df351ef8ff6",
+  "dependencies": {
+    "react-icons": "^5.5.0",
+    "react-markdown": "^10.1.0",
+    "toml": "^3.0.0"
+  }
 }

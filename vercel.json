@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "buildCommand": "yarn build",
+  "outputDirectory": "packages/playground/dist",
+  "framework": "vite",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
