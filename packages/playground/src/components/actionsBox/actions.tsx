@@ -1,9 +1,7 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 
-import { RenderInputs } from "../inputs/inputs";
 import { compileCode, generateProof } from "../../utils/generateProof";
 import { prepareInputs } from "../../utils/serializeParams";
-import { shareProject } from "../../utils/shareSnippet";
 import { toast } from "react-toastify";
 import { CompiledCircuit } from "@noir-lang/types";
 import { useParams } from "../../hooks/useParams";
@@ -18,37 +16,47 @@ export const ActionsBox = ({
   project,
   props,
   setProof,
+  onCompileSuccess,
+  onBack,
+  onForward,
 }: {
   project: FileSystem;
   props: PlaygroundProps;
   setProof: React.Dispatch<React.SetStateAction<ProofData | null>>;
+  onCompileSuccess?: () => void;
+  onBack?: () => void;
+  onForward?: () => void;
 }) => {
-  const [pending, setPending] = useState<boolean>(false);
   const [compiledCode, setCompiledCode] = useState<CompiledCircuit | null>(
     null
   );
-  const [inputs, setInputs] = useState<{ [key: string]: string }>({});
+  const [pending, setPending] = useState<boolean>(false);
+  const [compileError, setCompileError] = useState<string | null>(null);
 
   const params = useParams({ compiledCode });
 
-  const handleInput = ({
-    event,
-    key,
-  }: {
-    event: ChangeEvent<HTMLInputElement>;
-    key: string;
-  }) => {
-    event.preventDefault();
-    setInputs({ ...inputs, [key]: event.target.value });
-  };
-
   useEffect(() => {
     setCompiledCode(null);
+    setCompileError(null);
   }, [project]);
 
   const compile = async (project: FileSystem) => {
-    const compiledCode = await compileCode(project);
-    setCompiledCode(compiledCode);
+    setCompileError(null);
+    try {
+      const compiledCode = await compileCode(project);
+      setCompiledCode(compiledCode);
+      setCompileError(null);
+    } catch (err: unknown) {
+      let message = "Unknown error";
+      if (err instanceof Error) {
+        message = err.message;
+      } else if (typeof err === "string") {
+        message = err;
+      }
+      setCompileError(message);
+      setCompiledCode(null);
+      throw err;
+    }
   };
 
   const submit = async (e: FormEvent) => {
@@ -56,22 +64,25 @@ export const ActionsBox = ({
 
     if (!compiledCode) {
       setPending(true);
-
-      await toast.promise(compile(project), {
-        pending: "Compiling...",
-        success: "Compiled!",
-        error: { render: ({ data }) => `${data}` },
-      });
+      setCompileError(null);
+      try {
+        await toast.promise(compile(project), {
+          pending: "Compiling...",
+          success: "Compiled!",
+          error: { render: ({ data }) => `${data}` },
+        });
+        if (onCompileSuccess) onCompileSuccess();
+      } finally {
+        setPending(false);
+      }
     } else {
       await prove(e);
     }
-    setPending(false);
   };
 
   const prove = async (e: FormEvent) => {
     e.preventDefault();
-    setPending(true);
-    const inputMap = prepareInputs(params!, inputs);
+    const inputMap = prepareInputs(params!, {});
     const proofData = await toast.promise(
       generateProof({
         circuit: compiledCode!,
@@ -90,60 +101,66 @@ export const ActionsBox = ({
       publicInputs: Array.from(proofData.publicInputs.values()),
     };
     setProof(proofDataHex);
-    setPending(false);
-  };
-
-  const share = async (e: FormEvent) => {
-    e.preventDefault();
-    if (project) {
-      await toast.promise(shareProject({ project, baseUrl: props.baseUrl }), {
-        pending: "Copying to clipboard...",
-        success: "Copied!",
-        error: "Error sharing",
-      });
-    }
   };
 
   return (
     <>
-      {params && (
-        <div className="px-4 py-5 sm:p-6 flex flex-col flex-auto">
-          <h3 className="text-lg leading-6 font-medium text-gray-900">
-            Inputs
-          </h3>
-          <form
-            className="flex-col mt-5 sm:flex sm:items-center"
-            id="inputs-container"
-          >
-            <div
-              className="sm:max-w-xs flex flex-auto flex-col w-full"
-              id="inputs-container"
-            >
-              <RenderInputs
-                params={params}
-                inputs={inputs}
-                handleInput={handleInput}
-              />
-            </div>
-          </form>
-        </div>
-      )}
       <form
-        className="flex flex-auto flex-col justify-center"
+        className="flex flex-auto flex-col justify-end"
         onSubmit={(e) => submit(e)}
       >
-        <input type="text" style={{ display: "none" }} />
         <ButtonContainer>
-          <Button type="submit" disabled={pending} $primary={true}>
-            {compiledCode ? "📜 Prove" : "🔄 Compile"}
-          </Button>
-          <Button
-            onClick={(e: FormEvent) => share(e)}
-            disabled={pending}
-            $primary={undefined}
-          >
-            ✉️ Share
-          </Button>
+          {compiledCode && (
+            <div className="font-semibold mb-2" style={{ color: '#4ade80' }}>✨ Compiled successfully!</div>
+          )}
+          {compileError && (
+            <div className="font-semibold mb-2" style={{ color: '#ef4444' }}>
+              <span className="font-bold">Error:</span><br />
+              {compileError}
+            </div>
+          )}
+          <div className="w-full flex flex-row justify-between items-center">
+            <Button
+              type="button"
+              $primary={false}
+              className="cursor-pointer w-1/12"
+              disabled={pending}
+              onClick={onBack}
+              style={{
+                color: 'var(--color-primary)',
+                backgroundColor: 'var(--bg-toolbar-btn)',
+                opacity: onBack ? 1 : 0.5
+              }}
+            >
+              ←
+            </Button>
+            <Button
+              type="button"
+              $primary={false}
+              className="cursor-pointer w-1/12"
+              disabled={pending}
+              onClick={onForward}
+              style={{
+                color: 'var(--color-primary)',
+                backgroundColor: 'var(--bg-toolbar-btn)',
+                opacity: onForward ? 1 : 0.5
+              }}
+            >
+              →
+            </Button>
+            <Button
+              type="submit"
+              $primary={true}
+              className="cursor-pointer w-10/12"
+              disabled={pending}
+              style={{
+                color: 'var(--color-primary)',
+                backgroundColor: 'var(--color-accent)'
+              }}
+            >
+              {pending ? "Compiling..." : "Compile"}
+            </Button>
+          </div>
         </ButtonContainer>
       </form>
     </>

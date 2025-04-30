@@ -4,7 +4,7 @@ import { Registry } from "monaco-textmate";
 import { wireTmGrammars } from "monaco-editor-textmate";
 
 import initNoirC from "@noir-lang/noirc_abi";
-import initACVM from "@noir-lang/acvm_js"; 
+import initACVM from "@noir-lang/acvm_js";
 import { loadWASM } from "onigasm";
 import { useEffect, useState } from "react";
 
@@ -22,7 +22,7 @@ self.MonacoEnvironment = {
 
 loader.config({ monaco: monacoEditor });
 
-export const useMonaco = () => {
+export const useMonaco = (theme: 'light' | 'dark' = 'light') => {
   const [monaco, setMonaco] = useState<typeof import("monaco-editor")>();
   const [loaded, setLoaded] = useState(false);
   const [promises, setPromises] = useState<Promise<unknown>[]>([]);
@@ -81,9 +81,12 @@ export const useMonaco = () => {
   }, [promises]);
 
   useEffect(() => {
-    if (!monaco || loaded || !promises) return;
+    if (!monaco || !promises) return;
 
-    monaco.editor.setTheme("light");
+    monaco.editor.setTheme(theme);
+
+    if (loaded) return;
+
     const registry = new Registry({
       getGrammarDefinition: async () => {
         return {
@@ -101,7 +104,7 @@ export const useMonaco = () => {
       wireTmGrammars(monaco, registry, grammars);
       setLoaded(true);
     });
-  }, [monaco, promises]);
+  }, [monaco, promises, theme, loaded]);
 
   return { monaco, loaded };
 };

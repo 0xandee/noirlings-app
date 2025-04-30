@@ -2,6 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Light theme variables (default) */
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F9F1DF;
+  --bg-sidebar: #fff8e6;
+  --bg-toolbar: #fbbf24;
+  --bg-toolbar-btn: #d97706;
+  --bg-toolbar-btn-hover: #b45309;
+  --color-primary: #000000;
+  --color-secondary: #422006;
+  --color-accent: #b45309;
+  --border-color: #fcd34d;
+  --code-bg: #ececec;
+  --code-color: #b30000;
+  --hint-bg: #cbcbcb;
+}
+
+[data-theme="dark"] {
+  /* Dark theme variables */
+  --bg-primary: #121212;
+  --bg-secondary: #1E1E1E;
+  --bg-sidebar: #252525;
+  --bg-toolbar: #2D2D2D;
+  --bg-toolbar-btn: #4D4D4D;
+  --bg-toolbar-btn-hover: #626262;
+  --color-primary: #E0E0E0;
+  --color-secondary: #BBBBBB;
+  --color-accent: #fbbf24;
+  --border-color: #444444;
+  --code-bg: #2d2d2d;
+  --code-color: #ff9e9e;
+  --hint-bg: #2d2d2d;
+}
+
+body {
+  margin: 0;
+  overscroll-behavior: none;
+  background-color: var(--bg-primary);
+  color: var(--color-primary);
+}
+
 body:not(#editor) {
   font-family: "Inter", sans-serif;
 }
@@ -10,4 +51,36 @@ body:not(#editor) {
 #noir__playground {
   border-width: 0;
   border-style: solid;
+}
+
+.markdown-body {
+  /* Ensures markdown content wraps and doesn't overflow */
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  color: var(--color-primary);
+}
+
+.markdown-body p, ol {
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+}
+
+.markdown-body pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: auto;
+  display: block;
+  max-width: 100%;
+  background: var(--hint-bg);
+  border-radius: 4px;
+  padding: 0.5em;
+  margin: 0.5em 0;
+}
+
+.markdown-body :not(pre) > code {
+  background: var(--code-bg);
+  color: var(--code-color);
+  border-radius: 3px;
+  padding: 0.1em 0.3em;
+  white-space: break-spaces;
 }

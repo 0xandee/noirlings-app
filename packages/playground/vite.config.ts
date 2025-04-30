@@ -42,6 +42,11 @@ export default defineConfig(({ mode }: { mode: string }) => {
         insertTypesEntry: true,
       }),
     ],
+    server: {
+      proxy: {
+        "/api": "http://localhost:3000",
+      },
+    },
   };
 
   if (mode === "development") {

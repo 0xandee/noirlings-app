@@ -11,18 +11,27 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
-    "baseUrl": ".",
+    "allowJs": true,
+    "checkJs": false,
     "declaration": false,
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "target": "es2020",
     "module": "esnext",
-    "lib": ["es2021", "DOM"],
+    "lib": [
+      "es2021",
+      "DOM"
+    ],
     "outDir": "dist",
     "rootDir": "./",
     "preserveConstEnums": true,
     "skipLibCheck": true,
-    "types": ["vite/client"]
+    "types": [
+      "vite/client"
+    ]
   },
-  "include": ["src", "**/*.css"]
+  "include": [
+    "src",
+    "**/*.css"
+  ]
 }

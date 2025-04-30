@@ -1,4 +1,4 @@
-import React, { FormEvent, ReactNode } from "react";
+import React, { FormEvent, ReactNode, CSSProperties } from "react";
 
 export const Button = ({
   type = "button",
@@ -7,6 +7,7 @@ export const Button = ({
   $primary,
   onClick,
   children,
+  style,
   ...props
 }: {
   type?: "button" | "submit" | "reset";
@@ -15,12 +16,11 @@ export const Button = ({
   $primary?: boolean;
   onClick?: (e: FormEvent) => void;
   children?: React.ReactNode;
+  style?: CSSProperties;
 }) => {
-  const buttonClasses = `${className} px-6 px-3 m-2 rounded-md max-w-xs ${
-    $primary ? "bg-purple-1" : "bg-pink-2"
-  } max-h-10 text-right text-base normal-case font-medium leading-none flex p-5 justify-center items-center ${
-    disabled ? "opacity-50" : "opacity-100"
-  } w-full text-gray-7`;
+  const buttonClasses = `${className} px-6 px-3 m-2 rounded-md max-w-xs ${$primary ? "bg-purple-1" : "bg-pink-2"
+    } max-h-10 text-right text-base normal-case font-medium leading-none flex p-5 justify-center items-center ${disabled ? "opacity-50" : "opacity-100"
+    } w-full text-gray-7`;
 
   return (
     <button
@@ -28,6 +28,7 @@ export const Button = ({
       type={type}
       className={buttonClasses}
       tabIndex={-1}
+      style={style}
       {...props}
     >
       {children}
@@ -39,12 +40,14 @@ export const BackButton = ({
   children,
   $primary,
   onClick,
+  style,
 }: {
   children?: ReactNode;
   $primary?: boolean;
   onClick?: (e: FormEvent) => void;
+  style?: CSSProperties;
 }) => (
-  <Button onClick={onClick} $primary={$primary} className="bg-[#b31312]">
+  <Button onClick={onClick} $primary={$primary} className="bg-[#b31312]" style={style}>
     {children}
   </Button>
 );
