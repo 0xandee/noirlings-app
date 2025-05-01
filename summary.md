@@ -734,3 +734,24 @@ public/
 **You can now deploy to Vercel with no server or API dependencies.**
 
 ---
+
+## [Step 6] Set Default Theme to Dark
+
+- Updated the `useTheme` hook in `packages/playground/src/hooks/useTheme.tsx` to use 'dark' as the default theme for new users.
+- Now, if no theme is set in localStorage, the playground will load in dark mode by default.
+
+## [Step 7] Change Monaco Editor Dark Theme Background
+
+- Updated `editor.background` in `packages/playground/src/themes/dark.json` to `#020617`.
+- The Monaco code editor now uses this color as its background in dark mode.
+
+## New Feature: Reduced Monaco Editor font size
+
+- Reduced Monaco Editor font size from 16px to 14px in `packages/playground/src/components/editor/NoirEditor.tsx` for a smaller code editor appearance.
+
+## New Feature: The hint is now hidden by default for each exercise, and the Show/Hide Hint toggle works per exercise. This is implemented by setting showHint to false in handleExerciseSelect in `packages/playground/src/components/editor/NoirEditor.tsx`.
+
+## [Date: YYYY-MM-DD] Set Favicon for Playground
+
+- Added a <link rel="icon"> tag to `packages/playground/index.html` referencing `/public/noirlingsapp.ico` as the favicon for the app.
+- The favicon file is located at `packages/playground/public/noirlingsapp.ico`.
