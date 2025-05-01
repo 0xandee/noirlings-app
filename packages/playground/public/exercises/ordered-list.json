@@ -1,0 +1,353 @@
+[
+  {
+    "name": "intro1",
+    "path": "exercises/intro/intro1.nr",
+    "mode": "test",
+    "hint": "No hint this time\n",
+    "description": "Noir is an open-source DSL (Domain specific language) for construction of privacy-preserving zk programs.\n\nZK programs are programs that can generate short proof of statements without revealing all inputs to the statements.\n\nWelcome to Noirlings!\n\nThis exercise doesn't do anything yet but it still compiles! Noir file getting run\nneeds to have a `main` function. So this file is a valid Noir file.\nOther exercises will require you to write Noir code to make the exercise file compile.\n",
+    "category": "intro",
+    "file": "intro1.nr"
+  },
+  {
+    "name": "variables1",
+    "path": "exercises/variables/variables1.nr",
+    "mode": "compile",
+    "hint": "No hint this time\n",
+    "description": "This will not compile, can you fix it to compile successfully\n",
+    "category": "variables",
+    "file": "variables1.nr"
+  },
+  {
+    "name": "variables2",
+    "path": "exercises/variables/variables2.nr",
+    "mode": "compile",
+    "hint": "No hint this time\n",
+    "description": "This will not compile, can you fix it to compile successfully\n",
+    "category": "variables",
+    "file": "variables2.nr"
+  },
+  {
+    "name": "variables3",
+    "path": "exercises/variables/variables3.nr",
+    "mode": "compile",
+    "hint": "No hint this time\n",
+    "description": "This will not compile, can you fix it to compile successfully\n",
+    "category": "variables",
+    "file": "variables3.nr"
+  },
+  {
+    "name": "variables4",
+    "path": "exercises/variables/variables4.nr",
+    "mode": "compile",
+    "hint": "No hint this time\n",
+    "description": "This will not compile, can you fix it to compile successfully\n",
+    "category": "variables",
+    "file": "variables4.nr"
+  },
+  {
+    "name": "variables5",
+    "path": "exercises/variables/variables5.nr",
+    "mode": "compile",
+    "hint": "No hint this time\n",
+    "description": "This will not compile, can you fix it to compile successfully\n",
+    "category": "variables",
+    "file": "variables5.nr"
+  },
+  {
+    "name": "variables6",
+    "path": "exercises/variables/variables6.nr",
+    "mode": "compile",
+    "hint": "No hint this time\n",
+    "description": "This will not compile, can you fix it to compile successfully\n",
+    "category": "variables",
+    "file": "variables6.nr"
+  },
+  {
+    "name": "if1",
+    "path": "exercises/control-flow/if1.nr",
+    "mode": "test",
+    "hint": "No hint this time\n",
+    "description": "Change `can_vote` method to make test cases pass.\n",
+    "category": "control-flow",
+    "file": "if1.nr"
+  },
+  {
+    "name": "grade_calculator",
+    "path": "exercises/control-flow/grade_calculator.nr",
+    "mode": "test",
+    "hint": "No hint this time\n",
+    "description": "Make the tests pass by completing the `grade_calculator` function.\nThis function should return a letter grade based on the score:\n- 90 and above: \"A\"\n- 80-89: \"B\"\n- 70-79: \"C\"\n- 60-69: \"D\"\n- Below 60: \"F\"\n",
+    "category": "control-flow",
+    "file": "grade_calculator.nr"
+  },
+  {
+    "name": "count_factors",
+    "path": "exercises/control-flow/count_factors.nr",
+    "mode": "test",
+    "hint": "No hint this time\n",
+    "description": "Complete the `count_factors` function that counts the number of factors of a given number, and `find_special_numbers` that finds numbers with exactly k factors within a range\n",
+    "category": "control-flow",
+    "file": "count_factors.nr"
+  },
+  {
+    "name": "array_basics",
+    "path": "exercises/arrays/array_basics.nr",
+    "mode": "test",
+    "hint": "No hint this time\n",
+    "description": "This exercise will help you understand array creation, indexing, and basic operations\n",
+    "category": "arrays",
+    "file": "array_basics.nr"
+  },
+  {
+    "name": "array_advance",
+    "path": "exercises/arrays/array_advance.nr",
+    "mode": "test",
+    "hint": "No hint this time\n",
+    "description": "This exercise will help you understand array methods like map, fold, sort, and predicates\n",
+    "category": "arrays",
+    "file": "array_advance.nr"
+  },
+  {
+    "name": "structs1",
+    "path": "exercises/structs/structs1.nr",
+    "mode": "test",
+    "hint": "No hint this time\n",
+    "description": "TODO: Define a struct called 'Point' with two fields:\n- x: Field\n- y: Field\n",
+    "category": "structs",
+    "file": "structs1.nr"
+  },
+  {
+    "name": "structs2",
+    "path": "exercises/structs/structs2.nr",
+    "mode": "test",
+    "hint": "No hint this time\n",
+    "description": "No description here\n",
+    "category": "structs",
+    "file": "structs2.nr"
+  },
+  {
+    "name": "structs3",
+    "path": "exercises/structs/structs3.nr",
+    "mode": "test",
+    "hint": "Define Person Struct like this\n```\nstruct Person {\n    name: str<10>,\n    age: Field,\n    home_address: Address,\n}\n```\nFirst create a home_address like\n```\nlet home_address = Address { street_number: street_num, zip_code: zip };\n```\nFinally create and resturn Person instance\n```\nPerson { name, age, home_address }\n```\n",
+    "description": "No description here\n",
+    "category": "structs",
+    "file": "structs3.nr"
+  },
+  {
+    "name": "shopping_cart",
+    "path": "exercises/structs/shopping_cart.nr",
+    "mode": "test",
+    "hint": "Define `new()` method inside implementation block\n```\n    fn new() -> Cart {\n        let product = Product { id: 0, price: 0, quantity: 0 };\n        Cart { items: [product; 3], total_items: 0 }\n    }\n```\nDefine `add_product` method inside implementation block\n```\n    fn add_product(&mut self, product: Product) -> bool {\n        if self.total_items as u64 >= 3 {\n            false\n        } else {\n            self.items[self.total_items as u64] = product;\n            self.total_items = self.total_items + 1;\n            true\n        }\n    }\n```\n",
+    "description": "No description here\n",
+    "category": "structs",
+    "file": "shopping_cart.nr"
+  },
+  {
+    "name": "reference1",
+    "path": "exercises/references/reference1.nr",
+    "mode": "test",
+    "hint": "```\nlet temp = *a;\n*a = *b;\n*b = temp;\n```\n",
+    "description": "TODO: Complete the swap_values function that takes two mutable references to Field values and swaps their values\n",
+    "category": "references",
+    "file": "reference1.nr"
+  },
+  {
+    "name": "reference2",
+    "path": "exercises/references/reference2.nr",
+    "mode": "test",
+    "hint": "```\n    fn increment(&mut self) {\n        self.value = self.value + self.step;\n    }\n    fn update_step(&mut self, new_step: Field) {\n        self.step = new_step;\n    }\n```\nAs you may have noticed we are not using dereferce symbol(*) because compiler automatically dereferences the struct \nreference when you access its fields. This is called \"auto-dereferencing\" or \"auto-ref/deref\".\n",
+    "description": "No description here\n",
+    "category": "references",
+    "file": "reference2.nr"
+  },
+  {
+    "name": "slice1",
+    "path": "exercises/slices/slice1.nr",
+    "mode": "test",
+    "hint": "```\nlet mut slice = &[1, 2, 3];\nslice = slice.push_back(4);\nslice = slice.push_front(0);\n```\n\n",
+    "description": "No description here\n",
+    "category": "slices",
+    "file": "slice1.nr"
+  },
+  {
+    "name": "slice2",
+    "path": "exercises/slices/slice2.nr",
+    "mode": "test",
+    "hint": "1. Use `insert` method to insert element at particular index. `insert` method returns new slice.\n```\nslice = slice.insert(2, 42);\n```\n2. Remove element from front using `pop_front` method. This method returns a tuple of removed element and new slice.\n    let (_, slice) = slice.pop_front();\n3. return slice length typecasted as Field.\n```\nslice.len() as Field\n```\n",
+    "description": "No description here\n",
+    "category": "slices",
+    "file": "slice2.nr"
+  },
+  {
+    "name": "slice3",
+    "path": "exercises/slices/slice3.nr",
+    "mode": "test",
+    "hint": "1. First create a new slice of doubled elements using `map` method.\n```\nlet slice1 = input.map(|a| a * 2);\n```\n2. Filter elements greater than 10 using `filter method`\n```\nlet slice2 = slice1.filter(|a| a as u64 <= 10);\n```\n3. Return the slice `slice2`\n",
+    "description": "No description here\n",
+    "category": "slices",
+    "file": "slice3.nr"
+  },
+  {
+    "name": "slice4",
+    "path": "exercises/slices/slice4.nr",
+    "mode": "test",
+    "hint": "1. We are going to use `Stats` struct to store sum and count. define initial value for accumulator\n```\nlet acc = Stats { sum: 0, count: 0 };\n```\n2. Use `fold` method to fold values. Here we are passing closure function that will process each element of slice. \n3. Remember to define explicit type in closure for `acc` and `x` as type must be known by this point.\n```\nlet stats = numbers.fold(acc, |acc: Stats, x: Field| Stats { sum: acc.sum + x, count: acc.count + 1 });\n```\n4. Return the average\n```\nstats.sum / stats.count\n```\n",
+    "description": "No description here\n",
+    "category": "slices",
+    "file": "slice4.nr"
+  },
+  {
+    "name": "slice5",
+    "path": "exercises/slices/slice5.nr",
+    "mode": "test",
+    "hint": "```\nlet valid_transactions = transactions.filter(|txn: Transaction| txn.valid == true);\nlet amounts = valid_transactions.map(|txn: Transaction| txn.amount);\nlet sum = amounts.reduce(|acc: Field,x: Field| acc + x);\n```\n",
+    "description": "No description here\n",
+    "category": "slices",
+    "file": "slice5.nr"
+  },
+  {
+    "name": "tuple1",
+    "path": "exercises/tuples/tuple1.nr",
+    "mode": "test",
+    "hint": "```\nlet person = (name,age,zip);\nperson\n```\n",
+    "description": "No description here\n",
+    "category": "tuples",
+    "file": "tuple1.nr"
+  },
+  {
+    "name": "tuple2",
+    "path": "exercises/tuples/tuple2.nr",
+    "mode": "test",
+    "hint": "```\nNo hint this time\n```\n",
+    "description": "No description here\n",
+    "category": "tuples",
+    "file": "tuple2.nr"
+  },
+  {
+    "name": "string1",
+    "path": "exercises/strings/string1.nr",
+    "mode": "test",
+    "hint": "```\nif password == \"SuperSecret!\" {\n      true\n} else {\n  false\n}\n```\n",
+    "description": "Learn about string declarations and basic assertions\n",
+    "category": "strings",
+    "file": "string1.nr"
+  },
+  {
+    "name": "string2",
+    "path": "exercises/strings/string2.nr",
+    "mode": "test",
+    "hint": "1. First convert string into byte array by calling `as_bytes()`\n```\n    let char_bytes = text.as_bytes();\n```\n2. Run a loop on byte array to sum the values\n```\n    let mut sum: Field = 0;\n    for i in 0..5 {\n        sum = sum + char_bytes[i] as Field;\n    }\n```\n3. Return the sum\n```\n    sum as Field\n```\n",
+    "description": "No description here\n",
+    "category": "strings",
+    "file": "string2.nr"
+  },
+  {
+    "name": "integer1",
+    "path": "exercises/integers/integer1.nr",
+    "mode": "test",
+    "hint": "```\nlet kill_assists = wrapping_add(wrapping_mul(kills,2), assists);\nif deaths > kill_assists {\n    0\n} else {\n    kill_assists - deaths\n}\n```\n",
+    "description": "No description here\n",
+    "category": "integers",
+    "file": "integer1.nr"
+  },
+  {
+    "name": "integer2",
+    "path": "exercises/integers/integer2.nr",
+    "mode": "test",
+    "hint": "No hint this time\n",
+    "description": "Learn about signed and unsigned integers with temperature conversion\n",
+    "category": "integers",
+    "file": "integer2.nr"
+  },
+  {
+    "name": "traits1",
+    "path": "exercises/traits/traits1.nr",
+    "mode": "test",
+    "hint": "```\nfn area(self) -> Field {\n      self.width * self.height\n}\n```\n",
+    "description": "Basic Trait Implementation. This exercise introduces basic trait definition and implementation.\n",
+    "category": "traits",
+    "file": "traits1.nr"
+  },
+  {
+    "name": "traits2",
+    "path": "exercises/traits/traits2.nr",
+    "mode": "test",
+    "hint": "1. Implement Area trait for Circle\n```\nimpl Area for Circle {\n    fn area(self) -> Field {\n      3 * self.radius * self.radius\n    }\n}\n```\n2. Implement Perimeter trait for Circle\n```\nimpl Perimeter for Circle {\n    fn perimeter(self) -> Field {\n      2 * 3 * self.radius\n    }\n}\n```\n",
+    "description": "Multiple Trait Implementation: This exercise shows how to implement multiple traits for a type\n",
+    "category": "traits",
+    "file": "traits2.nr"
+  },
+  {
+    "name": "traits3",
+    "path": "exercises/traits/traits3.nr",
+    "mode": "test",
+    "hint": "1. Convert trait implementation\n```\nimpl Convert<Fahrenheit> for Celsius {\n    fn convert(self) -> Fahrenheit {\n    let f_temp = self.temp * 9/5 + 32;\n    Fahrenheit {\n        temp: f_temp\n    }\n    }\n}\n```\n",
+    "description": "Generic Traits: This exercise demonstrates how to work with generic traits\n",
+    "category": "traits",
+    "file": "traits3.nr"
+  },
+  {
+    "name": "traits4",
+    "path": "exercises/traits/traits4.nr",
+    "mode": "test",
+    "hint": "1. Implement `Counter` trait like this for Number\n```\nimpl Counter for Number {\n    fn increment(self) -> Self {\n      Number {\n        value: self.value + 1\n      }\n    }\n}\n```\n",
+    "description": "traits4.nr\nuse the `hint` watch subcommand for a hint.\nDefault Trait Methods: This exercise shows how to work with default trait methods\n",
+    "category": "traits",
+    "file": "traits4.nr"
+  },
+  {
+    "name": "traits5",
+    "path": "exercises/traits/traits5.nr",
+    "mode": "test",
+    "hint": "```\nfn find_maximum<T>(values: [T; 5]) -> T where T: Maximum {\n    let mut maximum = values[0];\n    for i in 1..5 {\n      maximum = values[i].max(maximum);\n    }\n    maximum\n}\n```\n",
+    "description": "Trait Bounds: This exercise demonstrates how to use trait bounds with generics\n",
+    "category": "traits",
+    "file": "traits5.nr"
+  },
+  {
+    "name": "field1",
+    "path": "exercises/fields/field1.nr",
+    "mode": "compile",
+    "hint": "value of p-1 is multiplication inverse of it self. i.e. (p-1) * (p-1) = 1.\n\nTo understand this, you have to first understand the modular arithmetic: c = a + b (mod p) where `a` and `b` are numbers in the finite field, `c` is the remainder that maps any number >=p and <0 back in the set {0,1,2,...p-1}\n\nThe notation means all arithmetic is done modulo p, for example \n\nfor p = 7, 1 = 8 (mod 7)\n\n 0 = 6+1(mod 7)\n\n 0 = p (mod p)\n\nwith this lets expand (p-1) * (p-1) = p^2 - 2p + 1 (mod p)\nsince p mod p is zero we can discard p^2 - 2p\nhence (p-1) * (p-1) = 1\n",
+    "description": "For Noir default backend, Grumpkin curve, order of the field value P is: `21888242871839275222246405745257275088548364400416034343698204186575808495617`\n",
+    "category": "fields",
+    "file": "field1.nr"
+  },
+  {
+    "name": "quiz1",
+    "path": "exercises/quizs/quiz1.nr",
+    "mode": "test",
+    "hint": "```\nfn equality(inputs: [u32;3]) -> bool {\n  if (inputs[0] == inputs[1]) & (inputs[0] == inputs[2]) {\n    true\n  } else {\n    false\n  }\n}\n```\n",
+    "description": "Input 3 values using 'a' (array of length 3) and check if they all are equal.\nReturn using signal 'c'.\n",
+    "category": "quizs",
+    "file": "quiz1.nr"
+  },
+  {
+    "name": "pedersen_hash",
+    "path": "exercises/advance/pedersen_hash.nr",
+    "mode": "test",
+    "hint": "No hint this time\n",
+    "description": "Understanding Pedersen Hash\n\nPedersen hash is a cryptographic hash function based on elliptic curve operations.\nIt is widely used in zero-knowledge proofs and privacy-preserving blockchain applications.\n\nKey Properties of Pedersen hash:\n1. It's a one-way function(difficult to reverse)\n2. It has collision resistance(hard to find two inputs that hash to the same output)\n3. Its deterministic(same input always produces the same output)\n4. It has homomorphic properties(especially useful in zero-knowledge proofs)\n\nIn this exercise, you will:\n1. Compute a basic Pedersen hash\n2. Verify its deterministic property\n3. Explore how changes to input affect the output (avalanche effect)\n",
+    "category": "advance",
+    "file": "pedersen_hash.nr"
+  },
+  {
+    "name": "embedded_curve1",
+    "path": "exercises/embedded_curves/embedded_curve1.nr",
+    "mode": "test",
+    "hint": "```\nstruct EmbeddedCurvePoint {\n  x: Field,\n  y: Field,\n  is_infinite: bool\n}\n```\n",
+    "description": "Introduction to EmbeddedCurvePoint structure\n\nTODO: Define a struct called 'EmbeddedCurvePoint' with three fields:\n- x: Field (x-coordinate)\n- y: Field (y-coordinate)\n- is_infinite: bool (flag indicating if it's the point at infinity)\n",
+    "category": "embedded_curves",
+    "file": "embedded_curve1.nr"
+  },
+  {
+    "name": "embedded_curve2",
+    "path": "exercises/embedded_curves/embedded_curve2.nr",
+    "mode": "test",
+    "hint": "1. Generator function implementation\n```\npub fn generator() -> EmbeddedCurvePoint {\n    EmbeddedCurvePoint {\n    x: 1,\n    y: 17631683881184975370165255887551781615748388533673675138860,\n    is_infinite: false\n    }\n}\n```\n2. Point At Infinity\n```\npub fn point_at_infinity() -> EmbeddedCurvePoint {\n    EmbeddedCurvePoint { x: 0, y: 0, is_infinite: true }\n}\n```\n3. Negation Implementation\n```\npub fn neg(self) -> EmbeddedCurvePoint {\n    EmbeddedCurvePoint { x: self.x, y: -self.y, is_infinite: self.is_infinite }\n}\n```\n",
+    "description": "Implementing methods for EmbeddedCurvePoint\n",
+    "category": "embedded_curves",
+    "file": "embedded_curve2.nr"
+  }
+]
