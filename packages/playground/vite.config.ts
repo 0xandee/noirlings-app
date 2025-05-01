@@ -5,6 +5,8 @@ import path from "path";
 
 export default defineConfig(({ mode }: { mode: string }) => {
   console.log("Building in mode:", mode);
+  const isVercel = process.env.VERCEL === "1";
+
   const base = {
     optimizeDeps: {
       esbuildOptions: {
@@ -13,28 +15,27 @@ export default defineConfig(({ mode }: { mode: string }) => {
     },
     build: {
       target: "esnext",
-      lib: {
-        // Could also be a dictionary or array of multiple entry points
-        entry: path.resolve("src/index.tsx"),
-        name: "Noir Playground",
-        formats: ["es"] as LibraryFormats[],
-        // the proper extensions will be added
-        fileName: "index",
-      },
-      rollupOptions: {
-        // make sure to externalize deps that shouldn't be bundled
-        // into your library
-        external: ["react", "react-dom"],
-        output: {
-          // Provide global variables to use in the UMD build
-          // for externalized deps
-          globals: {
-            react: "React",
-            "react-dom": "ReactDOM",
-          },
-          intro: "import './style.css';",
+      // If we're building for Vercel, disable library mode and use the default dist directory
+      ...(isVercel ? {
+        outDir: "dist",
+      } : {
+        lib: {
+          entry: path.resolve("src/index.tsx"),
+          name: "Noir Playground",
+          formats: ["es"] as LibraryFormats[],
+          fileName: "index",
         },
-      },
+        rollupOptions: {
+          external: ["react", "react-dom"],
+          output: {
+            globals: {
+              react: "React",
+              "react-dom": "ReactDOM",
+            },
+            intro: "import './style.css';",
+          },
+        },
+      }),
     },
     plugins: [
       react(),
