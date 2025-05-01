@@ -54,8 +54,6 @@ function NoirEditor(props: PlaygroundProps) {
   // State for draggable separator
   const [infoPanelWidth, setInfoPanelWidth] = useState<number>(480); // default width in px
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [showTooltip, setShowTooltip] = useState(false);
-  const [tooltipPos, setTooltipPos] = useState<{ top: number, left: number }>({ top: 0, left: 0 });
 
   // State for hint
   const [showHint, setShowHint] = useState(false);
@@ -78,24 +76,14 @@ function NoirEditor(props: PlaygroundProps) {
       if (animationFrame) cancelAnimationFrame(animationFrame);
       animationFrame = requestAnimationFrame(() => {
         setInfoPanelWidth(newWidth);
-        // Tooltip position
-        if (separatorRef.current) {
-          const rect = separatorRef.current.getBoundingClientRect();
-          setTooltipPos({
-            top: rect.top + window.scrollY - 32,
-            left: rect.left + window.scrollX + rect.width / 2,
-          });
-        }
       });
     }
     function handleMouseUp() {
       setIsDragging(false);
-      setShowTooltip(false);
     }
     if (isDragging) {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
-      setShowTooltip(true);
     }
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
@@ -103,8 +91,6 @@ function NoirEditor(props: PlaygroundProps) {
       if (animationFrame) cancelAnimationFrame(animationFrame);
     };
   }, [isDragging]);
-
-  const handleSeparatorBlur = () => setShowTooltip(false);
 
   useEffect(() => {
     async function load() {
@@ -431,6 +417,14 @@ function NoirEditor(props: PlaygroundProps) {
           {currentExercise && (
             <div
               ref={separatorRef}
+              className={
+                "hidden md:flex h-full select-none group"
+              }
+              onMouseDown={() => setIsDragging(true)}
+              role="separator"
+              aria-orientation="vertical"
+              aria-label="Resize exercise info panel"
+              tabIndex={0}
               style={{
                 width: 1,
                 cursor: isDragging ? "col-resize" : "ew-resize",
@@ -442,18 +436,6 @@ function NoirEditor(props: PlaygroundProps) {
                 justifyContent: "center",
                 outline: "none",
               }}
-              className={
-                "hidden md:flex h-full select-none group"
-              }
-              onMouseDown={() => setIsDragging(true)}
-              onMouseEnter={() => setShowTooltip(true)}
-              onMouseLeave={() => setShowTooltip(false)}
-              onFocus={() => setShowTooltip(true)}
-              onBlur={handleSeparatorBlur}
-              role="separator"
-              aria-orientation="vertical"
-              aria-label="Resize exercise info panel"
-              tabIndex={0}
             >
               {/* Handle: 3 vertical dots */}
               {/* <span
@@ -472,28 +454,7 @@ function NoirEditor(props: PlaygroundProps) {
                     : "opacity-80 group-hover:opacity-100 transition-opacity"
                 }
               /> */}
-              {/* Tooltip for width */}
-              {/* {showTooltip && (
-                <div
-                  style={{
-                    position: "absolute",
-                    top: tooltipPos.top,
-                    left: tooltipPos.left,
-                    transform: "translate(-50%, -100%)",
-                    background: "var(--color-accent)",
-                    color: "var(--color-primary)",
-                    padding: "2px 8px",
-                    borderRadius: 4,
-                    fontSize: 12,
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                    pointerEvents: "none",
-                    zIndex: 100,
-                  }}
-                  role="tooltip"
-                >
-                  {infoPanelWidth}px
-                </div>
-              )} */}
+              {/* Tooltip for width removed */}
             </div>
           )}
 
