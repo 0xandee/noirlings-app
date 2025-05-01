@@ -583,3 +583,10 @@ After deploying:
 - Fixed TypeScript error in `packages/playground/src/hooks/useTheme.tsx` which was causing the build to fail with: `error TS2686: 'React' refers to a UMD global, but the current file is a module. Consider adding an import instead.`
 - Added the missing React import by changing `import { useState, useEffect, createContext, useContext } from 'react';` to `import React, { useState, useEffect, createContext, useContext } from 'react';`
 - This resolves the Vercel build error and allows the project to compile successfully.
+
+## Fixed Issue: Vercel Deployment Failure
+
+- Fixed a build failure in Vercel deployment that was producing the error: `Could not resolve entry module "src/index.ts"`.
+- The issue was in `vite.config.ts` where the entry point was incorrectly specified as `src/index.ts` instead of the actual file `src/index.tsx`.
+- Updated `packages/playground/vite.config.ts` to use the correct file path: `entry: path.resolve("src/index.tsx")`.
+- This ensures the Vercel build process can now find the correct entry point for the application.
