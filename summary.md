@@ -584,9 +584,54 @@ After deploying:
 - Added the missing React import by changing `import { useState, useEffect, createContext, useContext } from 'react';` to `import React, { useState, useEffect, createContext, useContext } from 'react';`
 - This resolves the Vercel build error and allows the project to compile successfully.
 
-## Fixed Issue: Vercel Deployment Failure
+## Fixed Issue: Vercel Deployment Failure - Missing Output Directory
 
-- Fixed a build failure in Vercel deployment that was producing the error: `Could not resolve entry module "src/index.ts"`.
-- The issue was in `vite.config.ts` where the entry point was incorrectly specified as `src/index.ts` instead of the actual file `src/index.tsx`.
-- Updated `packages/playground/vite.config.ts` to use the correct file path: `entry: path.resolve("src/index.tsx")`.
-- This ensures the Vercel build process can now find the correct entry point for the application.
+- Fixed a deployment error in Vercel where the build completed successfully but couldn't find the output directory.
+- Updated the `vite.config.ts` to detect when running on Vercel and adjust the output configuration:
+  - Added detection for the Vercel environment (`process.env.VERCEL === "1"`)
+  - Disabled library mode when building for Vercel and used the standard build output
+  - Set the output directory to `dist` instead of using the library configuration
+- Modified the `vercel-build` script in root `package.json` to:
+  - Set the `VERCEL=1` environment variable when building
+  - Copy the build output from `packages/playground/dist` to the root `dist` directory
+- Updated `vercel.json` to use the correct `outputDirectory` (`dist` instead of `packages/playground/dist`)
+- These changes ensure that Vercel can find the build output in the expected location.
+
+# [2024-06-10] Vercel Build Failure: Missing `vercel-build` Script
+
+## Problem
+
+- Vercel build failed with the error: `Couldn't find a script named "vercel-build".`
+- The build log shows Vercel is running `yarn vercel-build`, but this script does not exist in the root `package.json`.
+
+## Diagnosis
+
+- Vercel uses the build command specified in `vercel.json` or the Vercel dashboard.
+- If `yarn vercel-build` is set as the build command, there must be a `vercel-build` script in the root `package.json`.
+- Without this script, the build fails immediately.
+
+## Solution
+
+1. **Add a `vercel-build` script to the root `package.json`:**
+   ```json
+   "scripts": {
+     // ... other scripts ...
+     "vercel-build": "yarn workspace @signorecello/noir_playground build"
+   }
+   ```
+   - Replace `@signorecello/noir_playground` with the correct workspace/package name if needed.
+   - If additional build steps are required (e.g., copying files, setting env vars), include them in this script.
+2. **Commit and push the change.**
+   - Vercel will automatically trigger a new build.
+
+## Additional Notes
+
+- Ensure the build command and output directory in `vercel.json` match your project structure.
+- Check that all dependencies and peer dependencies are correctly declared and installed.
+
+## Status
+
+- [ ] Fix applied
+- [ ] Build successful
+
+---
