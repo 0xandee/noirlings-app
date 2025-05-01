@@ -177,10 +177,6 @@ function NoirEditor(props: PlaygroundProps) {
     }
   };
 
-  const toggleExercisesSidebar = () => {
-    setShowExercisesSidebar(!showExercisesSidebar);
-  };
-
   // Auto-load the last or first exercise on initial mount
   useEffect(() => {
     if (currentExercise !== null) return; // Don't override if already selected
