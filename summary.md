@@ -577,3 +577,9 @@ After deploying:
 - Verify that the application is working correctly
 - Check routing to ensure all pages load properly
 - If any issues arise, check Vercel logs for more information
+
+## Fixed Issue: React UMD Global Reference Error
+
+- Fixed TypeScript error in `packages/playground/src/hooks/useTheme.tsx` which was causing the build to fail with: `error TS2686: 'React' refers to a UMD global, but the current file is a module. Consider adding an import instead.`
+- Added the missing React import by changing `import { useState, useEffect, createContext, useContext } from 'react';` to `import React, { useState, useEffect, createContext, useContext } from 'react';`
+- This resolves the Vercel build error and allows the project to compile successfully.
