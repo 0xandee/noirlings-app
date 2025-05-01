@@ -111,12 +111,12 @@ export const ActionsBox = ({
       >
         <ButtonContainer>
           {compiledCode && (
-            <div className="font-semibold mb-2" style={{ color: '#4ade80' }}>✨ Compiled successfully!</div>
+            <div className="font-semibold mb-2 px-4" style={{ color: '#4ade80' }}>✨ Compiled successfully!</div>
           )}
           {compileError && (
-            <div className="font-semibold mb-2" style={{ color: '#ef4444' }}>
-              <span className="font-bold">Error:</span><br />
-              {compileError}
+            <div className="font-semibold mb-2 px-4" style={{ color: '#ef4444' }}>
+              <span className="font-normal">Error:</span><br />
+              <span className="font-normal">{compileError}</span>
             </div>
           )}
           <div className="w-full flex flex-row justify-between items-center">
