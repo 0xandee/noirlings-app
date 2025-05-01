@@ -9,10 +9,10 @@ type ThemeContextType = {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-    // Get initial theme from localStorage or use light as default
+    // Get initial theme from localStorage or use dark as default
     const [theme, setTheme] = useState<'light' | 'dark'>(() => {
         const savedTheme = localStorage.getItem('noir_theme');
-        return (savedTheme === 'light' || savedTheme === 'dark') ? savedTheme : 'light';
+        return (savedTheme === 'light' || savedTheme === 'dark') ? savedTheme : 'dark';
     });
 
     // Save theme to localStorage whenever it changes

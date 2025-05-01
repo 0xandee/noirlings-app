@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 
 export const ButtonContainer = ({ children }: { children: ReactNode }) => (
-  <div className="w-full flex flex-wrap justify-center md:justify-center">
+  <div className="w-full flex flex-wrap">
     {children}
   </div>
 );

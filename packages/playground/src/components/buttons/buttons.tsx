@@ -18,9 +18,9 @@ export const Button = ({
   children?: React.ReactNode;
   style?: CSSProperties;
 }) => {
-  const buttonClasses = `${className} px-6 px-3 m-2 rounded-md max-w-xs ${$primary ? "bg-purple-1" : "bg-pink-2"
-    } max-h-10 text-right text-base normal-case font-medium leading-none flex p-5 justify-center items-center ${disabled ? "opacity-50" : "opacity-100"
-    } w-full text-gray-7`;
+  const buttonClasses = `${className} px-6 px-3 ${$primary ? "bg-[#00810d]" : "bg-black"
+    } max-h-10 text-right text-base font-medium leading-none flex p-5 justify-center items-center ${disabled ? "opacity-50" : "opacity-100"
+    } text-gray-7`;
 
   return (
     <button

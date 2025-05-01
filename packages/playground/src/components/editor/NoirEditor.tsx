@@ -44,7 +44,7 @@ function NoirEditor(props: PlaygroundProps) {
   const [codeInBuffer, setCodeInBuffer] = useState<string | undefined>("");
 
   // State for exercises
-  const [showExercisesSidebar, setShowExercisesSidebar] = useState<boolean>(true);
+  const [showExercisesSidebar] = useState<boolean>(true);
   const [currentExercise, setCurrentExercise] = useState<string | null>(null);
   const [currentExerciseTitle, setCurrentExerciseTitle] = useState<string | null>(null);
   const [currentExerciseHint, setCurrentExerciseHint] = useState<string | null>(null);
@@ -54,11 +54,9 @@ function NoirEditor(props: PlaygroundProps) {
   // State for draggable separator
   const [infoPanelWidth, setInfoPanelWidth] = useState<number>(480); // default width in px
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [showTooltip, setShowTooltip] = useState(false);
-  const [tooltipPos, setTooltipPos] = useState<{ top: number, left: number }>({ top: 0, left: 0 });
 
   // State for hint
-  const [showHint, setShowHint] = useState(true);
+  const [showHint, setShowHint] = useState(false);
 
   // Add after other useState hooks
   const [finishedExercises, setFinishedExercises] = useState<string[]>(() => {
@@ -72,30 +70,20 @@ function NoirEditor(props: PlaygroundProps) {
     function handleMouseMove(e: MouseEvent) {
       if (!isDragging) return;
       // Minimum 220px, maximum 480px for info panel
-      const min = 220;
-      const max = 480;
+      const min = 0;
+      const max = 800;
       const newWidth = Math.min(Math.max(e.clientX, min), max);
       if (animationFrame) cancelAnimationFrame(animationFrame);
       animationFrame = requestAnimationFrame(() => {
         setInfoPanelWidth(newWidth);
-        // Tooltip position
-        if (separatorRef.current) {
-          const rect = separatorRef.current.getBoundingClientRect();
-          setTooltipPos({
-            top: rect.top + window.scrollY - 32,
-            left: rect.left + window.scrollX + rect.width / 2,
-          });
-        }
       });
     }
     function handleMouseUp() {
       setIsDragging(false);
-      setShowTooltip(false);
     }
     if (isDragging) {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
-      setShowTooltip(true);
     }
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
@@ -103,8 +91,6 @@ function NoirEditor(props: PlaygroundProps) {
       if (animationFrame) cancelAnimationFrame(animationFrame);
     };
   }, [isDragging]);
-
-  const handleSeparatorBlur = () => setShowTooltip(false);
 
   useEffect(() => {
     async function load() {
@@ -118,7 +104,7 @@ function NoirEditor(props: PlaygroundProps) {
 
         const monacoProperties = {
           value: initialCode,
-          fontSize: 16,
+          fontSize: 14,
           language: "noir",
           fontFamily: "Fira Code Variable",
           roundedSelection: false,
@@ -185,13 +171,10 @@ function NoirEditor(props: PlaygroundProps) {
       setCurrentExerciseDescription(exerciseDescription || null);
       setCurrentPath("src/main.nr");
       setOldPath(undefined);
+      setShowHint(false); // Hide hint by default for each new exercise
     } catch (error) {
       console.error("Failed to load exercise:", error);
     }
-  };
-
-  const toggleExercisesSidebar = () => {
-    setShowExercisesSidebar(!showExercisesSidebar);
   };
 
   // Auto-load the last or first exercise on initial mount
@@ -287,12 +270,15 @@ function NoirEditor(props: PlaygroundProps) {
     <div className="h-screen w-full flex flex-col">
       {/* Top toolbar */}
       <div
-        className="p-2 flex justify-between items-center"
-        style={{ backgroundColor: 'var(--bg-toolbar)' }}
+        className="p-4 flex justify-between items-center border-b"
+        style={{ backgroundColor: 'var(--bg-toolbar)', borderColor: 'var(--border-color)' }}
       >
-        <div className="text-lg font-bold">Noirlings.app</div>
+        <div className="flex items-center gap-3 ml-2">
+          <img src="/noirlingsapplogo.png" alt="Noirlings Logo" className="h-4 w-auto" style={{ maxHeight: 32 }} />
+          {/* <div className="text-xl font-bold">Noirlings.app</div> */}
+        </div>
         <div className="flex gap-2 items-center">
-          <button
+          {/* <button
             className="text-white px-4 py-1 rounded hover:opacity-90 transition-opacity"
             style={{
               backgroundColor: 'var(--bg-toolbar-btn)',
@@ -301,19 +287,24 @@ function NoirEditor(props: PlaygroundProps) {
             onClick={toggleExercisesSidebar}
           >
             {showExercisesSidebar ? "Hide Exercises List" : "Show Exercises List"}
-          </button>
+          </button> */}
+
+          {/* add finished exercises counter e.g. 1/10   */}
+          <div className="text-sm text-[#768cac]">
+            Finished: {finishedExercises.length}/{orderedExercises.length}
+          </div>
 
           {/* Theme toggle button */}
           <button
             onClick={toggleTheme}
-            className="flex items-center justify-center w-10 h-10 rounded-full hover:opacity-80 transition-opacity"
-            style={{ backgroundColor: 'var(--bg-toolbar-btn)' }}
+            className="flex items-center justify-center w-10 h-10 rounded-full hover:opacity-80 transition-opacity cursor-pointer"
+            style={{ backgroundColor: 'transparent' }}
             aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
           >
             {theme === 'light' ? (
-              <FiMoon size={18} color="var(--color-primary)" />
-            ) : (
               <FiSun size={18} color="var(--color-primary)" />
+            ) : (
+              <FiMoon size={18} color="var(--color-primary)" />
             )}
           </button>
         </div>
@@ -324,7 +315,7 @@ function NoirEditor(props: PlaygroundProps) {
         {/* Exercises sidebar */}
         {showExercisesSidebar && (
           <div
-            className="min-w-[180px] border-r overflow-y-auto max-h-60 md:max-h-none"
+            className="min-w-[200px] border-r overflow-y-auto max-h-60 md:max-h-none"
             style={{
               backgroundColor: 'var(--bg-sidebar)',
               borderColor: 'var(--border-color)'
@@ -343,12 +334,12 @@ function NoirEditor(props: PlaygroundProps) {
           {/* Exercise Info Panel: only takes width if currentExercise is set */}
           {currentExercise ? (
             <div
-              className="hidden md:flex flex-col gap-4 border-r p-4"
+              className="hidden md:flex flex-col gap-4 border-r"
               style={{
                 backgroundColor: 'var(--bg-sidebar)',
                 borderColor: 'var(--border-color)',
-                minWidth: 220,
-                maxWidth: 480,
+                minWidth: 0,
+                maxWidth: 800,
                 width: infoPanelWidth,
                 transition: isDragging ? "none" : "none",
                 userSelect: isDragging ? "none" : "auto",
@@ -358,16 +349,17 @@ function NoirEditor(props: PlaygroundProps) {
                 color: 'var(--color-primary)'
               }}
             >
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <div className="text-xl font-bold" style={{ color: 'var(--color-primary)' }}>
+              <div className="p-6 pt-4">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="text-2xl font-bold" style={{ color: 'var(--color-primary)' }}>
                     {currentExerciseTitle && formatExerciseName(currentExerciseTitle)}
                   </div>
                   <button
-                    className="px-4 py-1 rounded hover:opacity-90 transition-opacity"
+                    className="px-4 py-1 cursor-pointer transition-opacity border"
                     style={{
-                      backgroundColor: 'var(--bg-toolbar-btn)',
-                      color: 'var(--color-primary)'
+                      borderColor: 'var(--border-color)',
+                      backgroundColor: 'transparent',
+                      color: '#768cac'
                     }}
                     onClick={() => setShowHint((prev) => !prev)}
                   >
@@ -375,22 +367,25 @@ function NoirEditor(props: PlaygroundProps) {
                   </button>
                 </div>
                 {currentExerciseDescription && (
-                  <div style={{ color: 'var(--color-primary)' }} className="mb-2">
+                  <div style={{ color: 'var(--color-primary)' }} className="mb-6">
                     {/* <span className="font-bold">Description</span> */}
                     <div className="markdown-body">
                       <ReactMarkdown>{currentExerciseDescription}</ReactMarkdown>
                     </div>
                   </div>
                 )}
+
                 {currentExerciseHint && showHint && (
                   <div className="whitespace-pre-line rounded flex flex-col gap-2" style={{ color: 'var(--color-secondary)' }}>
-                    <span className="font-bold" style={{ color: 'var(--color-primary)' }}>Hint</span>
+                    <span className="font-bold text-xl" style={{ color: 'var(--color-primary)' }}>Hint</span>
                     <div className="markdown-body">
                       <ReactMarkdown>{currentExerciseHint}</ReactMarkdown>
                     </div>
-                    <span style={{ color: 'var(--color-primary)' }}>
-                      Noir docs: <a href="https://noir-lang.org/docs" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--color-accent)' }}>https://noir-lang.org/docs</a>
-                    </span>
+                    <div className="mt-3 pt-6 border-t" style={{ borderColor: 'var(--border-color)' }}>
+                      <span style={{ color: 'var(--color-primary)' }}>
+                        <a href="https://noir-lang.org/docs" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--color-accent)' }}>View Noir Documentation</a>
+                      </span>
+                    </div>
                   </div>
                 )}
               </div>
@@ -418,37 +413,28 @@ function NoirEditor(props: PlaygroundProps) {
           {currentExercise && (
             <div
               ref={separatorRef}
+              className={
+                "hidden md:flex h-full select-none group"
+              }
+              onMouseDown={() => setIsDragging(true)}
+              role="separator"
+              aria-orientation="vertical"
+              aria-label="Resize exercise info panel"
+              tabIndex={0}
               style={{
-                width: 16,
+                width: 1,
                 cursor: isDragging ? "col-resize" : "ew-resize",
-                background: isDragging
-                  ? 'var(--border-color)'
-                  : 'var(--bg-secondary)',
+                background: 'var(--bg-secondary)',
                 zIndex: 20,
-                transition: "background 0.15s, box-shadow 0.15s",
-                boxShadow: isDragging
-                  ? `0 0 0 2px var(--border-color), 0 2px 8px var(--border-color)`
-                  : `0 0 0 1px var(--border-color)`,
+                boxShadow: `0 0 0 1px var(--border-color)`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 outline: "none",
               }}
-              className={
-                "hidden md:flex h-full select-none focus:ring-2 focus:outline-none group"
-              }
-              onMouseDown={() => setIsDragging(true)}
-              onMouseEnter={() => setShowTooltip(true)}
-              onMouseLeave={() => setShowTooltip(false)}
-              onFocus={() => setShowTooltip(true)}
-              onBlur={handleSeparatorBlur}
-              role="separator"
-              aria-orientation="vertical"
-              aria-label="Resize exercise info panel"
-              tabIndex={0}
             >
               {/* Handle: 3 vertical dots */}
-              <span
+              {/* <span
                 aria-hidden="true"
                 style={{
                   display: "inline-block",
@@ -463,29 +449,8 @@ function NoirEditor(props: PlaygroundProps) {
                     ? "opacity-100"
                     : "opacity-80 group-hover:opacity-100 transition-opacity"
                 }
-              />
-              {/* Tooltip for width */}
-              {showTooltip && (
-                <div
-                  style={{
-                    position: "absolute",
-                    top: tooltipPos.top,
-                    left: tooltipPos.left,
-                    transform: "translate(-50%, -100%)",
-                    background: "var(--color-accent)",
-                    color: "var(--color-primary)",
-                    padding: "2px 8px",
-                    borderRadius: 4,
-                    fontSize: 12,
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                    pointerEvents: "none",
-                    zIndex: 100,
-                  }}
-                  role="tooltip"
-                >
-                  {infoPanelWidth}px
-                </div>
-              )}
+              /> */}
+              {/* Tooltip for width removed */}
             </div>
           )}
 
