@@ -56,29 +56,25 @@ const ExercisesSidebar: React.FC<ExercisesSidebarProps> = ({
     }
 
     return (
-        <div className="w-auto h-auto p-4 overflow-y-auto" style={{ color: 'var(--color-primary)' }}>
+        <div className="w-auto h-auto overflow-y-auto" style={{ color: 'var(--color-primary)' }}>
             {/* <h2 className="text-xl font-bold mt-0 mb-4 text-yellow-800">Exercises</h2> */}
             {exercises.length === 0 ? (
                 <div style={{ color: 'var(--color-secondary)' }}>No exercises available</div>
             ) : (
-                <div className="space-y-1">
+                <div className="space-y-0">
                     {exercises.map((exercise) => {
                         const exerciseKey = `${exercise.category}/${exercise.file}`;
                         const isFinished = finishedExercises.includes(exerciseKey);
                         return (
                             <div
                                 key={exercise.path}
-                                className={`cursor-pointer select-none p-1 rounded transition-colors duration-150`}
+                                className={`cursor-pointer select-none p-4 pl-6 transition-colors ${theme === 'dark' ? 'hover:bg-[#ffffff10]' : 'hover:bg-[#00000010]'}`}
                                 style={{
                                     backgroundColor: currentExercise === exerciseKey
-                                        ? 'var(--color-accent)'
+                                        ? '#ffffff10'
                                         : 'transparent',
-                                    color: currentExercise === exerciseKey
-                                        ? theme === 'dark' ? '#000' : '#fff'
-                                        : isFinished
-                                            ? '#4CAF50' // Green color for finished exercises
-                                            : 'var(--color-primary)',
-                                    fontWeight: currentExercise === exerciseKey ? 'bold' : 'normal'
+                                    color: isFinished ? '#4CAF50' : 'var(--color-primary)',
+                                    fontWeight: 'normal'
                                 }}
                                 onClick={() =>
                                     selectExercise(exerciseKey, exercise.name, exercise.hint, exercise.description)
@@ -86,7 +82,7 @@ const ExercisesSidebar: React.FC<ExercisesSidebarProps> = ({
                             >
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                     <span>{formatExerciseName(exercise.name)}</span>
-                                    {isFinished && <span title="Finished">✅</span>}
+                                    {/* {isFinished && <span title="Finished">✅</span>} */}
                                 </div>
                             </div>
                         );

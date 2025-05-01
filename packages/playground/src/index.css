@@ -21,19 +21,20 @@
 
 [data-theme="dark"] {
   /* Dark theme variables */
-  --bg-primary: #121212;
-  --bg-secondary: #1E1E1E;
-  --bg-sidebar: #252525;
-  --bg-toolbar: #2D2D2D;
+  --bg-primary: #0f172a;
+  --bg-secondary: #020617;
+  --bg-sidebar: #0f172a;
+  --bg-toolbar: #0f172a;
   --bg-toolbar-btn: #4D4D4D;
   --bg-toolbar-btn-hover: #626262;
   --color-primary: #E0E0E0;
   --color-secondary: #BBBBBB;
-  --color-accent: #fbbf24;
-  --border-color: #444444;
+  --color-accent: #E0E0E0;
+  --border-color: #334155;
   --code-bg: #2d2d2d;
   --code-color: #ff9e9e;
   --hint-bg: #2d2d2d;
+  --separator-color: #0F172A;
 }
 
 body {
@@ -57,7 +58,8 @@ body:not(#editor) {
   /* Ensures markdown content wraps and doesn't overflow */
   word-break: break-word;
   overflow-wrap: anywhere;
-  color: var(--color-primary);
+  color: #768cac;
+  font-weight: 300;
 }
 
 .markdown-body p, ol {
