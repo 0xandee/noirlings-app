@@ -1,0 +1,3 @@
+- Removed unused variables `showTooltip`, `setShowTooltip`, `tooltipPos`, `setTooltipPos`, and the unused function `toggleExercisesSidebar` from `packages/playground/src/components/editor/NoirEditor.tsx`.
+- Removed all references to these variables and function, including event handlers and commented-out tooltip JSX in the draggable separator.
+- This resolves TypeScript errors TS6133 and allows the build to proceed successfully.
