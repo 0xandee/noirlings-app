@@ -68,7 +68,7 @@ const ExercisesSidebar: React.FC<ExercisesSidebarProps> = ({
                         return (
                             <div
                                 key={exercise.path}
-                                className={`cursor-pointer select-none p-4 transition-colors ${theme === 'dark' ? 'hover:bg-[#ffffff10]' : 'hover:bg-[#00000010]'}`}
+                                className={`cursor-pointer select-none p-4 pl-6 transition-colors ${theme === 'dark' ? 'hover:bg-[#ffffff10]' : 'hover:bg-[#00000010]'}`}
                                 style={{
                                     backgroundColor: currentExercise === exerciseKey
                                         ? '#ffffff10'
