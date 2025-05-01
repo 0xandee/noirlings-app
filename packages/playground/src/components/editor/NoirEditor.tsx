@@ -44,7 +44,7 @@ function NoirEditor(props: PlaygroundProps) {
   const [codeInBuffer, setCodeInBuffer] = useState<string | undefined>("");
 
   // State for exercises
-  const [showExercisesSidebar, setShowExercisesSidebar] = useState<boolean>(true);
+  const [showExercisesSidebar] = useState<boolean>(true);
   const [currentExercise, setCurrentExercise] = useState<string | null>(null);
   const [currentExerciseTitle, setCurrentExerciseTitle] = useState<string | null>(null);
   const [currentExerciseHint, setCurrentExerciseHint] = useState<string | null>(null);
