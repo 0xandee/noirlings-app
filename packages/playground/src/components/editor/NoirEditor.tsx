@@ -349,7 +349,7 @@ function NoirEditor(props: PlaygroundProps) {
                 color: 'var(--color-primary)'
               }}
             >
-              <div className="p-6">
+              <div className="p-6 pt-4">
                 <div className="flex items-center justify-between mb-4">
                   <div className="text-2xl font-bold" style={{ color: 'var(--color-primary)' }}>
                     {currentExerciseTitle && formatExerciseName(currentExerciseTitle)}
