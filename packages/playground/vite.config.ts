@@ -15,7 +15,7 @@ export default defineConfig(({ mode }: { mode: string }) => {
       target: "esnext",
       lib: {
         // Could also be a dictionary or array of multiple entry points
-        entry: path.resolve("src/index.ts"),
+        entry: path.resolve("src/index.tsx"),
         name: "Noir Playground",
         formats: ["es"] as LibraryFormats[],
         // the proper extensions will be added
