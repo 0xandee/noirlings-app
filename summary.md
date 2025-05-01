@@ -635,3 +635,36 @@ After deploying:
 - [ ] Build successful
 
 ---
+
+# Migration Summary: Express API to Vercel API Routes
+
+## What was done
+
+- Migrated all API endpoints from the custom Express server to Vercel API routes.
+- Each endpoint is now implemented as a serverless function in the `/api` directory at the project root.
+
+## Endpoint Mappings
+
+| Original Express Route                  | New Vercel API Route File              |
+| --------------------------------------- | -------------------------------------- |
+| GET /api/exercises/categories           | api/exercises/categories.js            |
+| GET /api/exercises/categories/:category | api/exercises/categories/[category].js |
+| GET /api/exercises/:category/:exercise  | api/exercises/[category]/[exercise].js |
+| GET /api/exercises/ordered-list         | api/exercises/ordered-list.js          |
+
+## Usage Notes
+
+- All endpoints only support the GET method; other methods will return 405 Method Not Allowed.
+- File system access is relative to the project root using `process.cwd()`.
+- The serverless functions use the same logic as the original Express routes, but adapted for Vercel's handler signature.
+- Static file serving and catch-all routes (e.g., serving index.html) are not handled by these API routes. For static assets, use Vercel's static file serving from the `/public` directory.
+
+## Next Steps
+
+- Remove or archive the old Express server files if no longer needed.
+- Update your frontend to call the new API endpoints as needed.
+- Deploy to Vercel and test the endpoints.
+
+---
+
+This migration enables your backend API to run natively on Vercel's serverless platform, with no need for a persistent Node.js server process.

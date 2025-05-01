@@ -45,7 +45,7 @@ export default defineConfig(({ mode }: { mode: string }) => {
     ],
     server: {
       proxy: {
-        "/api": "http://localhost:3000",
+        "/api": "http://localhost:5173",
       },
     },
   };
