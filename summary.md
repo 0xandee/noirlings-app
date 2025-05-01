@@ -16,3 +16,8 @@ These changes resolve the build error:
 ```
 
 You can now reinstall dependencies and redeploy the app on Vercel.
+
+- Added Open Graph and Twitter Card meta tags to `packages/playground/index.html` for rich link previews.
+- Used `/public/noirlingsapp-preview-image.png` as the preview image.
+- Set preview title to `NOIRLINGS.APP` and description to `Learn Noir, fast ⚡️`.
+- These changes ensure that sharing the site link will display the custom image and text on social platforms and messaging apps.
