@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "yarn vercel-build",
+  "buildCommand": "yarn build",
   "outputDirectory": "dist",
   "framework": "vite",
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
