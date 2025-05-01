@@ -1,18 +1,16 @@
 /**
- * API utility functions for the Noir Playground
+ * API utility functions for the Noir Playground (static file version)
  */
 
-const API_BASE_URL = window.location.origin;
-
 /**
- * Fetch exercise content from the server
+ * Fetch exercise content from static file
  * @param category The exercise category (e.g., 'intro', 'fields')
  * @param exercise The exercise filename (e.g., 'exercise1.nr')
  * @returns Promise with the exercise content
  */
 export const fetchExerciseContent = async (category: string, exercise: string): Promise<string> => {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/exercises/${category}/${exercise}`);
+        const response = await fetch(`/exercises/${category}/${exercise}`);
 
         if (!response.ok) {
             throw new Error(`Failed to fetch exercise: ${response.statusText}`);
@@ -26,12 +24,12 @@ export const fetchExerciseContent = async (category: string, exercise: string): 
 };
 
 /**
- * Fetch all available exercise categories
+ * Fetch all available exercise categories from static file
  * @returns Promise with an array of category names
  */
 export const fetchExerciseCategories = async (): Promise<string[]> => {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/exercises/categories`);
+        const response = await fetch(`/exercises/categories.json`);
 
         if (!response.ok) {
             throw new Error(`Failed to fetch categories: ${response.statusText}`);
@@ -45,13 +43,13 @@ export const fetchExerciseCategories = async (): Promise<string[]> => {
 };
 
 /**
- * Fetch exercises for a specific category
+ * Fetch exercises for a specific category from static file
  * @param category The exercise category
  * @returns Promise with an array of exercise names
  */
 export const fetchCategoryExercises = async (category: string): Promise<string[]> => {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/exercises/categories/${category}`);
+        const response = await fetch(`/exercises/${category}/exercises.json`);
 
         if (!response.ok) {
             throw new Error(`Failed to fetch exercises for category: ${response.statusText}`);
@@ -65,12 +63,12 @@ export const fetchCategoryExercises = async (category: string): Promise<string[]
 };
 
 /**
- * Fetch the ordered list of exercises as specified in info.toml
+ * Fetch the ordered list of exercises as specified in ordered-list.json
  * @returns Promise with an array of ordered exercise objects
  */
 export const fetchOrderedExercises = async (): Promise<any[]> => {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/exercises/ordered-list`);
+        const response = await fetch(`/exercises/ordered-list.json`);
         if (!response.ok) {
             throw new Error(`Failed to fetch ordered exercises: ${response.statusText}`);
         }

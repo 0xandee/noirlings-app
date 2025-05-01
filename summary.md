@@ -636,35 +636,101 @@ After deploying:
 
 ---
 
-# Migration Summary: Express API to Vercel API Routes
+## Migration Plan: Remove Server/API for Vercel Static Deployment
 
-## What was done
+### Current Situation
 
-- Migrated all API endpoints from the custom Express server to Vercel API routes.
-- Each endpoint is now implemented as a serverless function in the `/api` directory at the project root.
+- The app uses a custom Express server (`packages/playground/src/server/server.js` and `api.js`) to serve API endpoints under `/api` for:
+  - Listing exercise categories
+  - Listing exercises in a category
+  - Fetching exercise file content
+  - Fetching an ordered list of exercises from `info.toml`
+- The frontend fetches data from these endpoints using utility functions in `api.ts`.
+- This approach will not work on Vercel unless using serverless functions, which the user wants to avoid.
 
-## Endpoint Mappings
+### Migration Plan
 
-| Original Express Route                  | New Vercel API Route File              |
-| --------------------------------------- | -------------------------------------- |
-| GET /api/exercises/categories           | api/exercises/categories.js            |
-| GET /api/exercises/categories/:category | api/exercises/categories/[category].js |
-| GET /api/exercises/:category/:exercise  | api/exercises/[category]/[exercise].js |
-| GET /api/exercises/ordered-list         | api/exercises/ordered-list.js          |
-
-## Usage Notes
-
-- All endpoints only support the GET method; other methods will return 405 Method Not Allowed.
-- File system access is relative to the project root using `process.cwd()`.
-- The serverless functions use the same logic as the original Express routes, but adapted for Vercel's handler signature.
-- Static file serving and catch-all routes (e.g., serving index.html) are not handled by these API routes. For static assets, use Vercel's static file serving from the `/public` directory.
-
-## Next Steps
-
-- Remove or archive the old Express server files if no longer needed.
-- Update your frontend to call the new API endpoints as needed.
-- Deploy to Vercel and test the endpoints.
+1. **Remove all server/API code and dependencies.**
+2. **Convert all dynamic data (categories, exercises, ordered list) into static JSON files** (e.g., in `public/exercises/`).
+3. **Refactor frontend data fetching** to load from these static files instead of `/api` endpoints.
+4. **Ensure all exercise content is accessible as static assets.**
+5. **Test the app locally and on Vercel to confirm it works as a fully static site.**
 
 ---
 
-This migration enables your backend API to run natively on Vercel's serverless platform, with no need for a persistent Node.js server process.
+**Next steps:**
+
+- Summarize all API endpoints and the data they serve.
+- Propose a static file structure and frontend refactor plan.
+
+---
+
+## Migration: API Endpoints to Static Files (Vercel Static Deployment)
+
+### API Endpoints and Data
+
+1. **GET `/api/exercises/categories`**
+   - Returns: `["intro", "fields", ...]` (list of exercise categories)
+2. **GET `/api/exercises/categories/:category`**
+   - Returns: `["exercise1.nr", ...]` (list of exercises in a category)
+3. **GET `/api/exercises/:category/:exercise`**
+   - Returns: (plain text) content of the exercise file
+4. **GET `/api/exercises/ordered-list`**
+   - Returns: ordered list of exercises with metadata (from `info.toml`)
+
+### Static File Structure Proposal
+
+- Place all exercise files in `public/exercises/<category>/<exercise>.nr`
+- Generate the following JSON files:
+  - `public/exercises/categories.json` — list of categories
+  - `public/exercises/<category>/exercises.json` — list of exercises in that category
+  - `public/exercises/ordered-list.json` — ordered list of exercises (from `info.toml`)
+
+**Example Structure:**
+
+```
+public/
+  exercises/
+    categories.json
+    ordered-list.json
+    intro/
+      intro1.nr
+      intro2.nr
+      exercises.json
+    fields/
+      field1.nr
+      exercises.json
+    ...
+```
+
+### Mapping API Calls to Static Files
+
+- `/api/exercises/categories` → `/exercises/categories.json`
+- `/api/exercises/categories/:category` → `/exercises/<category>/exercises.json`
+- `/api/exercises/:category/:exercise` → `/exercises/<category>/<exercise>.nr`
+- `/api/exercises/ordered-list` → `/exercises/ordered-list.json`
+
+### Frontend Refactor Plan
+
+- Refactor all API calls in `api.ts` and related utilities to fetch from these static JSON/text files.
+- Remove all server and API code.
+- Ensure all exercise content is accessible as static assets.
+- Test the app locally and on Vercel to confirm it works as a fully static site.
+
+---
+
+## [2024-06-10] Migration Complete: Server/API Code Removed for Static Vercel Deployment
+
+- All Express server and API files have been removed:
+  - `packages/playground/src/server/server.js`
+  - `packages/playground/src/server/api.js`
+  - `packages/playground/src/utils/moduleHelper.js`
+  - `packages/playground/server.sh`
+  - The now-empty `packages/playground/src/server/` directory
+- All API utility functions in the frontend now fetch from static files in `/exercises/`.
+- The app is now fully static and ready for Vercel static hosting.
+- All exercise data and metadata are available as static assets in `public/exercises/`.
+
+**You can now deploy to Vercel with no server or API dependencies.**
+
+---
