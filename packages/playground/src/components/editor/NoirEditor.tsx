@@ -21,6 +21,7 @@ import { formatExerciseName } from "../../utils/formatExerciseName";
 
 // Add icons for theme toggle
 import { FiMoon, FiSun } from 'react-icons/fi';
+import { FaXTwitter } from 'react-icons/fa6';
 
 type editorType = editor.IStandaloneCodeEditor;
 
@@ -275,7 +276,16 @@ function NoirEditor(props: PlaygroundProps) {
       >
         <div className="flex items-center gap-3 ml-2">
           <img src="/noirlingsapplogo.png" alt="Noirlings Logo" className="h-4 w-auto" style={{ maxHeight: 32 }} />
-          {/* <div className="text-xl font-bold">Noirlings.app</div> */}
+          <a
+            href="http://x.com/andeebtceth/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Follow on X (Twitter)"
+            className="flex items-center justify-center w-10 h-10 rounded-full hover:opacity-80 transition-opacity cursor-pointer ml-1"
+            style={{ backgroundColor: 'transparent' }}
+          >
+            <FaXTwitter size={18} color="var(--color-primary)" />
+          </a>
         </div>
         <div className="flex gap-2 items-center">
           {/* <button
