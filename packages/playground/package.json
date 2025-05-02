@@ -1,6 +1,6 @@
 {
   "name": "@signorecello/noir_playground",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "A playground for the Noir programming language",
   "type": "module",
   "main": "src/index.ts",
