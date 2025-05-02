@@ -21,3 +21,5 @@ You can now reinstall dependencies and redeploy the app on Vercel.
 - Used `/public/noirlingsapp-preview-image.png` as the preview image.
 - Set preview title to `NOIRLINGS.APP` and description to `Learn Noir, fast ⚡️`.
 - These changes ensure that sharing the site link will display the custom image and text on social platforms and messaging apps.
+
+- Moved the X (Twitter) logo button to appear next to the Noirlings logo on the left side of the toolbar for better branding and visibility.
