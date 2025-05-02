@@ -23,3 +23,8 @@ You can now reinstall dependencies and redeploy the app on Vercel.
 - These changes ensure that sharing the site link will display the custom image and text on social platforms and messaging apps.
 
 - Moved the X (Twitter) logo button to appear next to the Noirlings logo on the left side of the toolbar for better branding and visibility.
+
+## [Favicon Added]
+
+- Added `<link rel="icon" type="image/x-icon" href="/noirlingsapp.ico" />` to `packages/playground/index.html` <head> section.
+- This sets the favicon for the playground app to the provided noirlingsapp.ico file located in packages/playground/public/.
