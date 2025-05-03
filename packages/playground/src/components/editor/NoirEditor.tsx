@@ -65,6 +65,19 @@ function NoirEditor(props: PlaygroundProps) {
     return saved ? JSON.parse(saved) : [];
   });
 
+  // Share text templates
+  const shareTemplates = [
+    "Just smashed {finished}/{total} Noirlings exercises, bullish af ⚡️\n\nLevel up your Noir game here: https://noirlings.app \n\n@NoirLang",
+    "{finished}/{total} Noirlings done, privacy arc started 🚀\n\nYour turn anon: https://noirlings.app \n\n@NoirLang",
+    "Grinding Noirlings {finished}/{total}, gonna make it fr 🔥\n\nJoin the quest: https://noirlings.app \n\n@NoirLang",
+    "{finished}/{total} Noirlings crushed! Ready to speedrun zk skills?\n\nHop in: https://noirlings.app \n\n@NoirLang",
+    "{finished} outta {total} Noirlings exercises checked ✅\nNoir skills loading… \n\nGet your zk reps in here: https://noirlings.app \n\n@NoirLang",
+    "I'm {finished}/{total} into Noirlings already, don't sleep anon 😴\n\nStart before your frens: https://noirlings.app \n\n@NoirLang",
+    "Achievement unlocked: {finished}/{total} Noirlings 🕹️\n\nLevel up: https://noirlings.app \n\n@NoirLang",
+    "{finished}/{total} done on Noirlings - can you beat me anon? 🎯\n\nShow your skillz: https://noirlings.app \n\n@NoirLang",
+    "Long on Noir, entry at {finished}/{total} Noirlings exercises 📈\n\nDYOR here: https://noirlings.app \n\n@NoirLang",
+  ];
+
   // Enhanced mouse event handlers for draggable separator
   useEffect(() => {
     let animationFrame: number | null = null;
@@ -275,17 +288,21 @@ function NoirEditor(props: PlaygroundProps) {
         style={{ backgroundColor: 'var(--bg-toolbar)', borderColor: 'var(--border-color)' }}
       >
         <div className="flex items-center gap-3 ml-2">
-          <img src="/noirlingsapplogo.png" alt="Noirlings Logo" className="h-4 w-auto" style={{ maxHeight: 32 }} />
-          <a
-            href="http://x.com/andeebtceth/"
+          {theme === 'light' ? (
+            <img src="/noirlingsapplogo-white.png" alt="Noirlings Logo" className="h-4 w-auto" style={{ maxHeight: 32 }} />
+          ) : (
+            <img src="/noirlingsapplogo-white.png" alt="Noirlings Logo" className="h-4 w-auto" style={{ maxHeight: 32 }} />
+          )}
+          {/* <a
+            href="https://x.com/andeebtceth"
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Follow on X (Twitter)"
-            className="flex items-center justify-center w-10 h-10 rounded-full hover:opacity-80 transition-opacity cursor-pointer ml-1"
-            style={{ backgroundColor: 'transparent' }}
+            aria-label="Follow @andeebtceth on X (Twitter)"
+            className="flex items-center gap-1 text-xs px-2 py-1 rounded hover:opacity-80 transition-opacity ml-2"
+            style={{ color: 'var(--finished-counter)', backgroundColor: 'transparent', textDecoration: 'none' }}
           >
-            <FaXTwitter size={18} color="var(--color-primary)" />
-          </a>
+            <span>Follow</span>
+          </a> */}
         </div>
         <div className="flex gap-2 items-center">
           {/* <button
@@ -299,24 +316,52 @@ function NoirEditor(props: PlaygroundProps) {
             {showExercisesSidebar ? "Hide Exercises List" : "Show Exercises List"}
           </button> */}
 
-          {/* add finished exercises counter e.g. 1/10   */}
-          <div className="text-sm text-[#768cac]">
+          <div className="text-sm " style={{ color: "var(--finished-counter)" }}>
             Finished: {finishedExercises.length}/{orderedExercises.length}
           </div>
+
+          <button
+            className="text-sm px-3 py-1 rounded hover:opacity-80 transition-opacity border flex items-center gap-1 cursor-pointer ml-3"
+            style={{ color: "var(--finished-counter)", borderColor: 'var(--border-color)', backgroundColor: 'transparent' }}
+            onClick={() => {
+              const template = shareTemplates[Math.floor(Math.random() * shareTemplates.length)];
+              const text = template
+                .replace('{finished}', finishedExercises.length.toString())
+                .replace('{total}', orderedExercises.length.toString());
+              const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+              window.open(url, '_blank', 'noopener,noreferrer');
+            }}
+            aria-label="Share your Noirlings progress on X (Twitter)"
+          >
+            <span>Share on</span>
+            <FaXTwitter size={16} color="var(--finished-counter)" />
+          </button>
+
+          {/* <a
+            href="http://x.com/andeebtceth/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Follow on X (Twitter)"
+            className="flex items-center justify-center w-10 h-10 rounded-full hover:opacity-80 transition-opacity cursor-pointer ml-2"
+            style={{ backgroundColor: 'transparent' }}
+          >
+            <FaXTwitter size={18} color="var(--finished-counter)" />
+          </a> */}
 
           {/* Theme toggle button */}
           <button
             onClick={toggleTheme}
             className="flex items-center justify-center w-10 h-10 rounded-full hover:opacity-80 transition-opacity cursor-pointer"
-            style={{ backgroundColor: 'transparent' }}
+            style={{ backgroundColor: 'transparent', }}
             aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
           >
             {theme === 'light' ? (
-              <FiSun size={18} color="var(--color-primary)" />
+              <FiSun size={18} color="var(--finished-counter)" />
             ) : (
-              <FiMoon size={18} color="var(--color-primary)" />
+              <FiMoon size={18} color="var(--finished-counter)" />
             )}
           </button>
+
         </div>
       </div>
 
@@ -365,11 +410,11 @@ function NoirEditor(props: PlaygroundProps) {
                     {currentExerciseTitle && formatExerciseName(currentExerciseTitle)}
                   </div>
                   <button
-                    className="px-4 py-1 cursor-pointer transition-opacity border"
+                    className="px-4 py-1 cursor-pointer transition-opacity border rounded-sm hover:opacity-80"
                     style={{
                       borderColor: 'var(--border-color)',
                       backgroundColor: 'transparent',
-                      color: '#768cac'
+                      color: 'var(--secondary-text)'
                     }}
                     onClick={() => setShowHint((prev) => !prev)}
                   >

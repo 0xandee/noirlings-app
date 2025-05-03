@@ -4,7 +4,7 @@
     "path": "exercises/intro/intro1.nr",
     "mode": "test",
     "hint": "No hint this time\n",
-    "description": "Noir is an open-source DSL (Domain specific language) for construction of privacy-preserving zk programs.\n\nZK programs are programs that can generate short proof of statements without revealing all inputs to the statements.\n\nWelcome to Noirlings!\n\nThis exercise doesn't do anything yet but it still compiles! Noir file getting run\nneeds to have a `main` function. So this file is a valid Noir file.\nOther exercises will require you to write Noir code to make the exercise file compile.\n",
+    "description": "Noir is an open-source DSL (Domain specific language) for construction of privacy-preserving zk programs.\n\nZK programs are programs that can generate short proof of statements without revealing all inputs to the statements.\n\nWelcome to Noirlings!\n\nThis exercise doesn't do anything yet but it still compiles! Noir file getting run\nneeds to have a `main` function. So this file is a valid Noir file.\nOther exercises will require you to write Noir code to make the exercise file compile.\n\n If you like this project, follow me [@andeebtceth](https://x.com/andeebtceth) on X!",
     "category": "intro",
     "file": "intro1.nr"
   },
