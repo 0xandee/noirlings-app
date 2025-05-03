@@ -1,7 +1,7 @@
 {
-  "name": "@signorecello/noir_playground",
+  "name": "@andeebtceth/noirlings-app",
   "version": "0.8.0",
-  "description": "A playground for the Noir programming language",
+  "description": "A playground for the Noirlings exercises",
   "type": "module",
   "main": "src/index.ts",
   "exports": {

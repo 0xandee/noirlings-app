@@ -1,45 +1,116 @@
-[![NPM](https://nodei.co/npm/@signorecello/noir_playground.png?downloads=true)](https://www.npmjs.com/package/@signorecello/noir_playground)
+<p align="center">
+ <img width="240" alt="twitter-avatar" src="https://github.com/user-attachments/assets/5b7f5676-54a2-4399-a022-b637078dc7d7" />
+</p>
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/a4e5229d-923b-437e-ad5c-8a8e131b5863/deploy-status)](https://app.netlify.com/sites/noir-playground/deploys)
+<h1 align="center">Noirlings.app</h1>
 
-# Noir Playground
+<p align="center">
+  <strong>Learn Noir, fast ⚡️</strong>
+</p>
 
-This package packages several Noir tools with Monaco, and allows you to embed a simple Noir Playground in your website. [Try the live demo!](https://noir-playground.netlify.app/)
+Noirlings.app is a modern, interactive playground for the [Noir](https://noir-lang.org/) programming language. It's designed to help you learn Noir quickly and intuitively, with hands-on exercises, instant feedback, and a beautiful, responsive UI.
 
-## Getting started
+---
+
+## Features
+
+- ✨ **Interactive Noir Playground** — Write, run, and experiment with Noir code in your browser
+- 🧩 **Guided Exercises** — Progress through curated exercises to master Noir concepts
+- 🏆 **Share Your Progress** — Instantly share your achievements on X (Twitter)
+- 🎨 **Modern UI** — Built with React, Tailwind CSS, and Monaco Editor for a seamless experience
+- ⚡️ **Fast & Serverless** — Powered by Vite and deployed on Vercel for instant access
+- 📈 **Analytics** — Integrated with Vercel Analytics for usage insights
+
+---
+
+## Monorepo Structure
+
+This project uses [Yarn Workspaces](https://classic.yarnpkg.com/en/docs/workspaces/) for a modular, scalable codebase:
+
+```
+packages/
+  playground/   # Main Noir playground app (React + Vite)
+  exercises/    # Exercise content and logic
+```
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v18+ recommended)
+- [Yarn](https://yarnpkg.com/) (v4+)
 
 ### Installation
 
-Install with npm or yarn:
-
-```
-yarn add @signorecello/noir_playground
-```
-
-### Usage
-
-Quite simply import NoirEditor and add it as a React node:
-
-```ts
-import { NoirEditor } from '@signorecello/noir_playground';
-
-ReactDOM.createRoot(document.getElementById('root')!).render(
-<NoirEditor />
-)
+```bash
+git clone https://github.com/0xandee/noirlings-app.git
+cd noirlings-app
+yarn install
 ```
 
-### Options
+### Development
 
-You can pass all the options in [Monaco editor](https://github.com/suren-atoyan/monaco-react#props).
+```bash
+yarn dev
+```
 
-There are some additional options related with Noir:
+This runs the playground in development mode. Open [http://localhost:5173](http://localhost:5173) to view it in your browser.
 
-| Name    | Type   | Default                         | Description                                                                               |
-| :------ | :----- | :------------------------------ | :---------------------------------------------------------------------------------------- |
-| threads | number | `navigator.hardwareConcurrency` | the number of threads to use in NoirJS. Defaults to the maximum available in your machine |
+### Build
 
-## How to build
+```bash
+yarn build
+```
 
-This repo uses yarn workspaces. The actual package is in `packages/playground`, and is built with `rollup`. To contribute, you should make whatever changes and simply run `yarn build` on that folder.
+Builds the playground for production to the `dist/` directory.
 
-All contributions are welcome!
+### Deployment (Vercel)
+
+This project is optimized for [Vercel](https://vercel.com/):
+
+- Build command: `yarn vercel-build`
+- Output directory: `dist`
+- Framework: Vite
+
+You can deploy instantly by clicking the Vercel button above or by running:
+
+```bash
+vercel --prod
+```
+
+---
+
+## Share Your Progress
+
+Noirlings.app makes it easy to share your learning journey:
+
+- Use the **Share on X** button in the playground toolbar to tweet your progress and tag [@NoirLang](https://x.com/NoirLang).
+- All shares are tracked with Vercel Analytics for insights.
+
+---
+
+## Follow the Author
+
+Made with ❤️ by [@andeebtceth](https://x.com/andeebtceth). Follow for updates and Noir tips!
+
+---
+
+## Contributing
+
+Contributions are welcome! Please open issues or pull requests to help improve Noirlings.app.
+
+---
+
+## Credits
+
+- [Noir Programming Language](https://noir-lang.org/)
+- [Monaco Editor](https://microsoft.github.io/monaco-editor/)
+- [Vercel](https://vercel.com/)
+- [React](https://react.dev/)
+- [Tailwind CSS](https://tailwindcss.com/)
+
+---
+
+For more details, see the [CHANGELOG.md](CHANGELOG.md).

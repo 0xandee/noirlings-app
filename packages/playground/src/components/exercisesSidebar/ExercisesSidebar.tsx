@@ -71,9 +71,9 @@ const ExercisesSidebar: React.FC<ExercisesSidebarProps> = ({
                                 className={`cursor-pointer select-none p-4 pl-6 transition-colors ${theme === 'dark' ? 'hover:bg-[#ffffff10]' : 'hover:bg-[#00000010]'}`}
                                 style={{
                                     backgroundColor: currentExercise === exerciseKey
-                                        ? '#ffffff10'
+                                        ? (theme === 'dark' ? '#ffffff10' : '#00000010')
                                         : 'transparent',
-                                    color: isFinished ? '#4CAF50' : 'var(--color-primary)',
+                                    color: isFinished ? 'var(--finished-text)' : 'var(--color-primary)',
                                     fontWeight: 'normal'
                                 }}
                                 onClick={() =>
