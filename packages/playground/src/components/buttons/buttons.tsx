@@ -18,7 +18,7 @@ export const Button = ({
   children?: React.ReactNode;
   style?: CSSProperties;
 }) => {
-  const buttonClasses = `${className} px-6 px-3 ${$primary ? "bg-[#00810d]" : "bg-black"
+  const buttonClasses = `${className} px-6 px-3 ${$primary ? "bg-[#00810d] hover:bg-[#005c09]" : "bg-[#141617] hover:bg-gray-800"
     } max-h-10 text-right text-base font-medium leading-none flex p-5 justify-center items-center ${disabled ? "opacity-50" : "opacity-100"
     } text-gray-7`;
 

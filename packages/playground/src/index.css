@@ -5,29 +5,32 @@
 :root {
   /* Light theme variables (default) */
   --bg-primary: #FFFFFF;
-  --bg-secondary: #F9F1DF;
-  --bg-sidebar: #fff8e6;
-  --bg-toolbar: #fbbf24;
+  --bg-secondary: #FFFFFF;
+  --bg-sidebar: #FFFFFF;
+  --bg-toolbar: #715ec2;
   --bg-toolbar-btn: #d97706;
   --bg-toolbar-btn-hover: #b45309;
   --color-primary: #000000;
-  --color-secondary: #422006;
+  --color-secondary: #141617;
   --color-accent: #b45309;
-  --border-color: #fcd34d;
+  --border-color: #EEEDF1;
   --code-bg: #ececec;
   --code-color: #b30000;
   --hint-bg: #cbcbcb;
+  --secondary-text: #292929;
+  --finished-text: #00810d;
+  --finished-counter: #FFFFFF;
 }
 
 [data-theme="dark"] {
   /* Dark theme variables */
   --bg-primary: #0f172a;
-  --bg-secondary: #020617;
+  --bg-secondary: #1D1F21;
   --bg-sidebar: #0f172a;
   --bg-toolbar: #0f172a;
   --bg-toolbar-btn: #4D4D4D;
   --bg-toolbar-btn-hover: #626262;
-  --color-primary: #E0E0E0;
+  --color-primary: #ffffffde;
   --color-secondary: #BBBBBB;
   --color-accent: #E0E0E0;
   --border-color: #334155;
@@ -35,6 +38,9 @@
   --code-color: #ff9e9e;
   --hint-bg: #2d2d2d;
   --separator-color: #0F172A;
+  --secondary-text: #99afd0;
+  --finished-text: #4CAF50;
+  --finished-counter: #99afd0;
 }
 
 body {
@@ -58,13 +64,13 @@ body:not(#editor) {
   /* Ensures markdown content wraps and doesn't overflow */
   word-break: break-word;
   overflow-wrap: anywhere;
-  color: #768cac;
+  color: var(--secondary-text);
   font-weight: 300;
 }
 
 .markdown-body p, ol {
-  margin-block-start: 1em;
-  margin-block-end: 1em;
+  margin-block-start: 0em;
+  margin-block-end: 0em;
 }
 
 .markdown-body pre {

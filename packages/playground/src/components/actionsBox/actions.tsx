@@ -111,10 +111,10 @@ export const ActionsBox = ({
       >
         <ButtonContainer>
           {compiledCode && (
-            <div className="font-semibold mb-2 px-4" style={{ color: '#4ade80' }}>✨ Compiled successfully!</div>
+            <div className="font-medium mb-4 px-4" style={{ color: '#4ade80' }}>✨ Compiled successfully!</div>
           )}
           {compileError && (
-            <div className="font-semibold mb-2 px-4" style={{ color: '#ef4444' }}>
+            <div className="font-medium mb-4 px-4" style={{ color: '#fa5e5e' }}>
               <span className="font-normal">Error:</span><br />
               <span className="font-normal">{compileError}</span>
             </div>
@@ -153,10 +153,6 @@ export const ActionsBox = ({
               $primary={true}
               className="cursor-pointer w-10/12"
               disabled={pending}
-              style={{
-                color: 'var(--color-primary)',
-                backgroundColor: 'var(--color-accent)'
-              }}
             >
               {pending ? "Compiling..." : "Compile"}
             </Button>
