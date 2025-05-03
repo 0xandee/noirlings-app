@@ -8,8 +8,6 @@
   <strong>Learn Noir, fast ⚡️</strong>
 </p>
 
----
-
 Noirlings.app is a modern, interactive playground for the [Noir](https://noir-lang.org/) programming language. It's designed to help you learn Noir quickly and intuitively, with hands-on exercises, instant feedback, and a beautiful, responsive UI.
 
 ---
@@ -32,7 +30,6 @@ This project uses [Yarn Workspaces](https://classic.yarnpkg.com/en/docs/workspac
 ```
 packages/
   playground/   # Main Noir playground app (React + Vite)
-  website/      # (Optional) Marketing or docs site
   exercises/    # Exercise content and logic
 ```
 
