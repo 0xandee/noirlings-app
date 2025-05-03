@@ -69,8 +69,8 @@ body:not(#editor) {
 }
 
 .markdown-body p, ol {
-  margin-block-start: 0em;
-  margin-block-end: 0em;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
 }
 
 .markdown-body pre {
