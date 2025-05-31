@@ -9,6 +9,12 @@ export default defineConfig(({ mode }: { mode: string }) => {
 
   const base = {
     optimizeDeps: {
+      exclude: [
+        "@noir-lang/noir_wasm",
+        "@noir-lang/backend_barretenberg",
+        "@noir-lang/noir_js",
+        "@noir-lang/types"
+      ],
       esbuildOptions: {
         target: "esnext",
       },

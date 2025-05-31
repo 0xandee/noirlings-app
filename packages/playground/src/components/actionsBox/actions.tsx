@@ -98,7 +98,7 @@ export const ActionsBox = ({
 
     const proofDataHex = {
       proof: toHex(proofData.proof),
-      publicInputs: Array.from(proofData.publicInputs.values()),
+      publicInputs: Array.from(proofData.publicInputs.values()).map(String),
     };
     setProof(proofDataHex);
   };
