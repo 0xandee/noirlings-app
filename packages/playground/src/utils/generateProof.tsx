@@ -38,11 +38,11 @@ export async function generateProof({
   input: InputMap;
   threads: number;
 }) {
-  const backend = new BarretenbergBackend(
-    circuit as unknown as CompiledCircuit,
-    { threads }
-  );
-  const noir = new Noir(circuit as unknown as CompiledCircuit, backend);
-  const proof = noir!.generateProof(input);
+  const noir = new Noir(circuit);
+  const backend = new BarretenbergBackend(circuit as any, { threads });
+
+  const { witness } = await noir.execute(input);
+  const proof = await backend.generateProof(witness);
+
   return proof;
 }
