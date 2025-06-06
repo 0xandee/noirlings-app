@@ -68,6 +68,10 @@ body:not(#editor) {
   font-weight: 300;
 }
 
+.markdown-body a {
+  color: var(--color-accent);
+}
+
 .markdown-body p, ol {
   margin-block-start: 1em;
   margin-block-end: 1em;
