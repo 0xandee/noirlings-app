@@ -12,17 +12,6 @@ Noirlings.app is a modern, interactive playground for the [Noir](https://noir-la
 
 ---
 
-## Features
-
-- ✨ **Interactive Noir Playground** — Write, run, and experiment with Noir code in your browser
-- 🧩 **Guided Exercises** — Progress through curated exercises to master Noir concepts
-- 🏆 **Share Your Progress** — Instantly share your achievements on X (Twitter)
-- 🎨 **Modern UI** — Built with React, Tailwind CSS, and Monaco Editor for a seamless experience
-- ⚡️ **Fast & Serverless** — Powered by Vite and deployed on Vercel for instant access
-- 📈 **Analytics** — Integrated with Vercel Analytics for usage insights
-
----
-
 ## Monorepo Structure
 
 This project uses [Yarn Workspaces](https://classic.yarnpkg.com/en/docs/workspaces/) for a modular, scalable codebase:
@@ -105,6 +94,7 @@ Contributions are welcome! Please open issues or pull requests to help improve N
 
 ## Credits
 
+- **Original Noirlings** — This project is inspired by and builds upon the original [Noirlings](https://github.com/raven-house/noirlings) by [@satyambnsal](https://x.com/satyambnsal)
 - [Noir Programming Language](https://noir-lang.org/)
 - [Monaco Editor](https://microsoft.github.io/monaco-editor/)
 - [Vercel](https://vercel.com/)
