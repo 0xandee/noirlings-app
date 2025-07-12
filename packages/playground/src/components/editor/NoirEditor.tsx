@@ -21,7 +21,6 @@ import { formatExerciseName } from "../../utils/formatExerciseName";
 import { useAuth } from "../../hooks/useAuth";
 import { supabase } from "../../hooks/useAuth";
 import debounce from 'lodash/debounce';
-import { User } from '@supabase/supabase-js';
 
 // Add icons for theme toggle
 import { FiMoon, FiSun } from 'react-icons/fi';
@@ -77,7 +76,7 @@ function NoirEditor(props: PlaygroundProps) {
   const loadProgress = async () => {
     if (user) {
       try {
-        const { data, error } = await supabase.from('user_progress').select('*').eq('user_id', user.id).single();
+        const { data, error } = await supabase.from('user_progress').select('*').eq('user_id', user!.id).single();
         if (error) {
           console.error('Error loading progress:', error);
           return;
@@ -104,7 +103,7 @@ function NoirEditor(props: PlaygroundProps) {
       (async () => {
         try {
           // First, load current DB progress
-          const { data: dbData, error: loadError } = await supabase.from('user_progress').select('*').eq('user_id', user.id).single();
+          const { data: dbData, error: loadError } = await supabase.from('user_progress').select('*').eq('user_id', user!.id).single();
           if (loadError && loadError.code !== 'PGRST116') { // Ignore if no row exists
             console.error('Error loading DB progress for merge:', loadError);
             return;
@@ -117,7 +116,7 @@ function NoirEditor(props: PlaygroundProps) {
           // Prepare merged data
           let shouldUpsert = false;
           const mergedData = {
-            user_id: user.id,
+            user_id: user!.id,
             finished_exercises: dbData?.finished_exercises || [],
             last_exercise: dbData?.last_exercise || null,
             theme: dbData?.theme || 'dark',
@@ -173,7 +172,7 @@ function NoirEditor(props: PlaygroundProps) {
             finished_exercises: finishedExercises,
             last_exercise: currentExercise,
             theme: theme,
-          }).eq('user_id', user.id);
+          }).eq('user_id', user!.id);
           if (error) {
             console.error('Error saving progress:', error);
           } else {
