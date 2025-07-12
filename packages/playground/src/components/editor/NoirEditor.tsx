@@ -18,6 +18,10 @@ import type { OrderedExercise } from "../exercisesSidebar/ExercisesSidebar";
 import { createFileFromExercise, loadExerciseContent, getOrderedExercises } from "../../utils/exerciseLoader";
 import ReactMarkdown from "react-markdown";
 import { formatExerciseName } from "../../utils/formatExerciseName";
+import { useAuth } from "../../hooks/useAuth";
+import { supabase } from "../../hooks/useAuth";
+import debounce from 'lodash/debounce';
+import { User } from '@supabase/supabase-js';
 
 // Add icons for theme toggle
 import { FiMoon, FiSun } from 'react-icons/fi';
@@ -29,7 +33,7 @@ function NoirEditor(props: PlaygroundProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const separatorRef = useRef<HTMLDivElement>(null);
 
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme, setTheme } = useTheme();
   const { monaco, loaded } = useMonaco(theme);
 
   const [monacoEditor, setMonacoEditor] = useState<editorType | null>(null); // To track the editor instance
@@ -60,10 +64,135 @@ function NoirEditor(props: PlaygroundProps) {
   const [showHint, setShowHint] = useState(false);
 
   // Add after other useState hooks
+  const { user, login, logout } = useAuth();
   const [finishedExercises, setFinishedExercises] = useState<string[]>(() => {
     const saved = localStorage.getItem("noir_finished_exercises");
     return saved ? JSON.parse(saved) : [];
   });
+
+  // Add states for last_exercise and theme (they already exist, but ensure sync)
+  // Note: currentExercise is set from last_exercise
+
+  // New function to load from Supabase
+  const loadProgress = async () => {
+    if (user) {
+      try {
+        const { data, error } = await supabase.from('user_progress').select('*').eq('user_id', user.id).single();
+        if (error) {
+          console.error('Error loading progress:', error);
+          return;
+        }
+        if (data) {
+          setFinishedExercises(data.finished_exercises as string[] || []);
+          if (data.last_exercise) {
+            // Load last exercise
+            const exercises = await getOrderedExercises();
+            const toLoad = exercises.find(ex => `${ex.category}/${ex.file}` === data.last_exercise) || exercises[0];
+            handleExerciseSelect(`${toLoad.category}/${toLoad.file}`, toLoad.name, toLoad.hint, toLoad.description);
+          }
+          if (data.theme) setTheme(data.theme);
+        }
+      } catch (err) {
+        console.error('Unexpected error loading progress:', err);
+      }
+    }
+  };
+
+  // Modify the sync useEffect:
+  useEffect(() => {
+    if (user) {
+      (async () => {
+        try {
+          // First, load current DB progress
+          const { data: dbData, error: loadError } = await supabase.from('user_progress').select('*').eq('user_id', user.id).single();
+          if (loadError && loadError.code !== 'PGRST116') { // Ignore if no row exists
+            console.error('Error loading DB progress for merge:', loadError);
+            return;
+          }
+
+          const localFinished = JSON.parse(localStorage.getItem('noir_finished_exercises') || '[]');
+          const localLast = localStorage.getItem('noir_last_exercise');
+          const localTheme = localStorage.getItem('noir_theme') || 'dark';
+
+          // Prepare merged data
+          let shouldUpsert = false;
+          const mergedData = {
+            user_id: user.id,
+            finished_exercises: dbData?.finished_exercises || [],
+            last_exercise: dbData?.last_exercise || null,
+            theme: dbData?.theme || 'dark',
+          };
+
+          // Merge finished_exercises if local has any
+          if (localFinished.length > 0) {
+            mergedData.finished_exercises = [...new Set([...mergedData.finished_exercises, ...localFinished])];
+            shouldUpsert = true;
+          }
+
+          // Use local last_exercise if present and DB doesn't have one, or prefer recent (simple: prefer local if exists)
+          if (localLast && !mergedData.last_exercise) {
+            mergedData.last_exercise = localLast;
+            shouldUpsert = true;
+          }
+
+          // Similar for theme
+          if (localTheme && mergedData.theme !== localTheme) {
+            mergedData.theme = localTheme;
+            shouldUpsert = true;
+          }
+
+          if (shouldUpsert) {
+            const { error } = await supabase.from('user_progress').upsert(mergedData, { onConflict: 'user_id' });
+            if (error) {
+              console.error('Error syncing progress:', error);
+              return;
+            }
+            console.log('Progress synced successfully');
+          }
+
+          // Clear local regardless
+          localStorage.removeItem('noir_finished_exercises');
+          localStorage.removeItem('noir_last_exercise');
+          localStorage.removeItem('noir_theme');
+
+          // Load final state
+          await loadProgress();
+        } catch (err) {
+          console.error('Unexpected error syncing progress:', err);
+        }
+      })();
+    }
+  }, [user]);
+
+  // Wrap the save logic in a debounced function
+  useEffect(() => {
+    const saveProgress = debounce(async () => {
+      if (user) {
+        try {
+          const { error } = await supabase.from('user_progress').update({
+            finished_exercises: finishedExercises,
+            last_exercise: currentExercise,
+            theme: theme,
+          }).eq('user_id', user.id);
+          if (error) {
+            console.error('Error saving progress:', error);
+          } else {
+            console.log('Progress saved successfully');
+          }
+        } catch (err) {
+          console.error('Unexpected error saving progress:', err);
+        }
+      } else {
+        localStorage.setItem("noir_finished_exercises", JSON.stringify(finishedExercises));
+        if (currentExercise) localStorage.setItem("noir_last_exercise", currentExercise);
+        localStorage.setItem("noir_theme", theme);
+      }
+    }, 500); // Debounce for 0.5 second
+
+    saveProgress();
+
+    return () => saveProgress.cancel(); // Cleanup on unmount
+  }, [finishedExercises, currentExercise, theme, user]);
 
   // Share text templates
   const shareTemplates = [
@@ -319,6 +448,14 @@ function NoirEditor(props: PlaygroundProps) {
           <div className="text-sm " style={{ color: "var(--finished-counter)" }}>
             Finished: {finishedExercises.length}/{orderedExercises.length}
           </div>
+
+          <button
+            className="text-sm px-3 py-1 rounded hover:opacity-80 transition-opacity border flex items-center gap-1 cursor-pointer ml-3"
+            style={{ color: "var(--finished-counter)", borderColor: 'var(--border-color)', backgroundColor: 'transparent' }}
+            onClick={user ? logout : login}
+          >
+            {user ? 'Logout' : 'Login with GitHub'}
+          </button>
 
           <button
             className="text-sm px-3 py-1 rounded hover:opacity-80 transition-opacity border flex items-center gap-1 cursor-pointer ml-3"
