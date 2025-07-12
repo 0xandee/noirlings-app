@@ -24,7 +24,7 @@ import debounce from 'lodash/debounce';
 
 // Add icons for theme toggle
 import { FiMoon, FiSun } from 'react-icons/fi';
-import { FaXTwitter, FaGithub } from 'react-icons/fa6';
+import { FaGithub } from 'react-icons/fa6';
 
 type editorType = editor.IStandaloneCodeEditor;
 
@@ -193,18 +193,18 @@ function NoirEditor(props: PlaygroundProps) {
     return () => saveProgress.cancel(); // Cleanup on unmount
   }, [finishedExercises, currentExercise, theme, user]);
 
-  // Share text templates
-  const shareTemplates = [
-    "Just smashed {finished}/{total} Noirlings exercises, bullish af ⚡️\n\nLevel up your Noir game here: https://noirlings.app \n\n@NoirLang @andeebtceth",
-    "{finished}/{total} Noirlings done, privacy arc started 🚀\n\nYour turn anon: https://noirlings.app \n\n@NoirLang @andeebtceth",
-    "Grinding Noirlings {finished}/{total}, gonna make it fr 🔥\n\nJoin the quest: https://noirlings.app \n\n@NoirLang @andeebtceth",
-    "{finished}/{total} Noirlings crushed! Ready to speedrun zk skills?\n\nHop in: https://noirlings.app \n\n@NoirLang @andeebtceth",
-    "{finished} outta {total} Noirlings exercises checked ✅\nNoir skills loading… \n\nGet your zk reps in here: https://noirlings.app \n\n@NoirLang @andeebtceth",
-    "I'm {finished}/{total} into Noirlings already, don't sleep anon 😴\n\nStart before your frens: https://noirlings.app \n\n@NoirLang @andeebtceth",
-    "Achievement unlocked: {finished}/{total} Noirlings 🕹️\n\nLevel up: https://noirlings.app \n\n@NoirLang @andeebtceth",
-    "{finished}/{total} done on Noirlings - can you beat me anon? 🎯\n\nShow your skillz: https://noirlings.app \n\n@NoirLang @andeebtceth",
-    "Long on Noir, entry at {finished}/{total} Noirlings exercises 📈\n\nDYOR here: https://noirlings.app \n\n@NoirLang @andeebtceth",
-  ];
+  // // Share text templates
+  // const shareTemplates = [
+  //   "Just smashed {finished}/{total} Noirlings exercises, bullish af ⚡️\n\nLevel up your Noir game here: https://noirlings.app \n\n@NoirLang @andeebtceth",
+  //   "{finished}/{total} Noirlings done, privacy arc started 🚀\n\nYour turn anon: https://noirlings.app \n\n@NoirLang @andeebtceth",
+  //   "Grinding Noirlings {finished}/{total}, gonna make it fr 🔥\n\nJoin the quest: https://noirlings.app \n\n@NoirLang @andeebtceth",
+  //   "{finished}/{total} Noirlings crushed! Ready to speedrun zk skills?\n\nHop in: https://noirlings.app \n\n@NoirLang @andeebtceth",
+  //   "{finished} outta {total} Noirlings exercises checked ✅\nNoir skills loading… \n\nGet your zk reps in here: https://noirlings.app \n\n@NoirLang @andeebtceth",
+  //   "I'm {finished}/{total} into Noirlings already, don't sleep anon 😴\n\nStart before your frens: https://noirlings.app \n\n@NoirLang @andeebtceth",
+  //   "Achievement unlocked: {finished}/{total} Noirlings 🕹️\n\nLevel up: https://noirlings.app \n\n@NoirLang @andeebtceth",
+  //   "{finished}/{total} done on Noirlings - can you beat me anon? 🎯\n\nShow your skillz: https://noirlings.app \n\n@NoirLang @andeebtceth",
+  //   "Long on Noir, entry at {finished}/{total} Noirlings exercises 📈\n\nDYOR here: https://noirlings.app \n\n@NoirLang @andeebtceth",
+  // ];
 
   // Enhanced mouse event handlers for draggable separator
   useEffect(() => {
