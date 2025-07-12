@@ -24,7 +24,7 @@ import debounce from 'lodash/debounce';
 
 // Add icons for theme toggle
 import { FiMoon, FiSun } from 'react-icons/fi';
-import { FaXTwitter } from 'react-icons/fa6';
+import { FaXTwitter, FaGithub } from 'react-icons/fa6';
 
 type editorType = editor.IStandaloneCodeEditor;
 
@@ -444,19 +444,57 @@ function NoirEditor(props: PlaygroundProps) {
             {showExercisesSidebar ? "Hide Exercises List" : "Show Exercises List"}
           </button> */}
 
-          <div className="text-sm " style={{ color: "var(--finished-counter)" }}>
-            Finished: {finishedExercises.length}/{orderedExercises.length}
-          </div>
-
+          {/* Theme toggle button */}
           <button
-            className="text-sm px-3 py-1 rounded hover:opacity-80 transition-opacity border flex items-center gap-1 cursor-pointer ml-3"
-            style={{ color: "var(--finished-counter)", borderColor: 'var(--border-color)', backgroundColor: 'transparent' }}
-            onClick={user ? logout : login}
+            onClick={toggleTheme}
+            className="flex items-center justify-center w-10 h-10 rounded-full hover:opacity-80 transition-opacity cursor-pointer"
+            style={{ backgroundColor: 'transparent', }}
+            aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
           >
-            {user ? 'Logout' : 'Login with GitHub'}
+            {theme === 'light' ? (
+              <FiSun size={18} color="var(--finished-counter)" />
+            ) : (
+              <FiMoon size={18} color="var(--finished-counter)" />
+            )}
           </button>
 
-          <button
+          <div className="text-base " style={{ color: "var(--finished-counter)" }}>
+            Finished: {finishedExercises.length}/{orderedExercises.length}
+          </div>
+          <div>
+            <div className="flex items-center">
+              {user ? (
+                <img
+                  src={user.user_metadata.avatar_url}
+                  alt="User avatar"
+                  className="w-10 h-10 rounded-l object-cover ml-3 border border-r-0"
+                  style={{ color: "var(--finished-counter)", borderColor: 'var(--border-color)', backgroundColor: 'transparent' }}
+                />
+              ) : (
+                <div className="ml-3" />
+              )}
+
+              <button
+                className={`text-base px-4 py-2 ${user ? 'rounded-r border-l-0 ' : 'rounded'} hover:opacity-80 transition-opacity border flex items-center gap-2 cursor-pointer`}
+                style={{ color: "var(--finished-counter)", borderColor: 'var(--border-color)', backgroundColor: 'transparent' }}
+                onClick={user ? logout : login}
+              >
+                {user ? (
+                  <div className="group flex items-center gap-2">
+                    <span className="group-hover:hidden">{user.user_metadata.user_name || 'User'}</span>
+                    <span className="hidden group-hover:block">Logout</span>
+                  </div>
+                ) : (
+                  <>
+                    <FaGithub size={16} color="var(--finished-counter)" />
+                    <span>Login with GitHub</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* <button
             className="text-sm px-3 py-1 rounded hover:opacity-80 transition-opacity border flex items-center gap-1 cursor-pointer ml-3"
             style={{ color: "var(--finished-counter)", borderColor: 'var(--border-color)', backgroundColor: 'transparent' }}
             onClick={() => {
@@ -471,7 +509,7 @@ function NoirEditor(props: PlaygroundProps) {
           >
             <span>Share on</span>
             <FaXTwitter size={16} color="var(--finished-counter)" />
-          </button>
+          </button> */}
 
           {/* <a
             href="http://x.com/andeebtceth/"
@@ -484,19 +522,6 @@ function NoirEditor(props: PlaygroundProps) {
             <FaXTwitter size={18} color="var(--finished-counter)" />
           </a> */}
 
-          {/* Theme toggle button */}
-          <button
-            onClick={toggleTheme}
-            className="flex items-center justify-center w-10 h-10 rounded-full hover:opacity-80 transition-opacity cursor-pointer"
-            style={{ backgroundColor: 'transparent', }}
-            aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-          >
-            {theme === 'light' ? (
-              <FiSun size={18} color="var(--finished-counter)" />
-            ) : (
-              <FiMoon size={18} color="var(--finished-counter)" />
-            )}
-          </button>
 
         </div>
       </div>
@@ -546,7 +571,7 @@ function NoirEditor(props: PlaygroundProps) {
                     {currentExerciseTitle && formatExerciseName(currentExerciseTitle)}
                   </div>
                   <button
-                    className="px-4 py-1 cursor-pointer transition-opacity border rounded-sm hover:opacity-80"
+                    className="px-4 py-2 cursor-pointer transition-opacity border rounded hover:opacity-80"
                     style={{
                       borderColor: 'var(--border-color)',
                       backgroundColor: 'transparent',
@@ -667,7 +692,7 @@ function NoirEditor(props: PlaygroundProps) {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
 
