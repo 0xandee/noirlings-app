@@ -39,6 +39,17 @@ cd noirlings-app
 yarn install
 ```
 
+### Environment Variables
+
+To configure Supabase for authentication, set the following environment variables in a `.env` file at the project root:
+
+- `VITE_SUPABASE_URL`: The URL of your Supabase project (found in your Supabase dashboard under Settings > API).
+- `VITE_SUPABASE_ANON_KEY`: The anonymous public key for your Supabase project (also found under Settings > API).
+
+These variables are required to initialize the Supabase client in `packages/playground/src/hooks/useAuth.tsx`.
+
+For a template, refer to the `.env.example` file provided in the project root.
+
 ### Development
 
 ```bash
