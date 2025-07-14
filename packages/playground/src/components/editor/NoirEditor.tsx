@@ -18,10 +18,13 @@ import type { OrderedExercise } from "../exercisesSidebar/ExercisesSidebar";
 import { createFileFromExercise, loadExerciseContent, getOrderedExercises } from "../../utils/exerciseLoader";
 import ReactMarkdown from "react-markdown";
 import { formatExerciseName } from "../../utils/formatExerciseName";
+import { useAuth } from "../../hooks/useAuth";
+import { supabase } from "../../hooks/useAuth";
+import debounce from 'lodash/debounce';
 
 // Add icons for theme toggle
 import { FiMoon, FiSun } from 'react-icons/fi';
-import { FaXTwitter } from 'react-icons/fa6';
+import { FaGithub } from 'react-icons/fa6';
 
 type editorType = editor.IStandaloneCodeEditor;
 
@@ -29,7 +32,7 @@ function NoirEditor(props: PlaygroundProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const separatorRef = useRef<HTMLDivElement>(null);
 
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme, setTheme } = useTheme();
   const { monaco, loaded } = useMonaco(theme);
 
   const [monacoEditor, setMonacoEditor] = useState<editorType | null>(null); // To track the editor instance
@@ -60,23 +63,148 @@ function NoirEditor(props: PlaygroundProps) {
   const [showHint, setShowHint] = useState(false);
 
   // Add after other useState hooks
+  const { user, login, logout } = useAuth();
   const [finishedExercises, setFinishedExercises] = useState<string[]>(() => {
     const saved = localStorage.getItem("noir_finished_exercises");
     return saved ? JSON.parse(saved) : [];
   });
 
-  // Share text templates
-  const shareTemplates = [
-    "Just smashed {finished}/{total} Noirlings exercises, bullish af ⚡️\n\nLevel up your Noir game here: https://noirlings.app \n\n@NoirLang @andeebtceth",
-    "{finished}/{total} Noirlings done, privacy arc started 🚀\n\nYour turn anon: https://noirlings.app \n\n@NoirLang @andeebtceth",
-    "Grinding Noirlings {finished}/{total}, gonna make it fr 🔥\n\nJoin the quest: https://noirlings.app \n\n@NoirLang @andeebtceth",
-    "{finished}/{total} Noirlings crushed! Ready to speedrun zk skills?\n\nHop in: https://noirlings.app \n\n@NoirLang @andeebtceth",
-    "{finished} outta {total} Noirlings exercises checked ✅\nNoir skills loading… \n\nGet your zk reps in here: https://noirlings.app \n\n@NoirLang @andeebtceth",
-    "I'm {finished}/{total} into Noirlings already, don't sleep anon 😴\n\nStart before your frens: https://noirlings.app \n\n@NoirLang @andeebtceth",
-    "Achievement unlocked: {finished}/{total} Noirlings 🕹️\n\nLevel up: https://noirlings.app \n\n@NoirLang @andeebtceth",
-    "{finished}/{total} done on Noirlings - can you beat me anon? 🎯\n\nShow your skillz: https://noirlings.app \n\n@NoirLang @andeebtceth",
-    "Long on Noir, entry at {finished}/{total} Noirlings exercises 📈\n\nDYOR here: https://noirlings.app \n\n@NoirLang @andeebtceth",
-  ];
+  // Add states for last_exercise and theme (they already exist, but ensure sync)
+  // Note: currentExercise is set from last_exercise
+
+  // New function to load from Supabase
+  const loadProgress = async () => {
+    if (user) {
+      try {
+        const { data, error } = await supabase.from('user_progress').select('*').eq('user_id', user!.id).single();
+        if (error) {
+          console.error('Error loading progress:', error);
+          return;
+        }
+        if (data) {
+          setFinishedExercises(data.finished_exercises as string[] || []);
+          if (data.last_exercise) {
+            // Load last exercise
+            const exercises = await getOrderedExercises();
+            const toLoad = exercises.find(ex => `${ex.category}/${ex.file}` === data.last_exercise) || exercises[0];
+            handleExerciseSelect(`${toLoad.category}/${toLoad.file}`, toLoad.name, toLoad.hint, toLoad.description);
+          }
+          if (data.theme) setTheme(data.theme);
+        }
+      } catch (err) {
+        console.error('Unexpected error loading progress:', err);
+      }
+    }
+  };
+
+  // Modify the sync useEffect:
+  useEffect(() => {
+    if (user) {
+      (async () => {
+        try {
+          // First, load current DB progress
+          const { data: dbData, error: loadError } = await supabase.from('user_progress').select('*').eq('user_id', user!.id).single();
+          if (loadError && loadError.code !== 'PGRST116') { // Ignore if no row exists
+            console.error('Error loading DB progress for merge:', loadError);
+            return;
+          }
+
+          const localFinished = JSON.parse(localStorage.getItem('noir_finished_exercises') || '[]');
+          const localLast = localStorage.getItem('noir_last_exercise');
+          const localTheme = localStorage.getItem('noir_theme') || 'dark';
+
+          // Prepare merged data
+          let shouldUpsert = false;
+          const mergedData = {
+            user_id: user!.id,
+            finished_exercises: dbData?.finished_exercises || [],
+            last_exercise: dbData?.last_exercise || null,
+            theme: dbData?.theme || 'dark',
+          };
+
+          // Merge finished_exercises if local has any
+          if (localFinished.length > 0) {
+            mergedData.finished_exercises = [...new Set([...mergedData.finished_exercises, ...localFinished])];
+            shouldUpsert = true;
+          }
+
+          // Use local last_exercise if present and DB doesn't have one, or prefer recent (simple: prefer local if exists)
+          if (localLast && !mergedData.last_exercise) {
+            mergedData.last_exercise = localLast;
+            shouldUpsert = true;
+          }
+
+          // Similar for theme
+          if (localTheme && mergedData.theme !== localTheme) {
+            mergedData.theme = localTheme;
+            shouldUpsert = true;
+          }
+
+          if (shouldUpsert) {
+            const { error } = await supabase.from('user_progress').upsert(mergedData, { onConflict: 'user_id' });
+            if (error) {
+              console.error('Error syncing progress:', error);
+              return;
+            }
+            console.log('Progress synced successfully');
+          }
+
+          // Clear local regardless
+          localStorage.removeItem('noir_finished_exercises');
+          localStorage.removeItem('noir_last_exercise');
+          localStorage.removeItem('noir_theme');
+
+          // Load final state
+          await loadProgress();
+        } catch (err) {
+          console.error('Unexpected error syncing progress:', err);
+        }
+      })();
+    }
+  }, [user]);
+
+  // Wrap the save logic in a debounced function
+  useEffect(() => {
+    const saveProgress = debounce(async () => {
+      if (user) {
+        try {
+          const { error } = await supabase.from('user_progress').update({
+            finished_exercises: finishedExercises,
+            last_exercise: currentExercise,
+            theme: theme,
+          }).eq('user_id', user!.id);
+          if (error) {
+            console.error('Error saving progress:', error);
+          } else {
+            console.log('Progress saved successfully');
+          }
+        } catch (err) {
+          console.error('Unexpected error saving progress:', err);
+        }
+      } else {
+        localStorage.setItem("noir_finished_exercises", JSON.stringify(finishedExercises));
+        if (currentExercise) localStorage.setItem("noir_last_exercise", currentExercise);
+        localStorage.setItem("noir_theme", theme);
+      }
+    }, 500); // Debounce for 0.5 second
+
+    saveProgress();
+
+    return () => saveProgress.cancel(); // Cleanup on unmount
+  }, [finishedExercises, currentExercise, theme, user]);
+
+  // // Share text templates
+  // const shareTemplates = [
+  //   "Just smashed {finished}/{total} Noirlings exercises, bullish af ⚡️\n\nLevel up your Noir game here: https://noirlings.app \n\n@NoirLang @andeebtceth",
+  //   "{finished}/{total} Noirlings done, privacy arc started 🚀\n\nYour turn anon: https://noirlings.app \n\n@NoirLang @andeebtceth",
+  //   "Grinding Noirlings {finished}/{total}, gonna make it fr 🔥\n\nJoin the quest: https://noirlings.app \n\n@NoirLang @andeebtceth",
+  //   "{finished}/{total} Noirlings crushed! Ready to speedrun zk skills?\n\nHop in: https://noirlings.app \n\n@NoirLang @andeebtceth",
+  //   "{finished} outta {total} Noirlings exercises checked ✅\nNoir skills loading… \n\nGet your zk reps in here: https://noirlings.app \n\n@NoirLang @andeebtceth",
+  //   "I'm {finished}/{total} into Noirlings already, don't sleep anon 😴\n\nStart before your frens: https://noirlings.app \n\n@NoirLang @andeebtceth",
+  //   "Achievement unlocked: {finished}/{total} Noirlings 🕹️\n\nLevel up: https://noirlings.app \n\n@NoirLang @andeebtceth",
+  //   "{finished}/{total} done on Noirlings - can you beat me anon? 🎯\n\nShow your skillz: https://noirlings.app \n\n@NoirLang @andeebtceth",
+  //   "Long on Noir, entry at {finished}/{total} Noirlings exercises 📈\n\nDYOR here: https://noirlings.app \n\n@NoirLang @andeebtceth",
+  // ];
 
   // Enhanced mouse event handlers for draggable separator
   useEffect(() => {
@@ -316,11 +444,57 @@ function NoirEditor(props: PlaygroundProps) {
             {showExercisesSidebar ? "Hide Exercises List" : "Show Exercises List"}
           </button> */}
 
-          <div className="text-sm " style={{ color: "var(--finished-counter)" }}>
+          {/* Theme toggle button */}
+          <button
+            onClick={toggleTheme}
+            className="flex items-center justify-center w-10 h-10 rounded-full hover:opacity-80 transition-opacity cursor-pointer"
+            style={{ backgroundColor: 'transparent', }}
+            aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+          >
+            {theme === 'light' ? (
+              <FiSun size={18} color="var(--finished-counter)" />
+            ) : (
+              <FiMoon size={18} color="var(--finished-counter)" />
+            )}
+          </button>
+
+          <div className="text-base " style={{ color: "var(--finished-counter)" }}>
             Finished: {finishedExercises.length}/{orderedExercises.length}
           </div>
+          <div>
+            <div className="flex items-center">
+              {user ? (
+                <img
+                  src={user.user_metadata.avatar_url}
+                  alt="User avatar"
+                  className="w-10 h-10 rounded-l object-cover ml-3 border border-r-0"
+                  style={{ color: "var(--finished-counter)", borderColor: 'var(--border-color)', backgroundColor: 'transparent' }}
+                />
+              ) : (
+                <div className="ml-3" />
+              )}
 
-          <button
+              <button
+                className={`text-base px-4 py-2 ${user ? 'rounded-r border-l-0 ' : 'rounded'} hover:opacity-80 transition-opacity border flex items-center gap-2 cursor-pointer`}
+                style={{ color: "var(--finished-counter)", borderColor: 'var(--border-color)', backgroundColor: 'transparent' }}
+                onClick={user ? logout : login}
+              >
+                {user ? (
+                  <div className="group flex items-center gap-2">
+                    <span className="group-hover:hidden">{user.user_metadata.user_name || 'User'}</span>
+                    <span className="hidden group-hover:block">Logout</span>
+                  </div>
+                ) : (
+                  <>
+                    <FaGithub size={16} color="var(--finished-counter)" />
+                    <span>Login with GitHub</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* <button
             className="text-sm px-3 py-1 rounded hover:opacity-80 transition-opacity border flex items-center gap-1 cursor-pointer ml-3"
             style={{ color: "var(--finished-counter)", borderColor: 'var(--border-color)', backgroundColor: 'transparent' }}
             onClick={() => {
@@ -335,7 +509,7 @@ function NoirEditor(props: PlaygroundProps) {
           >
             <span>Share on</span>
             <FaXTwitter size={16} color="var(--finished-counter)" />
-          </button>
+          </button> */}
 
           {/* <a
             href="http://x.com/andeebtceth/"
@@ -348,19 +522,6 @@ function NoirEditor(props: PlaygroundProps) {
             <FaXTwitter size={18} color="var(--finished-counter)" />
           </a> */}
 
-          {/* Theme toggle button */}
-          <button
-            onClick={toggleTheme}
-            className="flex items-center justify-center w-10 h-10 rounded-full hover:opacity-80 transition-opacity cursor-pointer"
-            style={{ backgroundColor: 'transparent', }}
-            aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-          >
-            {theme === 'light' ? (
-              <FiSun size={18} color="var(--finished-counter)" />
-            ) : (
-              <FiMoon size={18} color="var(--finished-counter)" />
-            )}
-          </button>
 
         </div>
       </div>
@@ -410,7 +571,7 @@ function NoirEditor(props: PlaygroundProps) {
                     {currentExerciseTitle && formatExerciseName(currentExerciseTitle)}
                   </div>
                   <button
-                    className="px-4 py-1 cursor-pointer transition-opacity border rounded-sm hover:opacity-80"
+                    className="px-4 py-2 cursor-pointer transition-opacity border rounded hover:opacity-80"
                     style={{
                       borderColor: 'var(--border-color)',
                       backgroundColor: 'transparent',
@@ -531,7 +692,7 @@ function NoirEditor(props: PlaygroundProps) {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
 
