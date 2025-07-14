@@ -23,8 +23,12 @@ import { supabase } from "../../hooks/useAuth";
 import debounce from 'lodash/debounce';
 
 // Add icons for theme toggle
-import { FiMoon, FiSun } from 'react-icons/fi';
-import { FaGithub } from 'react-icons/fa6';
+import { Moon, Sun, Github, Copy, RotateCcw, Play, Lightbulb } from 'lucide-react';
+
+// Add new imports
+import { compileCode } from "../../utils/generateProof";
+import { toast } from "react-toastify";
+import { CompiledCircuit } from "@noir-lang/types";
 
 type editorType = editor.IStandaloneCodeEditor;
 
@@ -37,6 +41,9 @@ function NoirEditor(props: PlaygroundProps) {
 
   const [monacoEditor, setMonacoEditor] = useState<editorType | null>(null); // To track the editor instance
   const [proof, setProof] = useState<ProofData | null>(null);
+  const [compiledCode, setCompiledCode] = useState<CompiledCircuit | null>(null);
+  const [compileError, setCompileError] = useState<string | null>(null);
+  const [pending, setPending] = useState<boolean>(false);
   const rootFs = props.initialProject
     ? decodeProject(props.initialProject)
     : (examples.main as unknown as File);
@@ -71,6 +78,13 @@ function NoirEditor(props: PlaygroundProps) {
 
   // Add states for last_exercise and theme (they already exist, but ensure sync)
   // Note: currentExercise is set from last_exercise
+
+  // Add new state after existing states
+  const [initialExerciseContent, setInitialExerciseContent] = useState<string>('');
+
+  const [copyTooltip, setCopyTooltip] = useState<{ visible: boolean; text: string; isClicked: boolean }>({ visible: false, text: 'Copy', isClicked: false });
+  const [resetTooltip, setResetTooltip] = useState<{ visible: boolean; text: string; isClicked: boolean }>({ visible: false, text: 'Reset', isClicked: false });
+  const [compileTooltip, setCompileTooltip] = useState<{ visible: boolean; text: string; isClicked: boolean }>({ visible: false, text: 'Compile', isClicked: false });
 
   // New function to load from Supabase
   const loadProgress = async () => {
@@ -206,30 +220,49 @@ function NoirEditor(props: PlaygroundProps) {
   //   "Long on Noir, entry at {finished}/{total} Noirlings exercises 📈\n\nDYOR here: https://noirlings.app \n\n@NoirLang @andeebtceth",
   // ];
 
-  // Enhanced mouse event handlers for draggable separator
+  // Enhanced mouse and touch event handlers for draggable separator
   useEffect(() => {
     let animationFrame: number | null = null;
-    function handleMouseMove(e: MouseEvent) {
-      if (!isDragging) return;
-      // Minimum 220px, maximum 480px for info panel
-      const min = 0;
+
+    function handleMove(clientX: number) {
+      // Minimum 300px, maximum 800px for info panel
+      const min = 300;
       const max = 800;
-      const newWidth = Math.min(Math.max(e.clientX, min), max);
+      const newWidth = Math.min(Math.max(clientX, min), max);
       if (animationFrame) cancelAnimationFrame(animationFrame);
       animationFrame = requestAnimationFrame(() => {
         setInfoPanelWidth(newWidth);
       });
     }
-    function handleMouseUp() {
+
+    function handleMouseMove(e: MouseEvent) {
+      if (!isDragging) return;
+      handleMove(e.clientX);
+    }
+
+    function handleTouchMove(e: TouchEvent) {
+      if (!isDragging) return;
+      if (e.touches.length > 0) {
+        handleMove(e.touches[0].clientX);
+      }
+    }
+
+    function handleEnd() {
       setIsDragging(false);
     }
+
     if (isDragging) {
       window.addEventListener("mousemove", handleMouseMove);
-      window.addEventListener("mouseup", handleMouseUp);
+      window.addEventListener("touchmove", handleTouchMove, { passive: false });
+      window.addEventListener("mouseup", handleEnd);
+      window.addEventListener("touchend", handleEnd);
     }
+
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("mouseup", handleEnd);
+      window.removeEventListener("touchend", handleEnd);
       if (animationFrame) cancelAnimationFrame(animationFrame);
     };
   }, [isDragging]);
@@ -255,6 +288,7 @@ function NoirEditor(props: PlaygroundProps) {
           scrollBeyondLastLine: false,
           minimap: { enabled: false },
           theme: theme, // Use the current theme
+          wordWrap: 'on',
         };
         const editor = monaco.editor.create(
           editorRef.current!,
@@ -303,6 +337,8 @@ function NoirEditor(props: PlaygroundProps) {
       localStorage.setItem("noir_last_exercise", exercisePath);
       // Load the exercise content
       const content = await loadExerciseContent(exercisePath);
+      // In handleExerciseSelect, after const content = await loadExerciseContent(exercisePath);
+      setInitialExerciseContent(content);
       // Create a new file system with the exercise content
       const exerciseFile = createFileFromExercise(exercisePath, content);
       setFilesystem(new FileSystem(exerciseFile));
@@ -385,16 +421,6 @@ function NoirEditor(props: PlaygroundProps) {
   );
 
   // Navigation handlers
-  const handleBack = () => {
-    if (currentExerciseIndex > 0) {
-      const prev = orderedExercises[currentExerciseIndex - 1];
-      if (prev) {
-        const exercisePath = `${prev.category}/${prev.file}`;
-        handleExerciseSelect(exercisePath, prev.name, prev.hint, prev.description);
-      }
-    }
-  };
-
   const handleForward = () => {
     if (
       currentExerciseIndex !== -1 &&
@@ -408,11 +434,70 @@ function NoirEditor(props: PlaygroundProps) {
     }
   };
 
+  // Add handlers before return
+  const handleCopy = async () => {
+    if (monacoEditor) {
+      await navigator.clipboard.writeText(monacoEditor.getValue());
+      toast.success('Code copied to clipboard!');
+    }
+  };
+
+  const handleReset = () => {
+    if (!currentExercise || !initialExerciseContent || !monacoEditor) return;
+    const exerciseFile = createFileFromExercise(currentExercise, initialExerciseContent);
+    setFilesystem(new FileSystem(exerciseFile));
+    monacoEditor.setValue(initialExerciseContent);
+    setCodeInBuffer(initialExerciseContent);
+    setProof(null);
+    setShowHint(false);
+    toast.success('Code reset to initial state!');
+  };
+
+  // Move compile function from ActionsBox
+  const compile = async (project: FileSystem) => {
+    setCompileError(null);
+    setPending(true);
+    try {
+      const compiled = await compileCode(project);
+      setCompiledCode(compiled);
+      setCompileError(null);
+      toast.success('Compiled!');
+      if (currentExercise && !finishedExercises.includes(currentExercise)) {
+        setFinishedExercises((prev) => [...prev, currentExercise]);
+      }
+    } catch (err: unknown) {
+      let message = "Unknown error";
+      if (err instanceof Error) {
+        message = err.message;
+      } else if (typeof err === "string") {
+        message = err;
+      }
+      setCompileError(message);
+      setCompiledCode(null);
+      toast.error(message);
+      throw err;
+    } finally {
+      setPending(false);
+    }
+  };
+
+  // Update handleRun to use the new compile
+  const handleRun = async () => {
+    console.log('handleRun started');
+    await compile(fileSystem);
+  };
+
+  // Add useEffect to reset states when fileSystem changes (like in ActionsBox)
+  useEffect(() => {
+    setCompiledCode(null);
+    setCompileError(null);
+  }, [fileSystem]);
+
   return (
     <div className="h-screen w-full flex flex-col">
       {/* Top toolbar */}
       <div
-        className="p-4 flex justify-between items-center border-b"
+        className="px-4 py-2 flex justify-between items-center border-b"
         style={{ backgroundColor: 'var(--bg-toolbar)', borderColor: 'var(--border-color)' }}
       >
         <div className="flex items-center gap-3 ml-2">
@@ -432,7 +517,7 @@ function NoirEditor(props: PlaygroundProps) {
             <span>Follow</span>
           </a> */}
         </div>
-        <div className="flex gap-2 items-center">
+        <div className="flex items-center gap-4">
           {/* <button
             className="text-white px-4 py-1 rounded hover:opacity-90 transition-opacity"
             style={{
@@ -452,13 +537,13 @@ function NoirEditor(props: PlaygroundProps) {
             aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
           >
             {theme === 'light' ? (
-              <FiSun size={18} color="var(--finished-counter)" />
+              <Sun size={18} color="var(--header-text)" />
             ) : (
-              <FiMoon size={18} color="var(--finished-counter)" />
+              <Moon size={18} color="var(--header-text)" />
             )}
           </button>
 
-          <div className="text-base " style={{ color: "var(--finished-counter)" }}>
+          <div className="text-base " style={{ color: "var(--header-text)" }}>
             Finished: {finishedExercises.length}/{orderedExercises.length}
           </div>
           <div>
@@ -468,7 +553,7 @@ function NoirEditor(props: PlaygroundProps) {
                   src={user.user_metadata.avatar_url}
                   alt="User avatar"
                   className="w-10 h-10 rounded-l object-cover ml-3 border border-r-0"
-                  style={{ color: "var(--finished-counter)", borderColor: 'var(--border-color)', backgroundColor: 'transparent' }}
+                  style={{ color: "var(--header-text)", borderColor: 'var(--border-color)', backgroundColor: 'transparent' }}
                 />
               ) : (
                 <div className="ml-3" />
@@ -476,7 +561,7 @@ function NoirEditor(props: PlaygroundProps) {
 
               <button
                 className={`text-base px-4 py-2 ${user ? 'rounded-r border-l-0 ' : 'rounded'} hover:opacity-80 transition-opacity border flex items-center gap-2 cursor-pointer`}
-                style={{ color: "var(--finished-counter)", borderColor: 'var(--border-color)', backgroundColor: 'transparent' }}
+                style={{ color: "var(--header-text)", borderColor: 'var(--border-color)', backgroundColor: 'transparent' }}
                 onClick={user ? logout : login}
               >
                 {user ? (
@@ -486,7 +571,7 @@ function NoirEditor(props: PlaygroundProps) {
                   </div>
                 ) : (
                   <>
-                    <FaGithub size={16} color="var(--finished-counter)" />
+                    <Github size={16} color="var(--header-text)" />
                     <span>Login with GitHub</span>
                   </>
                 )}
@@ -546,7 +631,7 @@ function NoirEditor(props: PlaygroundProps) {
         )}
 
         {/* Info Panel + Editor side by side */}
-        <div className="flex flex-1 flex-row min-h-0 w-full">
+        <div className="flex flex-1 flex-row min-h-0 w-[calc(100%-200px)]">
           {/* Exercise Info Panel: only takes width if currentExercise is set */}
           {currentExercise ? (
             <div
@@ -570,17 +655,28 @@ function NoirEditor(props: PlaygroundProps) {
                   <div className="text-2xl font-bold" style={{ color: 'var(--color-primary)' }}>
                     {currentExerciseTitle && formatExerciseName(currentExerciseTitle)}
                   </div>
-                  <button
-                    className="px-4 py-2 cursor-pointer transition-opacity border rounded hover:opacity-80"
-                    style={{
-                      borderColor: 'var(--border-color)',
-                      backgroundColor: 'transparent',
-                      color: 'var(--secondary-text)'
-                    }}
-                    onClick={() => setShowHint((prev) => !prev)}
-                  >
-                    {showHint ? "Hide Hint" : "Show Hint"}
-                  </button>
+                  {currentExerciseHint?.trim() === "No hint this time" ? (
+                    <button
+                      className="px-4 py-2 cursor-not-allowed opacity-50 border rounded"
+                      style={{
+                        borderColor: 'var(--border-color)',
+                        backgroundColor: 'transparent',
+                        color: 'var(--color-secondary)'
+                      }}
+                      disabled
+                    >
+                      No Hint
+                    </button>
+                  ) : (
+                    <button
+                      className="px-3 py-2 cursor-pointer transition-opacity border rounded hover:opacity-80 flex items-center gap-2"
+                      style={{ borderColor: 'var(--border-color)', backgroundColor: 'transparent', color: 'var(--color-secondary)' }}
+                      onClick={() => setShowHint((prev) => !prev)}
+                    >
+                      <Lightbulb size={16} color="var(--color-secondary)" />
+                      {showHint ? "Hide Hint" : "Show Hint"}
+                    </button>
+                  )}
                 </div>
                 {currentExerciseDescription && (
                   <div style={{ color: 'var(--color-primary)' }} className="mb-6">
@@ -591,7 +687,7 @@ function NoirEditor(props: PlaygroundProps) {
                   </div>
                 )}
 
-                {currentExerciseHint && showHint && (
+                {currentExerciseHint && currentExerciseHint.trim() !== "No hint this time" && showHint && (
                   <div className="whitespace-pre-line rounded flex flex-col gap-2" style={{ color: 'var(--color-secondary)' }}>
                     <span className="font-bold text-xl" style={{ color: 'var(--color-primary)' }}>Hint</span>
                     <div className="markdown-body">
@@ -608,15 +704,16 @@ function NoirEditor(props: PlaygroundProps) {
               {loaded && !proof && (
                 <ActionsBox
                   project={fileSystem}
-                  props={props}
-                  setProof={setProof}
                   onCompileSuccess={handleCompileSuccess}
-                  onBack={currentExerciseIndex > 0 ? handleBack : undefined}
                   onForward={
                     currentExerciseIndex !== -1 && currentExerciseIndex < orderedExercises.length - 1
                       ? handleForward
                       : undefined
                   }
+                  compiledCode={compiledCode}
+                  compileError={compileError}
+                  pending={pending}
+                  compile={compile}
                 />
               )}
             </div>
@@ -630,15 +727,26 @@ function NoirEditor(props: PlaygroundProps) {
             <div
               ref={separatorRef}
               className={
-                "hidden md:flex h-full select-none group"
+                "flex h-full select-none group"
               }
               onMouseDown={() => setIsDragging(true)}
+              onTouchStart={() => setIsDragging(true)}
+              onKeyDown={(e) => {
+                if (e.key === 'ArrowLeft') {
+                  setInfoPanelWidth((prev) => Math.max(300, prev - 10));
+                } else if (e.key === 'ArrowRight') {
+                  setInfoPanelWidth((prev) => Math.min(800, prev + 10));
+                }
+              }}
               role="separator"
               aria-orientation="vertical"
-              aria-label="Resize exercise info panel"
+              aria-label="Resize exercise info panel (use arrow keys for precise control)"
+              aria-valuemin={300}
+              aria-valuemax={800}
+              aria-valuenow={infoPanelWidth}
               tabIndex={0}
               style={{
-                width: 1,
+                width: 8, // Wider for easier grabbing
                 cursor: isDragging ? "col-resize" : "ew-resize",
                 background: 'var(--bg-secondary)',
                 zIndex: 20,
@@ -649,30 +757,28 @@ function NoirEditor(props: PlaygroundProps) {
                 outline: "none",
               }}
             >
-              {/* Handle: 3 vertical dots */}
-              {/* <span
+              {/* Visible handle: vertical grip */}
+              <span
                 aria-hidden="true"
                 style={{
                   display: "inline-block",
                   width: 4,
                   height: 24,
-                  borderRadius: 2,
                   background:
                     `repeating-linear-gradient(to bottom, var(--color-accent), var(--color-accent) 2px, transparent 2px, transparent 6px)`,
                 }}
                 className={
                   isDragging
                     ? "opacity-100"
-                    : "opacity-80 group-hover:opacity-100 transition-opacity"
+                    : "opacity-50 group-hover:opacity-100 transition-opacity"
                 }
-              /> */}
-              {/* Tooltip for width removed */}
+              />
             </div>
           )}
 
           {/* Editor area */}
           <div
-            className={`flex-1 flex flex-col min-h-0 box-border text-sm font-fira-code w-full h-auto pt-4`}
+            className={`flex-1 flex flex-col min-h-0 box-border text-sm font-fira-code w-full h-auto`}
             id="noir__playground"
             style={{
               backgroundColor: 'var(--bg-secondary)',
@@ -681,6 +787,84 @@ function NoirEditor(props: PlaygroundProps) {
               userSelect: isDragging ? "none" : "auto",
             }}
           >
+            <div className="px-4 py-4 gap-4 flex justify-end items-center" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+              <div className="relative">
+                <button
+                  onClick={() => {
+                    handleCopy();
+                    setCopyTooltip({ visible: true, text: 'Copied!', isClicked: true });
+                    setTimeout(() => setCopyTooltip({ visible: false, text: 'Copy', isClicked: false }), 500);
+                  }}
+                  onMouseEnter={() => setCopyTooltip({ visible: true, text: 'Copy', isClicked: false })}
+                  onMouseLeave={() => {
+                    if (!copyTooltip.isClicked) {
+                      setCopyTooltip(prev => ({ ...prev, visible: false }));
+                    }
+                  }}
+                  className="cursor-pointer hover:opacity-80 transition-all duration-200 bg-transparent border-none"
+                  aria-label="Copy code"
+                >
+                  <Copy size={18} color="var(--color-secondary)" />
+                </button>
+                <span
+                  className={`absolute top-full left-1/2 -translate-x-1/2 mt-1 px-2 py-1 text-xs rounded-md shadow-md whitespace-nowrap transition-opacity duration-200 z-50 ${copyTooltip.visible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                  style={{ backgroundColor: 'var(--bg-toolbar)', color: 'var(--header-text)' }}
+                >
+                  {copyTooltip.text}
+                </span>
+              </div>
+              <div className="relative">
+                <button
+                  onClick={() => {
+                    handleReset();
+                    setResetTooltip({ visible: true, text: 'Reset!', isClicked: true });
+                    setTimeout(() => setResetTooltip({ visible: false, text: 'Reset', isClicked: false }), 500);
+                  }}
+                  onMouseEnter={() => setResetTooltip({ visible: true, text: 'Reset', isClicked: false })}
+                  onMouseLeave={() => {
+                    if (!resetTooltip.isClicked) {
+                      setResetTooltip(prev => ({ ...prev, visible: false }));
+                    }
+                  }}
+                  className="cursor-pointer hover:opacity-80 transition-all duration-200 bg-transparent border-none"
+                  aria-label="Reset code"
+                >
+                  <RotateCcw size={18} color="var(--color-secondary)" />
+                </button>
+                <span
+                  className={`absolute top-full left-1/2 -translate-x-1/2 mt-1 px-2 py-1 text-xs rounded-md shadow-md whitespace-nowrap transition-opacity duration-200 z-50 ${resetTooltip.visible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                  style={{ backgroundColor: 'var(--bg-toolbar)', color: 'var(--header-text)' }}
+                >
+                  {resetTooltip.text}
+                </span>
+              </div>
+              <div className="relative">
+                <button
+                  onClick={() => {
+                    console.log('Compile button clicked');
+                    handleRun();
+                    setCompileTooltip({ visible: true, text: 'Compiling', isClicked: true });
+                    setTimeout(() => setCompileTooltip({ visible: false, text: 'Compile', isClicked: false }), 500);
+                  }}
+                  onMouseEnter={() => setCompileTooltip({ visible: true, text: 'Compile', isClicked: false })}
+                  onMouseLeave={() => {
+                    if (!compileTooltip.isClicked) {
+                      setCompileTooltip(prev => ({ ...prev, visible: false }));
+                    }
+                  }}
+                  className="cursor-pointer hover:opacity-80 transition-all duration-200 bg-transparent border-none"
+                  aria-label="Compile code"
+                >
+                  <Play size={18} color="var(--color-secondary)" />
+                </button>
+                <span
+                  className={`absolute top-full left-1/2 -translate-x-1/2 mt-1 px-2 py-1 text-xs rounded-md shadow-md whitespace-nowrap transition-opacity duration-200 z-50 ${compileTooltip.visible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                  style={{ backgroundColor: 'var(--bg-toolbar)', color: 'var(--header-text)' }}
+                >
+                  {compileTooltip.text}
+                </span>
+              </div>
+            </div>
             <section className="flex-1 min-h-0 w-full">
               <div ref={editorRef} id="editor" className="w-full h-64 md:h-full min-h-0 flex-1" style={{ minHeight: 0 }}></div>
             </section>

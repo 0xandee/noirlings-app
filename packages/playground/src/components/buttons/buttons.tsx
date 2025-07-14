@@ -17,9 +17,9 @@ export const Button = ({
   onClick?: (e: FormEvent) => void;
   children?: React.ReactNode;
   style?: CSSProperties;
-}) => {
+} & React.ButtonHTMLAttributes<HTMLButtonElement>) => {
   const buttonClasses = `${className} px-6 px-3 ${$primary ? "bg-[#00810d] hover:bg-[#005c09]" : "bg-[#141617] hover:bg-gray-800"
-    } max-h-10 text-right text-base font-medium leading-none flex p-5 justify-center items-center ${disabled ? "opacity-50" : "opacity-100"
+    } text-right text-base font-medium leading-none flex p-5 justify-center items-center ${disabled ? "opacity-50" : "opacity-100"
     } text-gray-7`;
 
   return (
@@ -29,6 +29,7 @@ export const Button = ({
       className={buttonClasses}
       tabIndex={-1}
       style={style}
+      disabled={disabled}
       {...props}
     >
       {children}

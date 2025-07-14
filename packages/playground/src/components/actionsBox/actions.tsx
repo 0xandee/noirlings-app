@@ -1,106 +1,43 @@
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useState, useEffect } from "react";
+import { ChevronRight, CheckCircle, XCircle, X, Play } from "lucide-react";
 
-import { compileCode, generateProof } from "../../utils/generateProof";
-import { prepareInputs } from "../../utils/serializeParams";
-import { toast } from "react-toastify";
 import { CompiledCircuit } from "@noir-lang/types";
-import { useParams } from "../../hooks/useParams";
-import { InputMap } from "@noir-lang/noirc_abi";
 import { Button } from "../buttons/buttons";
 import { ButtonContainer } from "../buttons/containers";
-import { NoirProps, PlaygroundProps, ProofData } from "../../types";
-import { toHex } from "../../utils/toHex";
 import { FileSystem } from "../../utils/fileSystem";
+import pkg from '../../../package.json';
 
-export const ActionsBox = ({
-  project,
-  props,
-  setProof,
-  onCompileSuccess,
-  onBack,
-  onForward,
-}: {
-  project: FileSystem;
-  props: PlaygroundProps;
-  setProof: React.Dispatch<React.SetStateAction<ProofData | null>>;
-  onCompileSuccess?: () => void;
-  onBack?: () => void;
-  onForward?: () => void;
-}) => {
-  const [compiledCode, setCompiledCode] = useState<CompiledCircuit | null>(
-    null
-  );
-  const [pending, setPending] = useState<boolean>(false);
-  const [compileError, setCompileError] = useState<string | null>(null);
+export const ActionsBox = ({ project, onCompileSuccess, onForward, compiledCode, compileError, pending, compile }: { project: FileSystem; onCompileSuccess?: () => void; onForward?: () => void; compiledCode: CompiledCircuit | null; compileError: string | null; pending: boolean; compile: (project: FileSystem) => Promise<void>; }) => {
 
-  const params = useParams({ compiledCode });
+  const [showSuccessAlert, setShowSuccessAlert] = useState(true);
+  const [showErrorAlert, setShowErrorAlert] = useState(true);
 
   useEffect(() => {
-    setCompiledCode(null);
-    setCompileError(null);
-  }, [project]);
-
-  const compile = async (project: FileSystem) => {
-    setCompileError(null);
-    try {
-      const compiledCode = await compileCode(project);
-      setCompiledCode(compiledCode);
-      setCompileError(null);
-    } catch (err: unknown) {
-      let message = "Unknown error";
-      if (err instanceof Error) {
-        message = err.message;
-      } else if (typeof err === "string") {
-        message = err;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !pending) {
+        setShowSuccessAlert(true);
+        setShowErrorAlert(true);
+        compile(project).then(() => {
+          if (onCompileSuccess) onCompileSuccess();
+        });
       }
-      setCompileError(message);
-      setCompiledCode(null);
-      throw err;
-    }
-  };
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [compile, project, onCompileSuccess, pending]);
 
   const submit = async (e: FormEvent) => {
+    console.log("Compile button clicked");
     e.preventDefault();
 
-    if (!compiledCode) {
-      setPending(true);
-      setCompileError(null);
-      try {
-        await toast.promise(compile(project), {
-          pending: "Compiling...",
-          success: "Compiled!",
-          error: { render: ({ data }) => `${data}` },
-        });
-        if (onCompileSuccess) onCompileSuccess();
-      } finally {
-        setPending(false);
-      }
-    } else {
-      await prove(e);
-    }
-  };
+    // Reset alert states so messages show up on new compilation
+    setShowSuccessAlert(true);
+    setShowErrorAlert(true);
 
-  const prove = async (e: FormEvent) => {
-    e.preventDefault();
-    const inputMap = prepareInputs(params!, {});
-    const proofData = await toast.promise(
-      generateProof({
-        circuit: compiledCode!,
-        input: inputMap as InputMap,
-        threads: (props as NoirProps).threads ?? navigator.hardwareConcurrency,
-      }),
-      {
-        pending: "Calculating proof...",
-        success: "Proof calculated!",
-        error: "Error calculating proof",
-      }
-    );
-
-    const proofDataHex = {
-      proof: toHex(proofData.proof),
-      publicInputs: Array.from(proofData.publicInputs.values()).map(String),
-    };
-    setProof(proofDataHex);
+    // Always compile when the compile button is clicked
+    await compile(project);
+    if (onCompileSuccess) onCompileSuccess();
   };
 
   return (
@@ -110,53 +47,109 @@ export const ActionsBox = ({
         onSubmit={(e) => submit(e)}
       >
         <ButtonContainer>
-          {compiledCode && (
-            <div className="font-medium mb-4 px-4" style={{ color: '#4ade80' }}>✨ Compiled successfully!</div>
-          )}
-          {compileError && (
-            <div className="font-medium mb-4 px-4" style={{ color: '#fa5e5e' }}>
-              <span className="font-normal">Error:</span><br />
-              <span className="font-normal">{compileError}</span>
+          {/* Enhanced Success Message */}
+          {compiledCode && showSuccessAlert && (
+            <div className="mx-6 mb-4 px-4 py-3 w-full rounded shadow-sm animate-fadeIn transition-all duration-100 ease-in-out border border-[#4ADE80]">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-[#4ADE80]" />
+                  <span className="font-medium text-[#4ADE80]">Compiled successfully!</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowSuccessAlert(false)}
+                  className="text-[#4ADE80] hover:text-[#4ADE80] transition-colors cursor-pointer bg-transparent border-none p-1 rounded flex items-center justify-center"
+                  aria-label="Dismiss success message"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           )}
-          <div className="w-full flex flex-row justify-between items-center">
-            <Button
+
+          {/* Enhanced Error Message */}
+          {compileError && showErrorAlert && (
+            <div className="mx-6 mb-4 px-4 py-3 rounded shadow-sm animate-fadeIn transition-all duration-100 ease-in-out border border-[#FA5E5E] w-full">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-start gap-2 flex-1">
+                  <div className="text-[#FA5E5E]">
+                    {/* <div className="flex items-center gap-2">
+                      <XCircle className="w-5 h-5" />
+                      <div className="font-medium my-2">Compilation Error</div>
+                    </div> */}
+                    <div className="text-sm font-normal">
+                      {compileError}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowErrorAlert(false)}
+                  className="text-[#FA5E5E] hover:text-[#FA5E5E] transition-colors cursor-pointer flex-shrink-0 bg-transparent border-none p-1 rounded flex items-center justify-center"
+                  aria-label="Dismiss error message"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
+
+          <div className="w-full flex flex-row justify-between items-center gap-4 mx-6 ">
+            {/* Enhanced Navigation Buttons */}
+            {/* <button
               type="button"
-              $primary={false}
-              className="cursor-pointer w-1/12"
-              disabled={pending}
+              className="cursor-pointer w-10 h-10 flex items-center justify-center group transition-all duration-200"
+              disabled={pending || !onBack}
               onClick={onBack}
+              title="Go to previous exercise"
               style={{
                 color: 'var(--color-primary)',
                 backgroundColor: 'var(--bg-toolbar-btn)',
-                opacity: onBack ? 1 : 0.5
+                opacity: onBack ? 1 : 0.1,
+                border: 'none'
               }}
             >
-              ←
-            </Button>
-            <Button
-              type="button"
-              $primary={false}
-              className="cursor-pointer w-1/12"
-              disabled={pending}
-              onClick={onForward}
-              style={{
-                color: 'var(--color-primary)',
-                backgroundColor: 'var(--bg-toolbar-btn)',
-                opacity: onForward ? 1 : 0.5
-              }}
-            >
-              →
-            </Button>
+              <ChevronLeft className="w-5 h-5" />
+            </button> */}
+
             <Button
               type="submit"
               $primary={true}
-              className="cursor-pointer w-10/12"
+              className={`cursor-pointer flex-1 h-12 flex items-center justify-center rounded hover:opacity-80 transition-opacity ${pending ? 'cursor-not-allowed opacity-80' : 'hover:scale-[1]'
+                }`}
               disabled={pending}
             >
-              {pending ? "Compiling..." : "Compile"}
+              <div className="flex items-center justify-center gap-2">
+                {pending ? <></> : <Play className="w-5 h-5" />}
+                <span>{pending ? "Compiling..." : "Compile"}</span>
+              </div>
             </Button>
+
+            <button
+              type="button"
+              className="cursor-pointer w-12 h-12 flex items-center justify-center group rounded hover:opacity-80 transition-opacity"
+              disabled={pending || !onForward}
+              onClick={onForward}
+              title="Go to next exercise"
+              style={{
+                color: 'var(--color-primary)',
+                backgroundColor: 'var(--bg-toolbar-btn)',
+                opacity: onForward ? 1 : 0.1,
+                border: 'none'
+              }}
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+
+
+
           </div>
+
+          <div className="flex flex-row justify-between mx-6 text-xs w-full opacity-50" style={{ color: 'var(--color-secondary)' }}>
+            <p>Press <span className="font-mono">Ctrl+Enter</span> to compile</p>
+            <p>Noir v{pkg.dependencies['@noir-lang/noir_js']}</p>
+          </div>
+
         </ButtonContainer>
       </form>
     </>
