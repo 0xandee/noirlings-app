@@ -1,5 +1,5 @@
 import React, { FormEvent, useState, useEffect } from "react";
-import { ChevronRight, CheckCircle, XCircle, X, Play } from "lucide-react";
+import { ChevronRight, CheckCircle, X, Play } from "lucide-react";
 
 import { CompiledCircuit } from "@noir-lang/types";
 import { Button } from "../buttons/buttons";
