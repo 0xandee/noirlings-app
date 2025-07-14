@@ -22,17 +22,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, []);
 
     const login = async () => {
-        await supabase.auth.signInWithOAuth({
-            provider: 'github',
-            options: {
-                redirectTo: window.location.origin,
-            },
-        });
+        try {
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'github',
+                options: {
+                    redirectTo: window.location.origin,
+                },
+            });
+            if (error) throw error;
+        } catch (error) {
+            console.error('Error during login:', error);
+            // TODO: Implement user-friendly message display if needed (e.g., via toast or state)
+        }
     };
 
     const logout = async () => {
-        await supabase.auth.signOut();
-        setUser(null);
+        try {
+            const { error } = await supabase.auth.signOut();
+            if (error) throw error;
+        } catch (error) {
+            console.error('Error during logout:', error);
+            // TODO: Implement user-friendly message display if needed (e.g., via toast or state)
+        }
     };
 
     return (
