@@ -483,7 +483,6 @@ function NoirEditor(props: PlaygroundProps) {
 
   // Update handleRun to use the new compile
   const handleRun = async () => {
-    console.log('handleRun started');
     await compile(fileSystem);
   };
 
@@ -841,7 +840,6 @@ function NoirEditor(props: PlaygroundProps) {
               <div className="relative">
                 <button
                   onClick={() => {
-                    console.log('Compile button clicked');
                     handleRun();
                     setCompileTooltip({ visible: true, text: 'Compiling', isClicked: true });
                     setTimeout(() => setCompileTooltip({ visible: false, text: 'Compile', isClicked: false }), 500);

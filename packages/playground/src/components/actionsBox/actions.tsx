@@ -28,7 +28,6 @@ export const ActionsBox = ({ project, onCompileSuccess, onForward, compiledCode,
   }, [compile, project, onCompileSuccess, pending]);
 
   const submit = async (e: FormEvent) => {
-    console.log("Compile button clicked");
     e.preventDefault();
 
     // Reset alert states so messages show up on new compilation
@@ -95,23 +94,6 @@ export const ActionsBox = ({ project, onCompileSuccess, onForward, compiledCode,
           )}
 
           <div className="w-full flex flex-row justify-between items-center gap-4 mx-6 ">
-            {/* Enhanced Navigation Buttons */}
-            {/* <button
-              type="button"
-              className="cursor-pointer w-10 h-10 flex items-center justify-center group transition-all duration-200"
-              disabled={pending || !onBack}
-              onClick={onBack}
-              title="Go to previous exercise"
-              style={{
-                color: 'var(--color-primary)',
-                backgroundColor: 'var(--bg-toolbar-btn)',
-                opacity: onBack ? 1 : 0.1,
-                border: 'none'
-              }}
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button> */}
-
             <Button
               type="submit"
               $primary={true}
@@ -140,9 +122,6 @@ export const ActionsBox = ({ project, onCompileSuccess, onForward, compiledCode,
             >
               <ChevronRight className="w-6 h-6" />
             </button>
-
-
-
           </div>
 
           <div className="flex flex-row justify-between mx-6 text-xs w-full opacity-50" style={{ color: 'var(--color-secondary)' }}>
