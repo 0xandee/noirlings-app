@@ -73,7 +73,7 @@ const ExercisesSidebar: React.FC<ExercisesSidebarProps> = ({
                                     backgroundColor: currentExercise === exerciseKey
                                         ? (theme === 'dark' ? '#ffffff10' : '#00000010')
                                         : 'transparent',
-                                    color: isFinished ? 'var(--finished-text)' : 'var(--color-primary)',
+                                    color: isFinished ? 'var(--finished-text)' : (currentExercise === exerciseKey ? 'var(--color-primary)' : 'var(--color-secondary)'),
                                     fontWeight: 'normal'
                                 }}
                                 onClick={() =>
