@@ -7,6 +7,7 @@
   "scripts": {
     "build": "yarn workspace @andeebtceth/noirlings-app run build",
     "dev": "yarn workspace @andeebtceth/noirlings-app run dev",
+    "start": "yarn workspace @andeebtceth/noirlings-app run start",
     "serve": "yarn workspace @andeebtceth/noirlings-app run preview",
     "publish": "yarn workspace @andeebtceth/noirlings-app run publish",
     "server": "yarn workspace @andeebtceth/noirlings-app run server",
