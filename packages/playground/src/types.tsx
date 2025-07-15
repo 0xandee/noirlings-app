@@ -29,6 +29,7 @@ export interface EditorProps extends NoirProps, MonacoEditorProps {
   baseUrl?: string;
   initialProject?: string;
   style?: object;
+  isAdvancedMode?: boolean;
 }
 
 // types related with Noir work
@@ -37,7 +38,7 @@ export interface NoirProps {
 }
 
 // all types
-export interface PlaygroundProps extends NoirProps, EditorProps {}
+export interface PlaygroundProps extends NoirProps, EditorProps { }
 
 export interface File {
   items?: File[];

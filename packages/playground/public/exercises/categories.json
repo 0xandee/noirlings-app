@@ -1,9 +1,9 @@
 [
-  "advance",
   "arrays",
   "control-flow",
   "embedded_curves",
   "fields",
+  "hashes",
   "integers",
   "intro",
   "merkle-tree",

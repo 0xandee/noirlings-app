@@ -1,9 +1,13 @@
 import { File } from "../types";
 import { encodeSnippet } from "./shareSnippet";
-import { fetchCategoryExercises, fetchExerciseCategories, fetchExerciseContent, fetchOrderedExercises } from "./api";
+import { fetchCategoryExercises, fetchExerciseCategories, fetchExerciseContent, fetchOrderedExercises, fetchAdvancedExercises } from "./api";
 
 // This is a mock implementation since we don't have direct access to the filesystem in the browser
 // In a real implementation, this would fetch the exercises from a server or include them in the build
+
+// Add at the top, after imports:
+export const BASIC_CATEGORIES = ["intro", "fields", "integers", "arrays", "control-flow", "structs", "traits", "variables", "tuples", "slices", "strings", "references", "merkle-tree", "quizs"];
+export const ADVANCED_CATEGORIES = ["advance", "embedded_curves", "hashes"];
 
 // Helper function to create a file structure from an exercise path
 export const createFileFromExercise = (exercisePath: string, content: string): File => {
@@ -46,15 +50,29 @@ type = \"bin\"
 // Function to load exercise content from the API
 export const loadExerciseContent = async (exercisePath: string): Promise<string> => {
     try {
+        // First, try to get the exercise from the ordered list to get the correct path
+        const allExercises = await fetchOrderedExercises();
+        const exercise = allExercises.find(ex => `${ex.category}/${ex.file}` === exercisePath);
+
+        if (exercise && exercise.path) {
+            // Use the actual path from the exercise data
+            const response = await fetch(`/${exercise.path}`);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch exercise: ${response.statusText}`);
+            }
+            return await response.text();
+        }
+
+        // Fallback to the old method if exercise not found in ordered list
         const parts = exercisePath.split('/');
         if (parts.length < 2) {
             throw new Error('Invalid exercise path format. Expected format: category/exercise.nr');
         }
 
         const category = parts[0];
-        const exercise = parts[1];
+        const exerciseFile = parts[1];
 
-        return await fetchExerciseContent(category, exercise);
+        return await fetchExerciseContent(category, exerciseFile);
     } catch (error) {
         console.error(`Error loading exercise content for ${exercisePath}:`, error);
 
@@ -90,7 +108,7 @@ export const getExerciseCategories = async (): Promise<string[]> => {
             "strings",
             "references",
             "merkle-tree",
-            "advance",
+            "hashes",
             "embedded_curves",
             "quizs"
         ];
@@ -112,9 +130,21 @@ export const getExercisesForCategory = async (category: string): Promise<string[
 // Function to get the ordered list of exercises as per info.toml
 export const getOrderedExercises = async (): Promise<any[]> => {
     try {
-        return await fetchOrderedExercises();
+        const ordered = await fetchOrderedExercises();
+        return ordered.filter(ex => BASIC_CATEGORIES.includes(ex.category));
     } catch (error) {
         console.error('Error fetching ordered exercises:', error);
+        return [];
+    }
+};
+
+// Function to get the advanced exercises (subset of ordered exercises)
+export const getAdvancedExercises = async (): Promise<any[]> => {
+    try {
+        const advanced = await fetchAdvancedExercises();
+        return advanced.filter(ex => ADVANCED_CATEGORIES.includes(ex.category));
+    } catch (error) {
+        console.error('Error fetching advanced exercises:', error);
         return [];
     }
 }; 

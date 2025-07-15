@@ -125,7 +125,7 @@ export const ActionsBox = ({ project, onCompileSuccess, onForward, compiledCode,
           </div>
 
           <div className="flex flex-row justify-between mx-6 text-xs w-full opacity-50" style={{ color: 'var(--color-secondary)' }}>
-            <p>Press <span className="font-mono">Ctrl+Enter</span> to compile</p>
+            <p><span className="font-mono">Ctrl+Enter</span> to compile</p>
             <p>Noir v{pkg.dependencies['@noir-lang/noir_js']}</p>
           </div>
 

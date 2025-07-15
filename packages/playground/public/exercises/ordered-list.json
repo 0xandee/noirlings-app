@@ -4,7 +4,7 @@
     "path": "exercises/intro/intro1.nr",
     "mode": "test",
     "hint": "No hint this time\n",
-    "description": "Noir is an open-source DSL (Domain specific language) for construction of privacy-preserving zk programs.\n\nZK programs are programs that can generate short proof of statements without revealing all inputs to the statements.\n\nWelcome to Noirlings!\n\nThis project is inspired by and builds upon the original [Noirlings](https://github.com/raven-house/noirlings) by [@satyambnsal](https://x.com/satyambnsal)\n\nThis exercise doesn't do anything yet but it still compiles! Noir file getting run\nneeds to have a `main` function. So this file is a valid Noir file.\nOther exercises will require you to write Noir code to make the exercise file compile.\n\n If you like this project, follow me [@andeebtceth](https://x.com/andeebtceth) on X!",
+    "description": "Noir is an open-source DSL (Domain specific language) for construction of privacy-preserving zk programs.\n\nZK programs are programs that can generate short proof of statements without revealing all inputs to the statements.\n\nThis project is inspired by and builds upon the original [Noirlings](https://github.com/raven-house/noirlings) by [@satyambnsal](https://x.com/satyambnsal).  If you like this project, here's the Github [repo](https://github.com/0xandee/noirlings-app) and me [@andeebtceth](https://x.com/andeebtceth) on X!\n\nThis exercise doesn't do anything yet but it still compiles! Noir file getting run\nneeds to have a `main` function. So this file is a valid Noir file.\nOther exercises will require you to write Noir code to make the exercise file compile.\n\n",
     "category": "intro",
     "file": "intro1.nr"
   },
@@ -329,7 +329,7 @@
     "mode": "test",
     "hint": "No hint this time\n",
     "description": "Understanding Pedersen Hash\n\nPedersen hash is a cryptographic hash function based on elliptic curve operations.\nIt is widely used in zero-knowledge proofs and privacy-preserving blockchain applications.\n\nKey Properties of Pedersen hash:\n1. It's a one-way function(difficult to reverse)\n2. It has collision resistance(hard to find two inputs that hash to the same output)\n3. Its deterministic(same input always produces the same output)\n4. It has homomorphic properties(especially useful in zero-knowledge proofs)\n\nIn this exercise, you will:\n1. Compute a basic Pedersen hash\n2. Verify its deterministic property\n3. Explore how changes to input affect the output (avalanche effect)\n",
-    "category": "advance",
+    "category": "hashes",
     "file": "pedersen_hash.nr"
   },
   {

@@ -77,4 +77,30 @@ export const fetchOrderedExercises = async (): Promise<any[]> => {
         console.error('Error fetching ordered exercises:', error);
         throw error;
     }
+};
+
+/**
+ * Fetch the advanced exercises (subset of ordered exercises)
+ * @returns Promise with an array of advanced exercise objects
+ */
+export const fetchAdvancedExercises = async (): Promise<any[]> => {
+    try {
+        const allExercises = await fetchOrderedExercises();
+
+        // Filter to only include the 3 advanced exercises
+        const advancedExerciseNames = [
+            'pedersen_hash',
+            'embedded_curve1',
+            'embedded_curve2'
+        ];
+
+        const advancedExercises = allExercises.filter(exercise =>
+            advancedExerciseNames.includes(exercise.name)
+        );
+
+        return advancedExercises;
+    } catch (error) {
+        console.error('Error fetching advanced exercises:', error);
+        throw error;
+    }
 }; 

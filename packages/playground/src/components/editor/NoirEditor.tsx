@@ -14,13 +14,15 @@ import { ResultBox } from "../resultBox/result";
 import { editor } from "monaco-editor";
 import { FileSystem } from "../../utils/fileSystem";
 import ExercisesSidebar from "../exercisesSidebar/ExercisesSidebar";
+import AdvancedExercisesSidebar from "../advancedExercisesSidebar/AdvancedExercisesSidebar";
 import type { OrderedExercise } from "../exercisesSidebar/ExercisesSidebar";
-import { createFileFromExercise, loadExerciseContent, getOrderedExercises } from "../../utils/exerciseLoader";
+import { createFileFromExercise, loadExerciseContent, getOrderedExercises, getAdvancedExercises } from "../../utils/exerciseLoader";
 import ReactMarkdown from "react-markdown";
 import { formatExerciseName } from "../../utils/formatExerciseName";
 import { useAuth } from "../../hooks/useAuth";
 import { supabase } from "../../hooks/useAuth";
 import debounce from 'lodash/debounce';
+import { Link, useLocation } from "react-router-dom";
 
 // Add icons for theme toggle
 import { Moon, Sun, Github, Copy, RotateCcw, Play, Lightbulb } from 'lucide-react';
@@ -29,6 +31,7 @@ import { Moon, Sun, Github, Copy, RotateCcw, Play, Lightbulb } from 'lucide-reac
 import { compileCode } from "../../utils/generateProof";
 import { toast } from "react-toastify";
 import { CompiledCircuit } from "@noir-lang/types";
+import { BASIC_CATEGORIES, ADVANCED_CATEGORIES } from "../../utils/exerciseLoader";
 
 type editorType = editor.IStandaloneCodeEditor;
 
@@ -86,6 +89,26 @@ function NoirEditor(props: PlaygroundProps) {
   const [resetTooltip, setResetTooltip] = useState<{ visible: boolean; text: string; isClicked: boolean }>({ visible: false, text: 'Reset', isClicked: false });
   const [compileTooltip, setCompileTooltip] = useState<{ visible: boolean; text: string; isClicked: boolean }>({ visible: false, text: 'Compile', isClicked: false });
 
+  // Map of categories to relevant Noir doc URLs
+  const docLinks: Record<string, string> = {
+    "intro": "https://noir-lang.org/docs/getting_started",
+    "variables": "https://noir-lang.org/docs/dev/noir/concepts/mutability",
+    "control-flow": "https://noir-lang.org/docs/dev/noir/concepts/control_flow",
+    "arrays": "https://noir-lang.org/docs/dev/noir/concepts/data_types",
+    "structs": "https://noir-lang.org/docs/dev/noir/concepts/data_types",
+    "references": "https://noir-lang.org/docs/dev/noir/concepts/mutability",
+    "slices": "https://noir-lang.org/docs/dev/noir/concepts/data_types",
+    "strings": "https://noir-lang.org/docs/dev/noir/concepts/data_types",
+    "tuples": "https://noir-lang.org/docs/dev/noir/concepts/data_types",
+    "integers": "https://noir-lang.org/docs/dev/noir/concepts/data_types",
+    "traits": "https://noir-lang.org/docs/dev/noir/concepts/traits",
+    "fields": "https://noir-lang.org/docs/dev/noir/concepts/data_types",
+    "merkle-tree": "https://noir-lang.org/docs/noir/standard_library/cryptographic_primitives/hashes",
+    "hashes": "https://noir-lang.org/docs/noir/standard_library/cryptographic_primitives/hashes",
+    "embedded_curves": "https://noir-lang.org/docs/noir/standard_library/cryptographic_primitives/embedded_curve_ops",
+    "quizs": "https://noir-lang.org/docs/dev/noir/concepts"
+  };
+
   // New function to load from Supabase
   const loadProgress = async () => {
     if (user) {
@@ -98,10 +121,18 @@ function NoirEditor(props: PlaygroundProps) {
         if (data) {
           setFinishedExercises(data.finished_exercises as string[] || []);
           if (data.last_exercise) {
-            // Load last exercise
-            const exercises = await getOrderedExercises();
-            const toLoad = exercises.find(ex => `${ex.category}/${ex.file}` === data.last_exercise) || exercises[0];
-            handleExerciseSelect(`${toLoad.category}/${toLoad.file}`, toLoad.name, toLoad.hint, toLoad.description);
+            // Check if last exercise belongs to current mode
+            const lastExerciseCategory = data.last_exercise.split('/')[0];
+            const currentModeCategories = props.isAdvancedMode ? ADVANCED_CATEGORIES : BASIC_CATEGORIES;
+            const lastExerciseInMode = currentModeCategories.includes(lastExerciseCategory);
+
+            if (lastExerciseInMode) {
+              // Load last exercise only if it belongs to current mode
+              const exercises = props.isAdvancedMode ? await getAdvancedExercises() : await getOrderedExercises();
+              const toLoad = exercises.find(ex => `${ex.category}/${ex.file}` === data.last_exercise) || exercises[0];
+              handleExerciseSelect(`${toLoad.category}/${toLoad.file}`, toLoad.name, toLoad.hint, toLoad.description);
+            }
+            // If last exercise doesn't belong to current mode, let the mode switch useEffect handle it
           }
           if (data.theme) setTheme(data.theme);
         }
@@ -357,37 +388,46 @@ function NoirEditor(props: PlaygroundProps) {
 
   // Auto-load the last or first exercise on initial mount
   useEffect(() => {
-    if (currentExercise !== null) return; // Don't override if already selected
     let cancelled = false;
     async function loadInitialExercise() {
       try {
-        const exercises = await getOrderedExercises();
+        const exercises = props.isAdvancedMode ? await getAdvancedExercises() : await getOrderedExercises();
         if (!exercises || exercises.length === 0) return;
-        // Try to load the last exercise from localStorage
-        const lastExercisePath = localStorage.getItem("noir_last_exercise");
-        let toLoad = exercises[0];
-        if (lastExercisePath) {
-          const found = exercises.find(
-            (ex) => `${ex.category}/${ex.file}` === lastExercisePath
-          );
-          if (found) toLoad = found;
-        }
-        if (!cancelled && toLoad) {
-          const exercisePath = `${toLoad.category}/${toLoad.file}`;
-          await handleExerciseSelect(
-            exercisePath,
-            toLoad.name,
-            toLoad.hint,
-            toLoad.description
-          );
+
+        // Check if current exercise belongs to the current mode
+        const currentCategory = currentExercise?.split('/')[0];
+        const currentModeCategories = props.isAdvancedMode ? ADVANCED_CATEGORIES : BASIC_CATEGORIES;
+        const currentExerciseInMode = currentCategory && currentModeCategories.includes(currentCategory);
+
+        console.log('Mode switch check:', {
+          isAdvancedMode: props.isAdvancedMode,
+          currentExercise,
+          currentCategory,
+          currentModeCategories,
+          currentExerciseInMode
+        });
+
+        // If current exercise doesn't belong to this mode, load first exercise of this mode
+        if (!currentExerciseInMode) {
+          const toLoad = exercises[0]; // Always load first exercise of the mode
+          if (!cancelled && toLoad) {
+            const exercisePath = `${toLoad.category}/${toLoad.file}`;
+            console.log('Loading exercise for mode:', exercisePath);
+            await handleExerciseSelect(
+              exercisePath,
+              toLoad.name,
+              toLoad.hint,
+              toLoad.description
+            );
+          }
         }
       } catch (e) {
-        // Optionally handle error
+        console.error('Error in loadInitialExercise:', e);
       }
     }
     loadInitialExercise();
     return () => { cancelled = true; };
-  }, [currentExercise]);
+  }, [props.isAdvancedMode, currentExercise]);
 
   // Add effect to persist finishedExercises
   useEffect(() => {
@@ -400,20 +440,20 @@ function NoirEditor(props: PlaygroundProps) {
     }
   };
 
-  // Fetch and store ordered exercises on mount
+  // Fetch and store exercises on mount (advanced or regular based on mode)
   useEffect(() => {
     let cancelled = false;
-    async function fetchOrdered() {
+    async function fetchExercises() {
       try {
-        const exercises = await getOrderedExercises();
+        const exercises = props.isAdvancedMode ? await getAdvancedExercises() : await getOrderedExercises();
         if (!cancelled) setOrderedExercises(exercises);
       } catch (e) {
         // Optionally handle error
       }
     }
-    fetchOrdered();
+    fetchExercises();
     return () => { cancelled = true; };
-  }, []);
+  }, [props.isAdvancedMode]);
 
   // Compute current exercise index
   const currentExerciseIndex = orderedExercises.findIndex(
@@ -492,6 +532,14 @@ function NoirEditor(props: PlaygroundProps) {
     setCompileError(null);
   }, [fileSystem]);
 
+  const location = useLocation();
+
+  const currentCategories = props.isAdvancedMode ? ADVANCED_CATEGORIES : BASIC_CATEGORIES;
+  const currentFinished = finishedExercises.filter(ex => {
+    const category = ex.split('/')[0];
+    return currentCategories.includes(category);
+  }).length;
+
   return (
     <div className="h-screen w-full flex flex-col">
       {/* Top toolbar */}
@@ -500,11 +548,39 @@ function NoirEditor(props: PlaygroundProps) {
         style={{ backgroundColor: 'var(--bg-toolbar)', borderColor: 'var(--border-color)' }}
       >
         <div className="flex items-center gap-3 ml-2">
-          {theme === 'light' ? (
-            <img src="/noirlingsapplogo-white.png" alt="Noirlings Logo" className="h-4 w-auto" style={{ maxHeight: 32 }} />
-          ) : (
-            <img src="/noirlingsapplogo-white.png" alt="Noirlings Logo" className="h-4 w-auto" style={{ maxHeight: 32 }} />
-          )}
+          <Link
+            to="/"
+            style={{
+              color: location.pathname === "/" ? 'var(--color-accent)' : 'var(--color-secondary)',
+              textDecoration: 'none',
+            }}
+          >
+            {theme === 'light' ? (
+              <img src="/noirlingsapplogo-white.png" alt="Noirlings Logo" className="h-4 w-auto" style={{ maxHeight: 32 }} />
+            ) : (
+              <img src="/noirlingsapplogo-white.png" alt="Noirlings Logo" className="h-4 w-auto" style={{ maxHeight: 32 }} />
+            )}
+          </Link>
+          <div className="ml-4 flex gap-4 items-center">
+            <Link
+              to="/"
+              style={{
+                color: location.pathname === "/" ? 'var(--color-accent)' : 'var(--color-secondary)',
+                textDecoration: 'none',
+              }}
+            >
+              Basic
+            </Link>
+            <Link
+              to="/advanced"
+              style={{
+                color: location.pathname === "/advanced" ? 'var(--color-accent)' : 'var(--color-secondary)',
+                textDecoration: 'none',
+              }}
+            >
+              Advanced
+            </Link>
+          </div>
           {/* <a
             href="https://x.com/andeebtceth"
             target="_blank"
@@ -543,7 +619,7 @@ function NoirEditor(props: PlaygroundProps) {
           </button>
 
           <div className="text-base " style={{ color: "var(--header-text)" }}>
-            Finished: {finishedExercises.length}/{orderedExercises.length}
+            Finished: {currentFinished}/{orderedExercises.length}
           </div>
           <div>
             <div className="flex items-center">
@@ -621,11 +697,19 @@ function NoirEditor(props: PlaygroundProps) {
               borderColor: 'var(--border-color)'
             }}
           >
-            <ExercisesSidebar
-              selectExercise={(path: string, name: string, hint?: string, description?: string): void => { void handleExerciseSelect(path, name, hint, description); }}
-              currentExercise={currentExercise}
-              finishedExercises={finishedExercises}
-            />
+            {props.isAdvancedMode ? (
+              <AdvancedExercisesSidebar
+                selectExercise={(path: string, name: string, hint?: string, description?: string): void => { void handleExerciseSelect(path, name, hint, description); }}
+                currentExercise={currentExercise}
+                finishedExercises={finishedExercises}
+              />
+            ) : (
+              <ExercisesSidebar
+                selectExercise={(path: string, name: string, hint?: string, description?: string): void => { void handleExerciseSelect(path, name, hint, description); }}
+                currentExercise={currentExercise}
+                finishedExercises={finishedExercises}
+              />
+            )}
           </div>
         )}
 
@@ -654,28 +738,15 @@ function NoirEditor(props: PlaygroundProps) {
                   <div className="text-2xl font-bold" style={{ color: 'var(--color-primary)' }}>
                     {currentExerciseTitle && formatExerciseName(currentExerciseTitle)}
                   </div>
-                  {currentExerciseHint?.trim() === "No hint this time" ? (
-                    <button
-                      className="px-4 py-2 cursor-not-allowed opacity-50 border rounded"
-                      style={{
-                        borderColor: 'var(--border-color)',
-                        backgroundColor: 'transparent',
-                        color: 'var(--color-secondary)'
-                      }}
-                      disabled
-                    >
-                      No Hint
-                    </button>
-                  ) : (
-                    <button
-                      className="px-3 py-2 cursor-pointer transition-opacity border rounded hover:opacity-80 flex items-center gap-2"
-                      style={{ borderColor: 'var(--border-color)', backgroundColor: 'transparent', color: 'var(--color-secondary)' }}
-                      onClick={() => setShowHint((prev) => !prev)}
-                    >
-                      <Lightbulb size={16} color="var(--color-secondary)" />
-                      {showHint ? "Hide Hint" : "Show Hint"}
-                    </button>
-                  )}
+                  <button
+                    className="px-3 py-2 cursor-pointer transition-opacity border rounded hover:opacity-80 flex items-center gap-2"
+                    style={{ borderColor: 'var(--border-color)', backgroundColor: 'transparent', color: 'var(--color-secondary)' }}
+                    onClick={() => setShowHint((prev) => !prev)}
+                  >
+                    <Lightbulb size={16} color="var(--color-secondary)" />
+                    {showHint ? "Hide Hint" : "Show Hint"}
+                  </button>
+
                 </div>
                 {currentExerciseDescription && (
                   <div style={{ color: 'var(--color-primary)' }} className="mb-6">
@@ -686,15 +757,15 @@ function NoirEditor(props: PlaygroundProps) {
                   </div>
                 )}
 
-                {currentExerciseHint && currentExerciseHint.trim() !== "No hint this time" && showHint && (
+                {currentExerciseHint && showHint && (
                   <div className="whitespace-pre-line rounded flex flex-col gap-2" style={{ color: 'var(--color-secondary)' }}>
                     <span className="font-bold text-xl" style={{ color: 'var(--color-primary)' }}>Hint</span>
                     <div className="markdown-body">
-                      <ReactMarkdown>{currentExerciseHint}</ReactMarkdown>
+                      <ReactMarkdown>{currentExerciseHint.trim() !== "No hint this time" ? currentExerciseHint : ""}</ReactMarkdown>
                     </div>
-                    <div className="mt-3 pt-6 border-t" style={{ borderColor: 'var(--border-color)' }}>
+                    <div className="mt-3 break-words" style={{ borderColor: 'var(--border-color)' }}>
                       <span style={{ color: 'var(--color-primary)' }}>
-                        <a href="https://noir-lang.org/docs" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--color-accent)' }}>View Noir Documentation</a>
+                        <a href={docLinks[currentExercise?.split('/')[0] || ''] || "https://noir-lang.org/docs"} target="_blank" rel="noopener noreferrer" className="underline font-light" style={{ color: 'var(--color-accent)' }}>{docLinks[currentExercise?.split('/')[0] || ''] || "https://noir-lang.org/docs"}</a>
                       </span>
                     </div>
                   </div>
