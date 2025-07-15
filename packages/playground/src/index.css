@@ -110,3 +110,12 @@ body:not(#editor) {
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-in-out;
 }
+
+/* Exercise navigation styling */
+.exercise-nav-button {
+  transition: all 0.2s ease;
+}
+
+.exercise-nav-button:hover {
+  background-color: var(--bg-toolbar-btn);
+}
