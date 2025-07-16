@@ -24,7 +24,7 @@ interface OrderedExercise {
 }
 
 interface AdvancedExercisesSidebarProps {
-    selectExercise: (exercisePath: string, exerciseName: string, exerciseHint?: string, exerciseDescription?: string) => void;
+    selectExercise: (exercisePath: string, exerciseName: string, exerciseHint?: string, exerciseDescription?: string, exerciseDocLink?: string) => void;
     currentExercise: string | null;
     finishedExercises: string[];
 }
