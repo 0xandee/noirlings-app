@@ -3,15 +3,24 @@ import { getAdvancedExercises } from "../../utils/exerciseLoader";
 import { formatExerciseName } from "../../utils/formatExerciseName";
 import { useTheme } from "../../hooks/useTheme";
 
-// Reuse the OrderedExercise type
+// Update interface OrderedExercise
 interface OrderedExercise {
-    name: string;
-    path: string;
-    mode: string;
-    hint: string;
-    description?: string;
+    id: string;
+    title: string;
     category: string;
-    file: string;
+    difficulty: string;
+    tags: string[];
+    mode: string;
+    prerequisites: string[];
+    version: string;
+    locales: {
+        en: {
+            hint: string;
+            description?: string;
+            docLink?: string;  // New
+        }
+    };
+    path?: string;
 }
 
 interface AdvancedExercisesSidebarProps {
@@ -68,11 +77,11 @@ const AdvancedExercisesSidebar: React.FC<AdvancedExercisesSidebarProps> = ({
             ) : (
                 <div className="space-y-0">
                     {exercises.map((exercise) => {
-                        const exerciseKey = `${exercise.category}/${exercise.file}`;
+                        const exerciseKey = `${exercise.category}/${exercise.id}`;
                         const isFinished = finishedExercises.includes(exerciseKey);
                         return (
                             <div
-                                key={exercise.path}
+                                key={exercise.id}
                                 className={`cursor-pointer select-none p-4 pl-6 transition-colors ${theme === 'dark' ? 'hover:bg-[#ffffff10]' : 'hover:bg-[#00000010]'}`}
                                 style={{
                                     backgroundColor: currentExercise === exerciseKey
@@ -82,11 +91,11 @@ const AdvancedExercisesSidebar: React.FC<AdvancedExercisesSidebarProps> = ({
                                     fontWeight: 'normal'
                                 }}
                                 onClick={() =>
-                                    selectExercise(exerciseKey, exercise.name, exercise.hint, exercise.description)
+                                    selectExercise(exerciseKey, exercise.title, exercise.locales.en.hint, exercise.locales.en.description, exercise.locales.en.docLink)  // Add docLink
                                 }
                             >
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                    <span>{formatExerciseName(exercise.name)}</span>
+                                    <span>{formatExerciseName(exercise.title)}</span>
                                     {isFinished && <span title="Completed" style={{ color: 'var(--finished-text)' }}>✓</span>}
                                 </div>
                             </div>

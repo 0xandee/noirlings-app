@@ -1,0 +1,53 @@
+[
+  {
+    "path": "hashes/pedersen_hash.md",
+    "id": "pedersen_hash",
+    "title": "pedersen_hash",
+    "category": "hashes",
+    "difficulty": "easy",
+    "tags": [],
+    "mode": "test",
+    "prerequisites": [],
+    "version": "1.0.0",
+    "locales": {
+      "en": {
+        "hint": "No hint this time\n",
+        "description": "Understanding Pedersen Hash\n\nPedersen hash is a cryptographic hash function based on elliptic curve operations.\nIt is widely used in zero-knowledge proofs and privacy-preserving blockchain applications.\n\nKey Properties of Pedersen hash:\n1. It's a one-way function(difficult to reverse)\n2. It has collision resistance(hard to find two inputs that hash to the same output)\n3. Its deterministic(same input always produces the same output)\n4. It has homomorphic properties(especially useful in zero-knowledge proofs)\n\nIn this exercise, you will:\n1. Compute a basic Pedersen hash\n2. Verify its deterministic property\n3. Explore how changes to input affect the output (avalanche effect)\n"
+      }
+    }
+  },
+  {
+    "path": "embedded_curves/embedded_curve1.md",
+    "id": "embedded_curve1",
+    "title": "embedded_curve1",
+    "category": "embedded_curves",
+    "difficulty": "easy",
+    "tags": [],
+    "mode": "test",
+    "prerequisites": [],
+    "version": "1.0.0",
+    "locales": {
+      "en": {
+        "hint": "```\nstruct EmbeddedCurvePoint {\n  x: Field,\n  y: Field,\n  is_infinite: bool\n}\n```\n",
+        "description": "Introduction to EmbeddedCurvePoint structure\n\nTODO: Define a struct called 'EmbeddedCurvePoint' with three fields:\n- x: Field (x-coordinate)\n- y: Field (y-coordinate)\n- is_infinite: bool (flag indicating if it's the point at infinity)\n"
+      }
+    }
+  },
+  {
+    "path": "embedded_curves/embedded_curve2.md",
+    "id": "embedded_curve2",
+    "title": "embedded_curve2",
+    "category": "embedded_curves",
+    "difficulty": "easy",
+    "tags": [],
+    "mode": "test",
+    "prerequisites": [],
+    "version": "1.0.0",
+    "locales": {
+      "en": {
+        "hint": "1. Generator function implementation\n```\npub fn generator() -> EmbeddedCurvePoint {\n    EmbeddedCurvePoint {\n    x: 1,\n    y: 17631683881184975370165255887551781615748388533673675138860,\n    is_infinite: false\n    }\n}\n```\n2. Point At Infinity\n```\npub fn point_at_infinity() -> EmbeddedCurvePoint {\n    EmbeddedCurvePoint { x: 0, y: 0, is_infinite: true }\n}\n```\n3. Negation Implementation\n```\npub fn neg(self) -> EmbeddedCurvePoint {\n    EmbeddedCurvePoint { x: self.x, y: -self.y, is_infinite: self.is_infinite }\n}\n```\n",
+        "description": "Implementing methods for EmbeddedCurvePoint\n"
+      }
+    }
+  }
+]
