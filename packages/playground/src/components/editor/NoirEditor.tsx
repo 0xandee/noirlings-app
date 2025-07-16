@@ -16,7 +16,7 @@ import { FileSystem } from "../../utils/fileSystem";
 import ExercisesSidebar from "../exercisesSidebar/ExercisesSidebar";
 import AdvancedExercisesSidebar from "../advancedExercisesSidebar/AdvancedExercisesSidebar";
 import type { OrderedExercise } from "../exercisesSidebar/ExercisesSidebar";
-import { createFileFromExercise, loadExerciseContent, getOrderedExercises, getAdvancedExercises } from "../../utils/exerciseLoader";
+import { BASIC_CATEGORIES, ADVANCED_CATEGORIES } from "../../utils/exerciseLoader";
 import ReactMarkdown from "react-markdown";
 import { formatExerciseName } from "../../utils/formatExerciseName";
 import { useAuth } from "../../hooks/useAuth";
@@ -31,7 +31,7 @@ import { Moon, Sun, Github, Copy, RotateCcw, Play, Lightbulb } from 'lucide-reac
 import { compileCode } from "../../utils/generateProof";
 import { toast } from "react-toastify";
 import { CompiledCircuit } from "@noir-lang/types";
-import { BASIC_CATEGORIES, ADVANCED_CATEGORIES } from "../../utils/exerciseLoader";
+import { createFileFromExercise, loadExerciseContent, getOrderedExercises, getAdvancedExercises } from "../../utils/exerciseLoader";
 
 type editorType = editor.IStandaloneCodeEditor;
 
@@ -84,6 +84,7 @@ function NoirEditor(props: PlaygroundProps) {
 
   // Add new state after existing states
   const [initialExerciseContent, setInitialExerciseContent] = useState<string>('');
+  const [currentDocLink, setCurrentDocLink] = useState<string | null>(null);
 
   const [copyTooltip, setCopyTooltip] = useState<{ visible: boolean; text: string; isClicked: boolean }>({ visible: false, text: 'Copy', isClicked: false });
   const [resetTooltip, setResetTooltip] = useState<{ visible: boolean; text: string; isClicked: boolean }>({ visible: false, text: 'Reset', isClicked: false });
@@ -109,6 +110,9 @@ function NoirEditor(props: PlaygroundProps) {
     "quizs": "https://noir-lang.org/docs/dev/noir/concepts"
   };
 
+  // Add at top of NoirEditor:
+  const normalizePath = (path: string | null | undefined) => path ? path.replace(/\.nr$/, '') : '';
+
   // New function to load from Supabase
   const loadProgress = async () => {
     if (user) {
@@ -119,18 +123,18 @@ function NoirEditor(props: PlaygroundProps) {
           return;
         }
         if (data) {
-          setFinishedExercises(data.finished_exercises as string[] || []);
+          setFinishedExercises((data.finished_exercises as string[] || []).map(normalizePath));
           if (data.last_exercise) {
             // Check if last exercise belongs to current mode
-            const lastExerciseCategory = data.last_exercise.split('/')[0];
+            const lastExerciseCategory = normalizePath(data.last_exercise).split('/')[0];
             const currentModeCategories = props.isAdvancedMode ? ADVANCED_CATEGORIES : BASIC_CATEGORIES;
             const lastExerciseInMode = currentModeCategories.includes(lastExerciseCategory);
 
             if (lastExerciseInMode) {
               // Load last exercise only if it belongs to current mode
               const exercises = props.isAdvancedMode ? await getAdvancedExercises() : await getOrderedExercises();
-              const toLoad = exercises.find(ex => `${ex.category}/${ex.file}` === data.last_exercise) || exercises[0];
-              handleExerciseSelect(`${toLoad.category}/${toLoad.file}`, toLoad.name, toLoad.hint, toLoad.description);
+              const toLoad = exercises.find((ex: OrderedExercise) => `${ex.category}/${ex.id}` === normalizePath(data.last_exercise)) || exercises[0];
+              handleExerciseSelect(`${toLoad.category}/${toLoad.id}`, toLoad.title, toLoad.locales.en.hint, toLoad.locales.en.description);
             }
             // If last exercise doesn't belong to current mode, let the mode switch useEffect handle it
           }
@@ -154,8 +158,8 @@ function NoirEditor(props: PlaygroundProps) {
             return;
           }
 
-          const localFinished = JSON.parse(localStorage.getItem('noir_finished_exercises') || '[]');
-          const localLast = localStorage.getItem('noir_last_exercise');
+          const localFinished = JSON.parse(localStorage.getItem('noir_finished_exercises') || '[]').map(normalizePath);
+          const localLast = normalizePath(localStorage.getItem('noir_last_exercise') || '');
           const localTheme = localStorage.getItem('noir_theme') || 'dark';
 
           // Prepare merged data
@@ -214,7 +218,7 @@ function NoirEditor(props: PlaygroundProps) {
       if (user) {
         try {
           const { error } = await supabase.from('user_progress').update({
-            finished_exercises: finishedExercises,
+            finished_exercises: finishedExercises.map(normalizePath),
             last_exercise: currentExercise,
             theme: theme,
           }).eq('user_id', user!.id);
@@ -361,7 +365,8 @@ function NoirEditor(props: PlaygroundProps) {
     exercisePath: string,
     exerciseName: string,
     exerciseHint?: string,
-    exerciseDescription?: string
+    exerciseDescription?: string,
+    exerciseDocLink?: string
   ) => {
     try {
       // Save the selected exercise path to localStorage
@@ -374,13 +379,14 @@ function NoirEditor(props: PlaygroundProps) {
       const exerciseFile = createFileFromExercise(exercisePath, content);
       setFilesystem(new FileSystem(exerciseFile));
       // Set the current exercise and path
-      setCurrentExercise(exercisePath);
+      setCurrentExercise(normalizePath(exercisePath));
       setCurrentExerciseTitle(exerciseName);
       setCurrentExerciseHint(exerciseHint || null);
       setCurrentExerciseDescription(exerciseDescription || null);
       setCurrentPath("src/main.nr");
       setOldPath(undefined);
       setShowHint(false); // Hide hint by default for each new exercise
+      setCurrentDocLink(exerciseDocLink || null);
     } catch (error) {
       console.error("Failed to load exercise:", error);
     }
@@ -411,13 +417,13 @@ function NoirEditor(props: PlaygroundProps) {
         if (!currentExerciseInMode) {
           const toLoad = exercises[0]; // Always load first exercise of the mode
           if (!cancelled && toLoad) {
-            const exercisePath = `${toLoad.category}/${toLoad.file}`;
+            const exercisePath = `${toLoad.category}/${toLoad.id}`;
             console.log('Loading exercise for mode:', exercisePath);
             await handleExerciseSelect(
               exercisePath,
-              toLoad.name,
-              toLoad.hint,
-              toLoad.description
+              toLoad.title,
+              toLoad.locales.en.hint,
+              toLoad.locales.en.description
             );
           }
         }
@@ -436,7 +442,7 @@ function NoirEditor(props: PlaygroundProps) {
 
   const handleCompileSuccess = () => {
     if (currentExercise && !finishedExercises.includes(currentExercise)) {
-      setFinishedExercises((prev) => [...prev, currentExercise]);
+      setFinishedExercises((prev) => Array.from(new Set([...prev, currentExercise])));
     }
   };
 
@@ -456,9 +462,7 @@ function NoirEditor(props: PlaygroundProps) {
   }, [props.isAdvancedMode]);
 
   // Compute current exercise index
-  const currentExerciseIndex = orderedExercises.findIndex(
-    (ex) => `${ex.category}/${ex.file}` === currentExercise
-  );
+  const currentExerciseIndex = orderedExercises.findIndex((ex: OrderedExercise) => `${ex.category}/${ex.id}` === normalizePath(currentExercise));
 
   // Navigation handlers
   const handleForward = () => {
@@ -468,8 +472,8 @@ function NoirEditor(props: PlaygroundProps) {
     ) {
       const next = orderedExercises[currentExerciseIndex + 1];
       if (next) {
-        const exercisePath = `${next.category}/${next.file}`;
-        handleExerciseSelect(exercisePath, next.name, next.hint, next.description);
+        const exercisePath = `${next.category}/${next.id}`;
+        handleExerciseSelect(exercisePath, next.title, next.locales.en.hint, next.locales.en.description);
       }
     }
   };
@@ -503,7 +507,7 @@ function NoirEditor(props: PlaygroundProps) {
       setCompileError(null);
       toast.success('Compiled!');
       if (currentExercise && !finishedExercises.includes(currentExercise)) {
-        setFinishedExercises((prev) => [...prev, currentExercise]);
+        setFinishedExercises((prev) => Array.from(new Set([...prev, currentExercise])));
       }
     } catch (err: unknown) {
       let message = "Unknown error";
@@ -536,7 +540,7 @@ function NoirEditor(props: PlaygroundProps) {
 
   const currentCategories = props.isAdvancedMode ? ADVANCED_CATEGORIES : BASIC_CATEGORIES;
   const currentFinished = finishedExercises.filter(ex => {
-    const category = ex.split('/')[0];
+    const category = normalizePath(ex).split('/')[0];
     return currentCategories.includes(category);
   }).length;
 
@@ -765,7 +769,7 @@ function NoirEditor(props: PlaygroundProps) {
                     </div>
                     <div className="mt-3 break-words" style={{ borderColor: 'var(--border-color)' }}>
                       <span style={{ color: 'var(--color-primary)' }}>
-                        <a href={docLinks[currentExercise?.split('/')[0] || ''] || "https://noir-lang.org/docs"} target="_blank" rel="noopener noreferrer" className="underline font-light" style={{ color: 'var(--color-accent)' }}>{docLinks[currentExercise?.split('/')[0] || ''] || "https://noir-lang.org/docs"}</a>
+                        <a href={currentDocLink || docLinks[normalizePath(currentExercise?.split('/')[0] || '')] || "https://noir-lang.org/docs"} target="_blank" rel="noopener noreferrer" className="underline font-light" style={{ color: 'var(--color-accent)' }}>{currentDocLink || docLinks[normalizePath(currentExercise?.split('/')[0] || '')] || "https://noir-lang.org/docs"}</a>
                       </span>
                     </div>
                   </div>

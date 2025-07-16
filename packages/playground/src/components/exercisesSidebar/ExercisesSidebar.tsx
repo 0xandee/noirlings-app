@@ -5,17 +5,26 @@ import { useTheme } from "../../hooks/useTheme";
 
 // New type for ordered exercises
 interface OrderedExercise {
-    name: string;
-    path: string;
-    mode: string;
-    hint: string;
-    description?: string;
+    id: string;
+    title: string;
     category: string;
-    file: string;
+    difficulty: string;
+    tags: string[];
+    mode: string;
+    prerequisites: string[];
+    version: string;
+    locales: {
+        en: {
+            hint: string;
+            description?: string;
+            docLink?: string;  // New
+        }
+    };
+    path?: string;
 }
 
 type ExercisesSidebarProps = {
-    selectExercise: (exercisePath: string, exerciseName: string, exerciseHint?: string, exerciseDescription?: string) => void;
+    selectExercise: (exercisePath: string, exerciseName: string, exerciseHint?: string, exerciseDescription?: string, exerciseDocLink?: string) => void;
     currentExercise: string | null;
     finishedExercises: string[];
 };
@@ -63,11 +72,11 @@ const ExercisesSidebar: React.FC<ExercisesSidebarProps> = ({
             ) : (
                 <div className="space-y-0">
                     {exercises.map((exercise) => {
-                        const exerciseKey = `${exercise.category}/${exercise.file}`;
-                        const isFinished = finishedExercises.includes(exerciseKey);
+                        const exerciseKey = `${exercise.category}/${exercise.id}`;
+                        const isFinished = finishedExercises.includes(`${exercise.category}/${exercise.id}`);
                         return (
                             <div
-                                key={exercise.path}
+                                key={exercise.id}
                                 className={`cursor-pointer select-none p-4 pl-6 transition-colors ${theme === 'dark' ? 'hover:bg-[#ffffff10]' : 'hover:bg-[#00000010]'}`}
                                 style={{
                                     backgroundColor: currentExercise === exerciseKey
@@ -77,11 +86,11 @@ const ExercisesSidebar: React.FC<ExercisesSidebarProps> = ({
                                     fontWeight: 'normal'
                                 }}
                                 onClick={() =>
-                                    selectExercise(exerciseKey, exercise.name, exercise.hint, exercise.description)
+                                    selectExercise(`${exercise.category}/${exercise.id}`, exercise.title, exercise.locales.en.hint, exercise.locales.en.description, exercise.locales.en.docLink)
                                 }
                             >
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                    <span>{formatExerciseName(exercise.name)}</span>
+                                    <span>{formatExerciseName(exercise.title)}</span>
                                     {/* {isFinished && <span title="Finished">✅</span>} */}
                                 </div>
                             </div>
