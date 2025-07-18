@@ -26,15 +26,11 @@ locales:
           }
       }
       ```
-      
-    description: |-
-      Multiple Trait Implementation: This exercise shows how to implement multiple traits for a type
-      
+    description: >-
+      Multiple Trait Implementation: This exercise shows how to implement
+      multiple traits for a type
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/traits'
 ---
-
-Multiple Trait Implementation: This exercise shows how to implement multiple traits for a type
-
-
 ```noir
 trait Perimeter {
     fn perimeter(self) -> Field;

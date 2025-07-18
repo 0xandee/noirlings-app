@@ -9,17 +9,12 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
-      No hint this time
-      
-    description: |-
-      This exercise will help you understand array methods like map, fold, sort, and predicates
-      
+    hint: No hint this time
+    description: >-
+      This exercise will help you understand array methods like map, fold, sort,
+      and predicates
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
 ---
-
-This exercise will help you understand array methods like map, fold, sort, and predicates
-
-
 ```noir
 fn find_even_numbers(arr: [u64; 6]) -> [u64; 6] {
     // TODO: Return an array where even numbers are kept and odd numbers are replaced with 0

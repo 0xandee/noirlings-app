@@ -26,15 +26,9 @@ locales:
       ```
       Person { name, age, home_address }
       ```
-      
-    description: |-
-      No description here
-      
+    description: No description here
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
 ---
-
-No description here
-
-
 ```noir
 struct Address {
     street_number: Field,

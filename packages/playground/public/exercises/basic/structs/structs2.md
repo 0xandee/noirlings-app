@@ -9,17 +9,10 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
-      No hint this time
-      
-    description: |-
-      No description here
-      
+    hint: No hint this time
+    description: No description here
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
 ---
-
-No description here
-
-
 ```noir
 struct Rectangle {
     width: Field,

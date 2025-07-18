@@ -9,16 +9,10 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
-      No hint this time
-
-    description: |-
-      This will not compile, can you fix it to compile successfully
-    docLink: "https://noir-lang.org/docs/dev/noir/concepts/mutability"
+    hint: No hint this time
+    description: 'This will not compile, can you fix it to compile successfully'
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/mutability'
 ---
-
-This will not compile, can you fix it to compile successfully
-
 ```noir
 fn main(x: Field, y: Field) {
     z = x + y;

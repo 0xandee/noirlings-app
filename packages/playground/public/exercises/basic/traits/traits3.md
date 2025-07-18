@@ -21,15 +21,9 @@ locales:
           }
       }
       ```
-      
-    description: |-
-      Generic Traits: This exercise demonstrates how to work with generic traits
-      
+    description: 'Generic Traits: This exercise demonstrates how to work with generic traits'
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/traits'
 ---
-
-Generic Traits: This exercise demonstrates how to work with generic traits
-
-
 ```noir
 trait Convert<T> {
     fn convert(self) -> T;

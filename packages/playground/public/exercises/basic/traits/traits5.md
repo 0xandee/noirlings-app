@@ -19,15 +19,11 @@ locales:
           maximum
       }
       ```
-      
-    description: |-
-      Trait Bounds: This exercise demonstrates how to use trait bounds with generics
-      
+    description: >-
+      Trait Bounds: This exercise demonstrates how to use trait bounds with
+      generics
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/traits'
 ---
-
-Trait Bounds: This exercise demonstrates how to use trait bounds with generics
-
-
 ```noir
 trait Maximum {
     fn max(self, other: Self) -> Self;

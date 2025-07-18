@@ -17,14 +17,14 @@ interface OrderedExercise {
         en: {
             hint: string;
             description?: string;
-            docLink?: string;  // New
+            docLink?: string;
         }
     };
     path?: string;
 }
 
 type ExercisesSidebarProps = {
-    selectExercise: (exercisePath: string, exerciseName: string, exerciseHint?: string, exerciseDescription?: string, exerciseDocLink?: string) => void;
+    selectExercise: (exercisePath: string) => void;
     currentExercise: string | null;
     finishedExercises: string[];
 };
@@ -66,7 +66,6 @@ const ExercisesSidebar: React.FC<ExercisesSidebarProps> = ({
 
     return (
         <div className="w-auto h-auto overflow-y-auto" style={{ color: 'var(--color-primary)' }}>
-            {/* <h2 className="text-xl font-bold mt-0 mb-4 text-yellow-800">Exercises</h2> */}
             {exercises.length === 0 ? (
                 <div style={{ color: 'var(--color-secondary)' }}>No exercises available</div>
             ) : (
@@ -85,13 +84,11 @@ const ExercisesSidebar: React.FC<ExercisesSidebarProps> = ({
                                     color: isFinished ? 'var(--finished-text)' : (currentExercise === exerciseKey ? 'var(--color-primary)' : 'var(--color-secondary)'),
                                     fontWeight: 'normal'
                                 }}
-                                onClick={() =>
-                                    selectExercise(`${exercise.category}/${exercise.id}`, exercise.title, exercise.locales.en.hint, exercise.locales.en.description, exercise.locales.en.docLink)
-                                }
+                                onClick={() => selectExercise(`${exercise.category}/${exercise.id}`)}
                             >
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                     <span>{formatExerciseName(exercise.title)}</span>
-                                    {/* {isFinished && <span title="Finished">✅</span>} */}
+                                    {isFinished && <span title="Completed" style={{ color: 'var(--finished-text)' }}>✓</span>}
                                 </div>
                             </div>
                         );

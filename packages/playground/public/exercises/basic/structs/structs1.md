@@ -9,21 +9,13 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
-      No hint this time
-      
+    hint: No hint this time
     description: |-
       TODO: Define a struct called 'Point' with two fields:
       - x: Field
       - y: Field
-      
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
 ---
-
-TODO: Define a struct called 'Point' with two fields:
-- x: Field
-- y: Field
-
-
 ```noir
 // structs1.nr
 // use the `hint` watch subcommand for a hint.

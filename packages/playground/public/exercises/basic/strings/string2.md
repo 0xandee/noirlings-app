@@ -25,15 +25,9 @@ locales:
       ```
           sum as Field
       ```
-      
-    description: |-
-      No description here
-      
+    description: No description here
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
 ---
-
-No description here
-
-
 ```noir
 fn get_ascii_sum(text: str<5>) -> Field {
     // TODO: Return the sum of ASCII values of all characters

@@ -14,15 +14,9 @@ locales:
       let person = (name,age,zip);
       person
       ```
-      
-    description: |-
-      No description here
-      
+    description: No description here
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
 ---
-
-No description here
-
-
 ```noir
 fn create_person(name: str<10>, age: Field, zip: Field) -> (str<10>, Field, Field) {
     // TODO: Create and return a tuple with the given parameters

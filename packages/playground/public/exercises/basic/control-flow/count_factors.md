@@ -9,17 +9,13 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
-      No hint this time
-      
-    description: |-
-      Complete the `count_factors` function that counts the number of factors of a given number, and `find_special_numbers` that finds numbers with exactly k factors within a range
-      
+    hint: No hint this time
+    description: >-
+      Complete the `count_factors` function that counts the number of factors of
+      a given number, and `find_special_numbers` that finds numbers with exactly
+      k factors within a range
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/control_flow'
 ---
-
-Complete the `count_factors` function that counts the number of factors of a given number, and `find_special_numbers` that finds numbers with exactly k factors within a range
-
-
 ```noir
 fn count_factors(n: u64) -> u64 {
     let mut count = 0;

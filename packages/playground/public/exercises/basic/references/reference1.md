@@ -15,15 +15,11 @@ locales:
       *a = *b;
       *b = temp;
       ```
-      
-    description: |-
-      TODO: Complete the swap_values function that takes two mutable references to Field values and swaps their values
-      
+    description: >-
+      TODO: Complete the swap_values function that takes two mutable references
+      to Field values and swaps their values
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/mutability'
 ---
-
-TODO: Complete the swap_values function that takes two mutable references to Field values and swaps their values
-
-
 ```noir
 fn swap_values(a: &mut Field, b: &mut Field) {
     // Your implementation here

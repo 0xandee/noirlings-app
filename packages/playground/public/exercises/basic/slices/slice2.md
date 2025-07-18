@@ -9,26 +9,29 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
-      1. Use `insert` method to insert element at particular index. `insert` method returns new slice.
+    hint: >-
+      1. Use `insert` method to insert element at particular index. `insert`
+      method returns new slice.
+
       ```
+
       slice = slice.insert(2, 42);
+
       ```
-      2. Remove element from front using `pop_front` method. This method returns a tuple of removed element and new slice.
+
+      2. Remove element from front using `pop_front` method. This method returns
+      a tuple of removed element and new slice.
           let (_, slice) = slice.pop_front();
       3. return slice length typecasted as Field.
+
       ```
+
       slice.len() as Field
+
       ```
-      
-    description: |-
-      No description here
-      
+    description: No description here
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
 ---
-
-No description here
-
-
 ```noir
 fn process_slice(mut slice: [Field]) -> Field {
     // TODO:

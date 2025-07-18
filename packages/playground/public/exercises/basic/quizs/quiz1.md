@@ -19,17 +19,13 @@ locales:
         }
       }
       ```
-      
-    description: |-
-      Input 3 values using 'a' (array of length 3) and check if they all are equal.
+    description: >-
+      Input 3 values using 'a' (array of length 3) and check if they all are
+      equal.
+
       Return using signal 'c'.
-      
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts'
 ---
-
-Input 3 values using 'a' (array of length 3) and check if they all are equal.
-Return using signal 'c'.
-
-
 ```noir
 fn equality(inputs: [u32; 3]) -> bool {
     //TODO

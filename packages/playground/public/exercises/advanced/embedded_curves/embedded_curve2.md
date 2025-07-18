@@ -32,15 +32,10 @@ locales:
           EmbeddedCurvePoint { x: self.x, y: -self.y, is_infinite: self.is_infinite }
       }
       ```
-      
-    description: |-
-      Implementing methods for EmbeddedCurvePoint
-      
+    description: Implementing methods for EmbeddedCurvePoint
+    docLink: >-
+      https://noir-lang.org/docs/noir/standard_library/cryptographic_primitives/embedded_curve_ops
 ---
-
-Implementing methods for EmbeddedCurvePoint
-
-
 ```noir
 struct EmbeddedCurvePoint {
     x: Field,

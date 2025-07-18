@@ -9,21 +9,20 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
+    hint: >-
       ```
-      let valid_transactions = transactions.filter(|txn: Transaction| txn.valid == true);
+
+      let valid_transactions = transactions.filter(|txn: Transaction| txn.valid
+      == true);
+
       let amounts = valid_transactions.map(|txn: Transaction| txn.amount);
+
       let sum = amounts.reduce(|acc: Field,x: Field| acc + x);
+
       ```
-      
-    description: |-
-      No description here
-      
+    description: No description here
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
 ---
-
-No description here
-
-
 ```noir
 struct Transaction {
     amount: Field,

@@ -18,15 +18,9 @@ locales:
           kill_assists - deaths
       }
       ```
-      
-    description: |-
-      No description here
-      
+    description: No description here
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
 ---
-
-No description here
-
-
 ```noir
 use std::{wrapping_add, wrapping_mul};
 
