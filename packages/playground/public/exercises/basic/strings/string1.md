@@ -9,16 +9,17 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
-      ```
-      if password == "SuperSecret!" {
-            true
-      } else {
-        false
-      }
-      ```
-    description: Learn about string declarations and basic assertions
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
+    hint: >-
+      String literals use double quotes. String comparison in Noir works with
+      the `==` operator.
+    description: >-
+      Strings in Noir have fixed sizes specified in their type, ensuring
+      predictable memory usage in ZK circuits
+
+
+      #### Docs
+    docLink: >-
+      https://noir-lang.org/docs/noir/concepts/data_types/strings#string-literals
 ---
 ```noir
 fn check_password(password: str<12>) -> bool {

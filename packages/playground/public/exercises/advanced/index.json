@@ -1,5 +1,23 @@
 [
   {
+    "path": "hashes/pedersen_hash.md",
+    "id": "pedersen_hash",
+    "title": "pedersen_hash",
+    "category": "hashes",
+    "difficulty": "easy",
+    "tags": [],
+    "mode": "test",
+    "prerequisites": [],
+    "version": "1.0.0",
+    "locales": {
+      "en": {
+        "hint": "Import the Pedersen hash function from the standard library. Use it to hash your input data and observe the deterministic output.",
+        "description": "Pedersen hashes are ZK-friendly cryptographic primitives that enable efficient commitment schemes and merkle trees in circuits\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/standard_library/cryptographic_primitives/hashes#pedersen-hash"
+      }
+    }
+  },
+  {
     "path": "embedded_curves/embedded_curve1.md",
     "id": "embedded_curve1",
     "title": "embedded_curve1",
@@ -11,9 +29,9 @@
     "version": "1.0.0",
     "locales": {
       "en": {
-        "hint": "```\nstruct EmbeddedCurvePoint {\n  x: Field,\n  y: Field,\n  is_infinite: bool\n}\n```",
-        "description": "Introduction to EmbeddedCurvePoint structure\n\nTODO: Define a struct called 'EmbeddedCurvePoint' with three fields:\n- x: Field (x-coordinate)\n- y: Field (y-coordinate)\n- is_infinite: bool (flag indicating if it's the point at infinity)",
-        "docLink": "https://noir-lang.org/docs/noir/standard_library/cryptographic_primitives/embedded_curve_ops"
+        "hint": "Define a struct with three fields: `x: Field`, `y: Field`, and `is_infinite: bool`. This represents a point on an elliptic curve.",
+        "description": "Embedded curves enable efficient elliptic curve operations within ZK circuits, crucial for advanced cryptographic protocols\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/standard_library/cryptographic_primitives/embedded_curve_ops#curve-points"
       }
     }
   },
@@ -29,27 +47,9 @@
     "version": "1.0.0",
     "locales": {
       "en": {
-        "hint": "1. Generator function implementation\n```\npub fn generator() -> EmbeddedCurvePoint {\n    EmbeddedCurvePoint {\n    x: 1,\n    y: 17631683881184975370165255887551781615748388533673675138860,\n    is_infinite: false\n    }\n}\n```\n2. Point At Infinity\n```\npub fn point_at_infinity() -> EmbeddedCurvePoint {\n    EmbeddedCurvePoint { x: 0, y: 0, is_infinite: true }\n}\n```\n3. Negation Implementation\n```\npub fn neg(self) -> EmbeddedCurvePoint {\n    EmbeddedCurvePoint { x: self.x, y: -self.y, is_infinite: self.is_infinite }\n}\n```",
-        "description": "Implementing methods for EmbeddedCurvePoint",
-        "docLink": "https://noir-lang.org/docs/noir/standard_library/cryptographic_primitives/embedded_curve_ops"
-      }
-    }
-  },
-  {
-    "path": "hashes/pedersen_hash.md",
-    "id": "pedersen_hash",
-    "title": "pedersen_hash",
-    "category": "hashes",
-    "difficulty": "easy",
-    "tags": [],
-    "mode": "test",
-    "prerequisites": [],
-    "version": "1.0.0",
-    "locales": {
-      "en": {
-        "hint": "No hint this time",
-        "description": "Understanding Pedersen Hash\n\nPedersen hash is a cryptographic hash function based on elliptic curve operations.\nIt is widely used in zero-knowledge proofs and privacy-preserving blockchain applications.\n\nKey Properties of Pedersen hash:\n1. It's a one-way function(difficult to reverse)\n2. It has collision resistance(hard to find two inputs that hash to the same output)\n3. Its deterministic(same input always produces the same output)\n4. It has homomorphic properties(especially useful in zero-knowledge proofs)\n\nIn this exercise, you will:\n1. Compute a basic Pedersen hash\n2. Verify its deterministic property\n3. Explore how changes to input affect the output (avalanche effect)",
-        "docLink": "https://noir-lang.org/docs/noir/standard_library/cryptographic_primitives/hashes"
+        "hint": "Implement the required methods: generator returns a specific point, point_at_infinity has special coordinates, and negation flips the y-coordinate.",
+        "description": "Curve operations form the basis of many ZK protocols - understanding points, generators, and group operations is essential\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/standard_library/cryptographic_primitives/embedded_curve_ops#point-operations"
       }
     }
   }

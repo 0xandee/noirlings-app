@@ -9,28 +9,16 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
-      Define `new()` method inside implementation block
-      ```
-          fn new() -> Cart {
-              let product = Product { id: 0, price: 0, quantity: 0 };
-              Cart { items: [product; 3], total_items: 0 }
-          }
-      ```
-      Define `add_product` method inside implementation block
-      ```
-          fn add_product(&mut self, product: Product) -> bool {
-              if self.total_items as u64 >= 3 {
-                  false
-              } else {
-                  self.items[self.total_items as u64] = product;
-                  self.total_items = self.total_items + 1;
-                  true
-              }
-          }
-      ```
-    description: No description here
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
+    hint: >-
+      Methods can modify the struct if they take `&mut self`. Arrays in structs
+      can be indexed and modified like regular arrays.
+    description: >-
+      Real-world ZK applications often need complex state management - structs
+      with arrays help organize this efficiently
+
+
+      #### Docs
+    docLink: 'https://noir-lang.org/docs/noir/concepts/data_types/structs#methods'
 ---
 ```noir
 struct Product {

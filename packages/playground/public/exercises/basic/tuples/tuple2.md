@@ -9,12 +9,17 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
-      ```
-      No hint this time
-      ```
-    description: No description here
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
+    hint: >-
+      Destructure tuples to extract values: `let (a, b, c) = tuple;` or access
+      by index: `tuple.0`, `tuple.1`, etc.
+    description: >-
+      Tuple destructuring lets you extract values cleanly, making your code more
+      readable and maintainable
+
+
+      #### Docs
+    docLink: >-
+      https://noir-lang.org/docs/noir/concepts/data_types/tuples#tuple-destructuring
 ---
 ```noir
 fn create_coordinates(x: Field, y: Field, z: Field) -> (Field, Field, Field) {}

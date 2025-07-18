@@ -9,24 +9,16 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
-      1. First convert string into byte array by calling `as_bytes()`
-      ```
-          let char_bytes = text.as_bytes();
-      ```
-      2. Run a loop on byte array to sum the values
-      ```
-          let mut sum: Field = 0;
-          for i in 0..5 {
-              sum = sum + char_bytes[i] as Field;
-          }
-      ```
-      3. Return the sum
-      ```
-          sum as Field
-      ```
-    description: No description here
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
+    hint: >-
+      Convert strings to bytes with `.as_bytes()`. Then iterate over the byte
+      array to sum the ASCII values.
+    description: >-
+      String-to-bytes conversion allows you to work with character data at a low
+      level, useful for cryptographic operations
+
+
+      #### Docs
+    docLink: 'https://noir-lang.org/docs/noir/concepts/data_types/strings#string-methods'
 ---
 ```noir
 fn get_ascii_sum(text: str<5>) -> Field {

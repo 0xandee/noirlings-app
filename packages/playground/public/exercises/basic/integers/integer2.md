@@ -9,9 +9,17 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: No hint this time
-    description: Learn about signed and unsigned integers with temperature conversion
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
+    hint: >-
+      Temperature can be negative, so you'll need signed integer types. Consider
+      what happens when converting between Celsius and Fahrenheit.
+    description: >-
+      Choose signed integers (i8, i16, i32, i64) when you need negative values,
+      unsigned (u8, u16, u32, u64) for non-negative values
+
+
+      #### Docs
+    docLink: >-
+      https://noir-lang.org/docs/noir/concepts/data_types/integers#signed-integers
 ---
 ```noir
 fn celsius_to_fahrenheit(celsius: i8) -> i16 {

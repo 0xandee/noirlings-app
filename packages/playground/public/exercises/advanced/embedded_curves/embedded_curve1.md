@@ -9,23 +9,17 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
-      ```
-      struct EmbeddedCurvePoint {
-        x: Field,
-        y: Field,
-        is_infinite: bool
-      }
-      ```
-    description: |-
-      Introduction to EmbeddedCurvePoint structure
+    hint: >-
+      Define a struct with three fields: `x: Field`, `y: Field`, and
+      `is_infinite: bool`. This represents a point on an elliptic curve.
+    description: >-
+      Embedded curves enable efficient elliptic curve operations within ZK
+      circuits, crucial for advanced cryptographic protocols
 
-      TODO: Define a struct called 'EmbeddedCurvePoint' with three fields:
-      - x: Field (x-coordinate)
-      - y: Field (y-coordinate)
-      - is_infinite: bool (flag indicating if it's the point at infinity)
+
+      #### Docs
     docLink: >-
-      https://noir-lang.org/docs/noir/standard_library/cryptographic_primitives/embedded_curve_ops
+      https://noir-lang.org/docs/noir/standard_library/cryptographic_primitives/embedded_curve_ops#curve-points
 ---
 ```noir
 fn main() {

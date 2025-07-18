@@ -9,25 +9,16 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
-      Define Person Struct like this
-      ```
-      struct Person {
-          name: str<10>,
-          age: Field,
-          home_address: Address,
-      }
-      ```
-      First create a home_address like
-      ```
-      let home_address = Address { street_number: street_num, zip_code: zip };
-      ```
-      Finally create and resturn Person instance
-      ```
-      Person { name, age, home_address }
-      ```
-    description: No description here
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
+    hint: >-
+      Nested structs are defined separately, then used as field types in other
+      structs. Create the inner struct first, then the outer one.
+    description: >-
+      Nested structs help model complex real-world data while keeping your ZK
+      circuit organized and efficient
+
+
+      #### Docs
+    docLink: 'https://noir-lang.org/docs/noir/concepts/data_types/structs#nested-structs'
 ---
 ```noir
 struct Address {

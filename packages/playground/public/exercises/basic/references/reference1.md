@@ -9,16 +9,17 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
-      ```
-      let temp = *a;
-      *a = *b;
-      *b = temp;
-      ```
+    hint: >-
+      References use the `&` operator. They let you access data without taking
+      ownership of it.
     description: >-
-      TODO: Complete the swap_values function that takes two mutable references
-      to Field values and swaps their values
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/mutability'
+      References let you access data without moving it, important for
+      performance in zero-knowledge circuits
+
+
+      #### Docs
+    docLink: >-
+      https://noir-lang.org/docs/noir/concepts/data_types/references#reference-creation
 ---
 ```noir
 fn swap_values(a: &mut Field, b: &mut Field) {

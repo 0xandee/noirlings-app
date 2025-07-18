@@ -9,9 +9,17 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: No hint this time
-    description: 'This will not compile, can you fix it to compile successfully'
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/mutability'
+    hint: >-
+      Variables need a value when they're declared (or before they're used). Try
+      assigning a value to `x` before the conditional.
+    description: >-
+      Variables must be initialized with a value before they can be used in
+      comparisons or other operations
+
+
+      #### Docs
+    docLink: >-
+      https://noir-lang.org/docs/noir/concepts/mutability#variable-initialization
 ---
 ```noir
 fn main() {

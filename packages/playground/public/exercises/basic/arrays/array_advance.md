@@ -9,11 +9,16 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: No hint this time
+    hint: >-
+      The `map()` method transforms each element. Think about how to apply a
+      transformation function to filter even numbers.
     description: >-
-      This exercise will help you understand array methods like map, fold, sort,
-      and predicates
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
+      Functional array methods create more readable code and often compile to
+      more efficient circuits than manual loops
+
+
+      #### Docs
+    docLink: 'https://noir-lang.org/docs/noir/concepts/data_types/arrays#array-methods'
 ---
 ```noir
 fn find_even_numbers(arr: [u64; 6]) -> [u64; 6] {

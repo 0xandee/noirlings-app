@@ -9,11 +9,17 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: No hint this time
+    hint: >-
+      Arrays can be created with literal syntax [1, 2, 3] or filled with the
+      same value. For loops and methods like `fold()` are useful for operations.
     description: >-
-      This exercise will help you understand array creation, indexing, and basic
-      operations
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
+      Arrays in Noir have fixed sizes known at compile time, making them
+      efficient for zero-knowledge circuit generation
+
+
+      #### Docs
+    docLink: >-
+      https://noir-lang.org/docs/noir/concepts/data_types/arrays#array-initialization
 ---
 ```noir
 fn create_array() -> [u64; 5] {

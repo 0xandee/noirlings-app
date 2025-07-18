@@ -9,22 +9,17 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
-      ```
-      fn equality(inputs: [u32;3]) -> bool {
-        if (inputs[0] == inputs[1]) & (inputs[0] == inputs[2]) {
-          true
-        } else {
-          false
-        }
-      }
-      ```
+    hint: >-
+      Check if all three array elements are equal. Use logical AND (`&`) to
+      combine equality comparisons.
     description: >-
-      Input 3 values using 'a' (array of length 3) and check if they all are
-      equal.
+      Combining basic concepts like arrays, loops, and conditionals is essential
+      for building complex ZK applications
 
-      Return using signal 'c'.
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts'
+
+      #### Docs
+    docLink: >-
+      https://noir-lang.org/docs/noir/concepts/data_types/arrays#array-comparison
 ---
 ```noir
 fn equality(inputs: [u32; 3]) -> bool {

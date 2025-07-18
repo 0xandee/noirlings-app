@@ -9,20 +9,16 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
-      1. Convert trait implementation
-      ```
-      impl Convert<Fahrenheit> for Celsius {
-          fn convert(self) -> Fahrenheit {
-          let f_temp = self.temp * 9/5 + 32;
-          Fahrenheit {
-              temp: f_temp
-          }
-          }
-      }
-      ```
-    description: 'Generic Traits: This exercise demonstrates how to work with generic traits'
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/traits'
+    hint: >-
+      Generic traits use type parameters. The Convert trait should transform one
+      temperature type into another using the conversion formula.
+    description: >-
+      Generic traits enable type-safe conversions and operations that work
+      across different but related types
+
+
+      #### Docs
+    docLink: 'https://noir-lang.org/docs/noir/concepts/generics#generic-traits'
 ---
 ```noir
 trait Convert<T> {

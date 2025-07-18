@@ -9,14 +9,16 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
-      ```
-      let mut slice = &[1, 2, 3];
-      slice = slice.push_back(4);
-      slice = slice.push_front(0);
-      ```
-    description: No description here
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
+    hint: >-
+      Create a slice with `&[1, 2, 3]`. Use `push_back()` and `push_front()`
+      methods to add elements. Remember to reassign the result!
+    description: >-
+      Slices provide dynamic arrays that can grow and shrink, useful when array
+      size isn't known at compile time
+
+
+      #### Docs
+    docLink: 'https://noir-lang.org/docs/noir/concepts/data_types/slices#slice-creation'
 ---
 ```noir
 fn main() {

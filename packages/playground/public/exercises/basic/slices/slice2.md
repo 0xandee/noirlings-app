@@ -10,27 +10,15 @@ version: 1.0.0
 locales:
   en:
     hint: >-
-      1. Use `insert` method to insert element at particular index. `insert`
-      method returns new slice.
+      Slice methods like `insert()` and `pop_front()` return new slices. Always
+      assign the result back to your slice variable.
+    description: >-
+      Slice methods return new slices rather than modifying existing ones,
+      following functional programming principles
 
-      ```
 
-      slice = slice.insert(2, 42);
-
-      ```
-
-      2. Remove element from front using `pop_front` method. This method returns
-      a tuple of removed element and new slice.
-          let (_, slice) = slice.pop_front();
-      3. return slice length typecasted as Field.
-
-      ```
-
-      slice.len() as Field
-
-      ```
-    description: No description here
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
+      #### Docs
+    docLink: 'https://noir-lang.org/docs/noir/concepts/data_types/slices#slice-methods'
 ---
 ```noir
 fn process_slice(mut slice: [Field]) -> Field {

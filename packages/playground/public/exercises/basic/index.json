@@ -1,9 +1,9 @@
 [
   {
-    "path": "arrays/array_advance.md",
-    "id": "array_advance",
-    "title": "array_advance",
-    "category": "arrays",
+    "path": "intro/intro1.md",
+    "id": "intro1",
+    "title": "intro1",
+    "category": "intro",
     "difficulty": "easy",
     "tags": [],
     "mode": "test",
@@ -11,45 +11,117 @@
     "version": "1.0.0",
     "locales": {
       "en": {
-        "hint": "No hint this time",
-        "description": "This exercise will help you understand array methods like map, fold, sort, and predicates",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/data_types"
+        "hint": "This exercise is already complete! Study the structure of the main function and the test - this is the basic template for all Noir programs.",
+        "description": "Every Noir program must have a `main` function - this is the entry point where your zero-knowledge circuit begins execution\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/getting_started"
       }
     }
   },
   {
-    "path": "arrays/array_basics.md",
-    "id": "array_basics",
-    "title": "array_basics",
-    "category": "arrays",
+    "path": "variables/variables1.md",
+    "id": "variables1",
+    "title": "variables1",
+    "category": "variables",
     "difficulty": "easy",
     "tags": [],
-    "mode": "test",
+    "mode": "compile",
     "prerequisites": [],
     "version": "1.0.0",
     "locales": {
       "en": {
-        "hint": "No hint this time",
-        "description": "This exercise will help you understand array creation, indexing, and basic operations",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/data_types"
+        "hint": "Every variable in Noir needs to be declared before use. What keyword is used to declare variables in Noir?",
+        "description": "Variables in Noir must be explicitly declared with `let` before they can be used - this helps prevent errors in your ZK circuits\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/mutability#let-bindings"
       }
     }
   },
   {
-    "path": "control-flow/count_factors.md",
-    "id": "count_factors",
-    "title": "count_factors",
-    "category": "control-flow",
+    "path": "variables/variables2.md",
+    "id": "variables2",
+    "title": "variables2",
+    "category": "variables",
     "difficulty": "easy",
     "tags": [],
-    "mode": "test",
+    "mode": "compile",
     "prerequisites": [],
     "version": "1.0.0",
     "locales": {
       "en": {
-        "hint": "No hint this time",
-        "description": "Complete the `count_factors` function that counts the number of factors of a given number, and `find_special_numbers` that finds numbers with exactly k factors within a range",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/control_flow"
+        "hint": "Variables need a value when they're declared (or before they're used). Try assigning a value to `x` before the conditional.",
+        "description": "Variables must be initialized with a value before they can be used in comparisons or other operations\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/mutability#variable-initialization"
+      }
+    }
+  },
+  {
+    "path": "variables/variables3.md",
+    "id": "variables3",
+    "title": "variables3",
+    "category": "variables",
+    "difficulty": "easy",
+    "tags": [],
+    "mode": "compile",
+    "prerequisites": [],
+    "version": "1.0.0",
+    "locales": {
+      "en": {
+        "hint": "Variables are immutable by default in Noir. If you want to change a variable's value, you need to make it mutable using a keyword.",
+        "description": "Variables are immutable by default - use `mut` keyword to make them mutable when you need to change their values\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/mutability#mutable-variables"
+      }
+    }
+  },
+  {
+    "path": "variables/variables4.md",
+    "id": "variables4",
+    "title": "variables4",
+    "category": "variables",
+    "difficulty": "easy",
+    "tags": [],
+    "mode": "compile",
+    "prerequisites": [],
+    "version": "1.0.0",
+    "locales": {
+      "en": {
+        "hint": "Think about where the variable is declared versus where it's being used. Variables have scope - they're only visible within their block.",
+        "description": "Variables have block scope - they're only accessible within the block (between `{}`) where they're declared\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/mutability#variable-scope"
+      }
+    }
+  },
+  {
+    "path": "variables/variables5.md",
+    "id": "variables5",
+    "title": "variables5",
+    "category": "variables",
+    "difficulty": "easy",
+    "tags": [],
+    "mode": "compile",
+    "prerequisites": [],
+    "version": "1.0.0",
+    "locales": {
+      "en": {
+        "hint": "Variable shadowing lets you declare a new variable with the same name. The new declaration 'shadows' (hides) the previous one.",
+        "description": "Variable shadowing allows you to reuse variable names in the same scope, with the new declaration hiding the previous one\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/shadowing"
+      }
+    }
+  },
+  {
+    "path": "variables/variables6.md",
+    "id": "variables6",
+    "title": "variables6",
+    "category": "variables",
+    "difficulty": "easy",
+    "tags": [],
+    "mode": "compile",
+    "prerequisites": [],
+    "version": "1.0.0",
+    "locales": {
+      "en": {
+        "hint": "Constants are declared differently than variables and are evaluated at compile time. Look up the `const` keyword syntax.",
+        "description": "Constants are evaluated at compile time and cannot be changed - they're useful for fixed parameters in your ZK circuits\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/mutability#constants"
       }
     }
   },
@@ -65,45 +137,9 @@
     "version": "1.0.0",
     "locales": {
       "en": {
-        "hint": "value of p-1 is multiplication inverse of it self. i.e. (p-1) * (p-1) = 1.\n\nTo understand this, you have to first understand the modular arithmetic: c = a + b (mod p) where `a` and `b` are numbers in the finite field, `c` is the remainder that maps any number >=p and <0 back in the set {0,1,2,...p-1}\n\nThe notation means all arithmetic is done modulo p, for example \n\nfor p = 7, 1 = 8 (mod 7)\n\n 0 = 6+1(mod 7)\n\n 0 = p (mod p)\n\nwith this lets expand (p-1) * (p-1) = p^2 - 2p + 1 (mod p)\nsince p mod p is zero we can discard p^2 - 2p\nhence (p-1) * (p-1) = 1",
-        "description": "For Noir default backend, Grumpkin curve, order of the field value P is: `21888242871839275222246405745257275088548364400416034343698204186575808495617`",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/data_types"
-      }
-    }
-  },
-  {
-    "path": "control-flow/grade_calculator.md",
-    "id": "grade_calculator",
-    "title": "grade_calculator",
-    "category": "control-flow",
-    "difficulty": "easy",
-    "tags": [],
-    "mode": "test",
-    "prerequisites": [],
-    "version": "1.0.0",
-    "locales": {
-      "en": {
-        "hint": "No hint this time",
-        "description": "Make the tests pass by completing the `grade_calculator` function.\nThis function should return a letter grade based on the score:\n- 90 and above: \"A\"\n- 80-89: \"B\"\n- 70-79: \"C\"\n- 60-69: \"D\"\n- Below 60: \"F\"",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/control_flow"
-      }
-    }
-  },
-  {
-    "path": "control-flow/if1.md",
-    "id": "if1",
-    "title": "if1",
-    "category": "control-flow",
-    "difficulty": "easy",
-    "tags": [],
-    "mode": "test",
-    "prerequisites": [],
-    "version": "1.0.0",
-    "locales": {
-      "en": {
-        "hint": "No hint this time",
-        "description": "Change `can_vote` method to make test cases pass.",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/control_flow"
+        "hint": "In finite field arithmetic, what happens when you add 1 to the largest possible value (p-1)? Think about modular arithmetic.",
+        "description": "All arithmetic in Noir happens in a finite field modulo a large prime p. When you exceed p-1, values wrap around to 0\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/data_types/fields#field-arithmetic"
       }
     }
   },
@@ -119,9 +155,9 @@
     "version": "1.0.0",
     "locales": {
       "en": {
-        "hint": "```\nlet kill_assists = wrapping_add(wrapping_mul(kills,2), assists);\nif deaths > kill_assists {\n    0\n} else {\n    kill_assists - deaths\n}\n```",
-        "description": "No description here",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/data_types"
+        "hint": "Regular arithmetic can overflow. Look for 'wrapping' methods that handle overflow safely. Check the `use std::ops::` import section.",
+        "description": "ZK circuits need predictable behavior - wrapping methods provide safe arithmetic that won't cause constraint system failures\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/data_types/integers#wrapping-methods"
       }
     }
   },
@@ -137,17 +173,17 @@
     "version": "1.0.0",
     "locales": {
       "en": {
-        "hint": "No hint this time",
-        "description": "Learn about signed and unsigned integers with temperature conversion",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/data_types"
+        "hint": "Temperature can be negative, so you'll need signed integer types. Consider what happens when converting between Celsius and Fahrenheit.",
+        "description": "Choose signed integers (i8, i16, i32, i64) when you need negative values, unsigned (u8, u16, u32, u64) for non-negative values\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/data_types/integers#signed-integers"
       }
     }
   },
   {
-    "path": "intro/intro1.md",
-    "id": "intro1",
-    "title": "intro1",
-    "category": "intro",
+    "path": "arrays/array_basics.md",
+    "id": "array_basics",
+    "title": "array_basics",
+    "category": "arrays",
     "difficulty": "easy",
     "tags": [],
     "mode": "test",
@@ -155,17 +191,17 @@
     "version": "1.0.0",
     "locales": {
       "en": {
-        "hint": "No hint this time",
-        "description": "Noir is an open-source DSL (Domain specific language) for construction of privacy-preserving zk programs.\n\nZK programs are programs that can generate short proof of statements without revealing all inputs to the statements.\n\nThis project is inspired by and builds upon the original [Noirlings](https://github.com/raven-house/noirlings) by [@satyambnsal](https://x.com/satyambnsal).  If you like this project, here's the Github [repo](https://github.com/0xandee/noirlings-app) and me [@andeebtceth](https://x.com/andeebtceth) on X!\n\nThis exercise doesn't do anything yet but it still compiles! Noir file getting run\nneeds to have a `main` function. So this file is a valid Noir file.\nOther exercises will require you to write Noir code to make the exercise file compile.",
-        "docLink": "https://noir-lang.org/docs/getting_started"
+        "hint": "Arrays can be created with literal syntax [1, 2, 3] or filled with the same value. For loops and methods like `fold()` are useful for operations.",
+        "description": "Arrays in Noir have fixed sizes known at compile time, making them efficient for zero-knowledge circuit generation\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/data_types/arrays#array-initialization"
       }
     }
   },
   {
-    "path": "quizs/quiz1.md",
-    "id": "quiz1",
-    "title": "quiz1",
-    "category": "quizs",
+    "path": "arrays/array_advance.md",
+    "id": "array_advance",
+    "title": "array_advance",
+    "category": "arrays",
     "difficulty": "easy",
     "tags": [],
     "mode": "test",
@@ -173,17 +209,17 @@
     "version": "1.0.0",
     "locales": {
       "en": {
-        "hint": "```\nfn equality(inputs: [u32;3]) -> bool {\n  if (inputs[0] == inputs[1]) & (inputs[0] == inputs[2]) {\n    true\n  } else {\n    false\n  }\n}\n```",
-        "description": "Input 3 values using 'a' (array of length 3) and check if they all are equal.\nReturn using signal 'c'.",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts"
+        "hint": "The `map()` method transforms each element. Think about how to apply a transformation function to filter even numbers.",
+        "description": "Functional array methods create more readable code and often compile to more efficient circuits than manual loops\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/data_types/arrays#array-methods"
       }
     }
   },
   {
-    "path": "references/reference1.md",
-    "id": "reference1",
-    "title": "reference1",
-    "category": "references",
+    "path": "control-flow/if1.md",
+    "id": "if1",
+    "title": "if1",
+    "category": "control-flow",
     "difficulty": "easy",
     "tags": [],
     "mode": "test",
@@ -191,17 +227,17 @@
     "version": "1.0.0",
     "locales": {
       "en": {
-        "hint": "```\nlet temp = *a;\n*a = *b;\n*b = temp;\n```",
-        "description": "TODO: Complete the swap_values function that takes two mutable references to Field values and swaps their values",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/mutability"
+        "hint": "If expressions in Noir return values. Make sure your conditional logic returns the correct boolean value for voting eligibility.",
+        "description": "If expressions in Noir return values and must handle all code paths - they're expressions, not just statements\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/control_flow#if-expressions"
       }
     }
   },
   {
-    "path": "references/reference2.md",
-    "id": "reference2",
-    "title": "reference2",
-    "category": "references",
+    "path": "control-flow/grade_calculator.md",
+    "id": "grade_calculator",
+    "title": "grade_calculator",
+    "category": "control-flow",
     "difficulty": "easy",
     "tags": [],
     "mode": "test",
@@ -209,9 +245,81 @@
     "version": "1.0.0",
     "locales": {
       "en": {
-        "hint": "```\n    fn increment(&mut self) {\n        self.value = self.value + self.step;\n    }\n    fn update_step(&mut self, new_step: Field) {\n        self.step = new_step;\n    }\n```\nAs you may have noticed we are not using dereferce symbol(*) because compiler automatically dereferences the struct \nreference when you access its fields. This is called \"auto-dereferencing\" or \"auto-ref/deref\".",
-        "description": "No description here",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/mutability"
+        "hint": "Use if-else chains to check grade boundaries. Start with the highest grade (A) and work down, or use else-if for each range.",
+        "description": "Chain if-else statements to handle multiple conditions efficiently in your zero-knowledge programs\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/control_flow#conditional-expressions"
+      }
+    }
+  },
+  {
+    "path": "control-flow/count_factors.md",
+    "id": "count_factors",
+    "title": "count_factors",
+    "category": "control-flow",
+    "difficulty": "easy",
+    "tags": [],
+    "mode": "test",
+    "prerequisites": [],
+    "version": "1.0.0",
+    "locales": {
+      "en": {
+        "hint": "A factor is a number that divides evenly (remainder is 0). Use the modulo operator `%` to check if `n % i == 0`.",
+        "description": "For loops in ZK circuits must have bounds known at compile time - this allows the prover to generate the correct number of constraints\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/control_flow#for-loops"
+      }
+    }
+  },
+  {
+    "path": "structs/structs1.md",
+    "id": "structs1",
+    "title": "structs1",
+    "category": "structs",
+    "difficulty": "easy",
+    "tags": [],
+    "mode": "test",
+    "prerequisites": [],
+    "version": "1.0.0",
+    "locales": {
+      "en": {
+        "hint": "Struct definition uses the `struct` keyword followed by field names and types. Each field needs a type annotation.",
+        "description": "Structs group related data together, making your zero-knowledge programs more organized and easier to understand\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/data_types/structs#struct-definition"
+      }
+    }
+  },
+  {
+    "path": "structs/structs2.md",
+    "id": "structs2",
+    "title": "structs2",
+    "category": "structs",
+    "difficulty": "easy",
+    "tags": [],
+    "mode": "test",
+    "prerequisites": [],
+    "version": "1.0.0",
+    "locales": {
+      "en": {
+        "hint": "Implementation blocks use `impl StructName { }`. Methods that take `self` can access the struct's fields using `self.field_name`.",
+        "description": "Implementation blocks (`impl`) allow you to attach functions to your custom types, creating object-like behavior\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/data_types/structs#implementation-blocks"
+      }
+    }
+  },
+  {
+    "path": "structs/structs3.md",
+    "id": "structs3",
+    "title": "structs3",
+    "category": "structs",
+    "difficulty": "easy",
+    "tags": [],
+    "mode": "test",
+    "prerequisites": [],
+    "version": "1.0.0",
+    "locales": {
+      "en": {
+        "hint": "Nested structs are defined separately, then used as field types in other structs. Create the inner struct first, then the outer one.",
+        "description": "Nested structs help model complex real-world data while keeping your ZK circuit organized and efficient\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/data_types/structs#nested-structs"
       }
     }
   },
@@ -227,9 +335,135 @@
     "version": "1.0.0",
     "locales": {
       "en": {
-        "hint": "Define `new()` method inside implementation block\n```\n    fn new() -> Cart {\n        let product = Product { id: 0, price: 0, quantity: 0 };\n        Cart { items: [product; 3], total_items: 0 }\n    }\n```\nDefine `add_product` method inside implementation block\n```\n    fn add_product(&mut self, product: Product) -> bool {\n        if self.total_items as u64 >= 3 {\n            false\n        } else {\n            self.items[self.total_items as u64] = product;\n            self.total_items = self.total_items + 1;\n            true\n        }\n    }\n```",
-        "description": "No description here",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/data_types"
+        "hint": "Methods can modify the struct if they take `&mut self`. Arrays in structs can be indexed and modified like regular arrays.",
+        "description": "Real-world ZK applications often need complex state management - structs with arrays help organize this efficiently\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/data_types/structs#methods"
+      }
+    }
+  },
+  {
+    "path": "traits/traits1.md",
+    "id": "traits1",
+    "title": "traits1",
+    "category": "traits",
+    "difficulty": "easy",
+    "tags": [],
+    "mode": "test",
+    "prerequisites": [],
+    "version": "1.0.0",
+    "locales": {
+      "en": {
+        "hint": "Implement the trait using `impl TraitName for StructName { }`. The area of a rectangle is width × height.",
+        "description": "Traits define shared behavior that multiple types can implement, enabling polymorphism in your ZK programs\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/standard_library/traits#implementing-traits"
+      }
+    }
+  },
+  {
+    "path": "traits/traits2.md",
+    "id": "traits2",
+    "title": "traits2",
+    "category": "traits",
+    "difficulty": "easy",
+    "tags": [],
+    "mode": "test",
+    "prerequisites": [],
+    "version": "1.0.0",
+    "locales": {
+      "en": {
+        "hint": "You can implement multiple traits for the same type with separate `impl` blocks. Circle area uses π × r², perimeter uses 2 × π × r.",
+        "description": "Types can implement multiple traits, allowing them to have diverse capabilities while maintaining type safety\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/standard_library/traits#multiple-trait-implementations"
+      }
+    }
+  },
+  {
+    "path": "traits/traits3.md",
+    "id": "traits3",
+    "title": "traits3",
+    "category": "traits",
+    "difficulty": "easy",
+    "tags": [],
+    "mode": "test",
+    "prerequisites": [],
+    "version": "1.0.0",
+    "locales": {
+      "en": {
+        "hint": "Generic traits use type parameters. The Convert trait should transform one temperature type into another using the conversion formula.",
+        "description": "Generic traits enable type-safe conversions and operations that work across different but related types\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/generics#generic-traits"
+      }
+    }
+  },
+  {
+    "path": "traits/traits4.md",
+    "id": "traits4",
+    "title": "traits4",
+    "category": "traits",
+    "difficulty": "easy",
+    "tags": [],
+    "mode": "test",
+    "prerequisites": [],
+    "version": "1.0.0",
+    "locales": {
+      "en": {
+        "hint": "Default methods can be overridden in your implementation. Focus on implementing the required methods first.",
+        "description": "Default methods reduce code duplication by providing common functionality that types can use or override\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/standard_library/traits#default-implementations"
+      }
+    }
+  },
+  {
+    "path": "traits/traits5.md",
+    "id": "traits5",
+    "title": "traits5",
+    "category": "traits",
+    "difficulty": "easy",
+    "tags": [],
+    "mode": "test",
+    "prerequisites": [],
+    "version": "1.0.0",
+    "locales": {
+      "en": {
+        "hint": "Trait bounds limit which types can be used with generics. Use `where T: TraitName` to specify that T must implement the trait.",
+        "description": "Trait bounds ensure generic functions only work with types that have the required capabilities\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/generics#trait-bounds"
+      }
+    }
+  },
+  {
+    "path": "tuples/tuple1.md",
+    "id": "tuple1",
+    "title": "tuple1",
+    "category": "tuples",
+    "difficulty": "easy",
+    "tags": [],
+    "mode": "test",
+    "prerequisites": [],
+    "version": "1.0.0",
+    "locales": {
+      "en": {
+        "hint": "Tuples group values of different types using parentheses: `(value1, value2, value3)`. Order matters!",
+        "description": "Tuples group different types together temporarily - useful for functions that need to return multiple values\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/data_types/tuples#tuple-creation"
+      }
+    }
+  },
+  {
+    "path": "tuples/tuple2.md",
+    "id": "tuple2",
+    "title": "tuple2",
+    "category": "tuples",
+    "difficulty": "easy",
+    "tags": [],
+    "mode": "test",
+    "prerequisites": [],
+    "version": "1.0.0",
+    "locales": {
+      "en": {
+        "hint": "Destructure tuples to extract values: `let (a, b, c) = tuple;` or access by index: `tuple.0`, `tuple.1`, etc.",
+        "description": "Tuple destructuring lets you extract values cleanly, making your code more readable and maintainable\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/data_types/tuples#tuple-destructuring"
       }
     }
   },
@@ -245,9 +479,9 @@
     "version": "1.0.0",
     "locales": {
       "en": {
-        "hint": "```\nlet mut slice = &[1, 2, 3];\nslice = slice.push_back(4);\nslice = slice.push_front(0);\n```",
-        "description": "No description here",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/data_types"
+        "hint": "Create a slice with `&[1, 2, 3]`. Use `push_back()` and `push_front()` methods to add elements. Remember to reassign the result!",
+        "description": "Slices provide dynamic arrays that can grow and shrink, useful when array size isn't known at compile time\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/data_types/slices#slice-creation"
       }
     }
   },
@@ -263,9 +497,9 @@
     "version": "1.0.0",
     "locales": {
       "en": {
-        "hint": "1. Use `insert` method to insert element at particular index. `insert` method returns new slice.\n```\nslice = slice.insert(2, 42);\n```\n2. Remove element from front using `pop_front` method. This method returns a tuple of removed element and new slice.\n    let (_, slice) = slice.pop_front();\n3. return slice length typecasted as Field.\n```\nslice.len() as Field\n```",
-        "description": "No description here",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/data_types"
+        "hint": "Slice methods like `insert()` and `pop_front()` return new slices. Always assign the result back to your slice variable.",
+        "description": "Slice methods return new slices rather than modifying existing ones, following functional programming principles\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/data_types/slices#slice-methods"
       }
     }
   },
@@ -281,9 +515,9 @@
     "version": "1.0.0",
     "locales": {
       "en": {
-        "hint": "1. First create a new slice of doubled elements using `map` method.\n```\nlet slice1 = input.map(|a| a * 2);\n```\n2. Filter elements greater than 10 using `filter method`\n```\nlet slice2 = slice1.filter(|a| a as u64 <= 10);\n```\n3. Return the slice `slice2`",
-        "description": "No description here",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/data_types"
+        "hint": "Chain operations: first `map()` to double elements, then `filter()` to keep only elements ≤ 10. Each method returns a new slice.",
+        "description": "Functional slice operations often compile to more efficient circuits than imperative approaches\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/data_types/slices#functional-methods"
       }
     }
   },
@@ -300,8 +534,8 @@
     "locales": {
       "en": {
         "hint": "1. We are going to use `Stats` struct to store sum and count. define initial value for accumulator\n```\nlet acc = Stats { sum: 0, count: 0 };\n```\n2. Use `fold` method to fold values. Here we are passing closure function that will process each element of slice. \n3. Remember to define explicit type in closure for `acc` and `x` as type must be known by this point.\n```\nlet stats = numbers.fold(acc, |acc: Stats, x: Field| Stats { sum: acc.sum + x, count: acc.count + 1 });\n```\n4. Return the average\n```\nstats.sum / stats.count\n```",
-        "description": "No description here",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/data_types"
+        "description": "No description here\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/data_types/slices#slice-iteration"
       }
     }
   },
@@ -318,8 +552,8 @@
     "locales": {
       "en": {
         "hint": "```\nlet valid_transactions = transactions.filter(|txn: Transaction| txn.valid == true);\nlet amounts = valid_transactions.map(|txn: Transaction| txn.amount);\nlet sum = amounts.reduce(|acc: Field,x: Field| acc + x);\n```",
-        "description": "No description here",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/data_types"
+        "description": "No description here\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/data_types/slices#slice-manipulation"
       }
     }
   },
@@ -335,9 +569,9 @@
     "version": "1.0.0",
     "locales": {
       "en": {
-        "hint": "```\nif password == \"SuperSecret!\" {\n      true\n} else {\n  false\n}\n```",
-        "description": "Learn about string declarations and basic assertions",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/data_types"
+        "hint": "String literals use double quotes. String comparison in Noir works with the `==` operator.",
+        "description": "Strings in Noir have fixed sizes specified in their type, ensuring predictable memory usage in ZK circuits\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/data_types/strings#string-literals"
       }
     }
   },
@@ -353,17 +587,17 @@
     "version": "1.0.0",
     "locales": {
       "en": {
-        "hint": "1. First convert string into byte array by calling `as_bytes()`\n```\n    let char_bytes = text.as_bytes();\n```\n2. Run a loop on byte array to sum the values\n```\n    let mut sum: Field = 0;\n    for i in 0..5 {\n        sum = sum + char_bytes[i] as Field;\n    }\n```\n3. Return the sum\n```\n    sum as Field\n```",
-        "description": "No description here",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/data_types"
+        "hint": "Convert strings to bytes with `.as_bytes()`. Then iterate over the byte array to sum the ASCII values.",
+        "description": "String-to-bytes conversion allows you to work with character data at a low level, useful for cryptographic operations\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/data_types/strings#string-methods"
       }
     }
   },
   {
-    "path": "structs/structs1.md",
-    "id": "structs1",
-    "title": "structs1",
-    "category": "structs",
+    "path": "references/reference1.md",
+    "id": "reference1",
+    "title": "reference1",
+    "category": "references",
     "difficulty": "easy",
     "tags": [],
     "mode": "test",
@@ -371,17 +605,17 @@
     "version": "1.0.0",
     "locales": {
       "en": {
-        "hint": "No hint this time",
-        "description": "TODO: Define a struct called 'Point' with two fields:\n- x: Field\n- y: Field",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/data_types"
+        "hint": "References use the `&` operator. They let you access data without taking ownership of it.",
+        "description": "References let you access data without moving it, important for performance in zero-knowledge circuits\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/data_types/references#reference-creation"
       }
     }
   },
   {
-    "path": "structs/structs2.md",
-    "id": "structs2",
-    "title": "structs2",
-    "category": "structs",
+    "path": "references/reference2.md",
+    "id": "reference2",
+    "title": "reference2",
+    "category": "references",
     "difficulty": "easy",
     "tags": [],
     "mode": "test",
@@ -389,17 +623,17 @@
     "version": "1.0.0",
     "locales": {
       "en": {
-        "hint": "No hint this time",
-        "description": "No description here",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/data_types"
+        "hint": "Mutable references use `&mut`. They let you modify data through the reference without moving the original value.",
+        "description": "Mutable references enable efficient in-place modifications while maintaining Noir's safety guarantees\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/data_types/references#mutable-references"
       }
     }
   },
   {
-    "path": "structs/structs3.md",
-    "id": "structs3",
-    "title": "structs3",
-    "category": "structs",
+    "path": "quizs/quiz1.md",
+    "id": "quiz1",
+    "title": "quiz1",
+    "category": "quizs",
     "difficulty": "easy",
     "tags": [],
     "mode": "test",
@@ -407,243 +641,9 @@
     "version": "1.0.0",
     "locales": {
       "en": {
-        "hint": "Define Person Struct like this\n```\nstruct Person {\n    name: str<10>,\n    age: Field,\n    home_address: Address,\n}\n```\nFirst create a home_address like\n```\nlet home_address = Address { street_number: street_num, zip_code: zip };\n```\nFinally create and resturn Person instance\n```\nPerson { name, age, home_address }\n```",
-        "description": "No description here",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/data_types"
-      }
-    }
-  },
-  {
-    "path": "traits/traits1.md",
-    "id": "traits1",
-    "title": "traits1",
-    "category": "traits",
-    "difficulty": "easy",
-    "tags": [],
-    "mode": "test",
-    "prerequisites": [],
-    "version": "1.0.0",
-    "locales": {
-      "en": {
-        "hint": "```\nfn area(self) -> Field {\n      self.width * self.height\n}\n```",
-        "description": "Basic Trait Implementation. This exercise introduces basic trait definition and implementation.",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/traits"
-      }
-    }
-  },
-  {
-    "path": "traits/traits2.md",
-    "id": "traits2",
-    "title": "traits2",
-    "category": "traits",
-    "difficulty": "easy",
-    "tags": [],
-    "mode": "test",
-    "prerequisites": [],
-    "version": "1.0.0",
-    "locales": {
-      "en": {
-        "hint": "1. Implement Area trait for Circle\n```\nimpl Area for Circle {\n    fn area(self) -> Field {\n      3 * self.radius * self.radius\n    }\n}\n```\n2. Implement Perimeter trait for Circle\n```\nimpl Perimeter for Circle {\n    fn perimeter(self) -> Field {\n      2 * 3 * self.radius\n    }\n}\n```",
-        "description": "Multiple Trait Implementation: This exercise shows how to implement multiple traits for a type",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/traits"
-      }
-    }
-  },
-  {
-    "path": "traits/traits3.md",
-    "id": "traits3",
-    "title": "traits3",
-    "category": "traits",
-    "difficulty": "easy",
-    "tags": [],
-    "mode": "test",
-    "prerequisites": [],
-    "version": "1.0.0",
-    "locales": {
-      "en": {
-        "hint": "1. Convert trait implementation\n```\nimpl Convert<Fahrenheit> for Celsius {\n    fn convert(self) -> Fahrenheit {\n    let f_temp = self.temp * 9/5 + 32;\n    Fahrenheit {\n        temp: f_temp\n    }\n    }\n}\n```",
-        "description": "Generic Traits: This exercise demonstrates how to work with generic traits",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/traits"
-      }
-    }
-  },
-  {
-    "path": "traits/traits4.md",
-    "id": "traits4",
-    "title": "traits4",
-    "category": "traits",
-    "difficulty": "easy",
-    "tags": [],
-    "mode": "test",
-    "prerequisites": [],
-    "version": "1.0.0",
-    "locales": {
-      "en": {
-        "hint": "1. Implement `Counter` trait like this for Number\n```\nimpl Counter for Number {\n    fn increment(self) -> Self {\n      Number {\n        value: self.value + 1\n      }\n    }\n}\n```",
-        "description": "traits4.nr\nuse the `hint` watch subcommand for a hint.\nDefault Trait Methods: This exercise shows how to work with default trait methods",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/traits"
-      }
-    }
-  },
-  {
-    "path": "traits/traits5.md",
-    "id": "traits5",
-    "title": "traits5",
-    "category": "traits",
-    "difficulty": "easy",
-    "tags": [],
-    "mode": "test",
-    "prerequisites": [],
-    "version": "1.0.0",
-    "locales": {
-      "en": {
-        "hint": "```\nfn find_maximum<T>(values: [T; 5]) -> T where T: Maximum {\n    let mut maximum = values[0];\n    for i in 1..5 {\n      maximum = values[i].max(maximum);\n    }\n    maximum\n}\n```",
-        "description": "Trait Bounds: This exercise demonstrates how to use trait bounds with generics",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/traits"
-      }
-    }
-  },
-  {
-    "path": "tuples/tuple1.md",
-    "id": "tuple1",
-    "title": "tuple1",
-    "category": "tuples",
-    "difficulty": "easy",
-    "tags": [],
-    "mode": "test",
-    "prerequisites": [],
-    "version": "1.0.0",
-    "locales": {
-      "en": {
-        "hint": "```\nlet person = (name,age,zip);\nperson\n```",
-        "description": "No description here",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/data_types"
-      }
-    }
-  },
-  {
-    "path": "tuples/tuple2.md",
-    "id": "tuple2",
-    "title": "tuple2",
-    "category": "tuples",
-    "difficulty": "easy",
-    "tags": [],
-    "mode": "test",
-    "prerequisites": [],
-    "version": "1.0.0",
-    "locales": {
-      "en": {
-        "hint": "```\nNo hint this time\n```",
-        "description": "No description here",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/data_types"
-      }
-    }
-  },
-  {
-    "path": "variables/variables1.md",
-    "id": "variables1",
-    "title": "variables1",
-    "category": "variables",
-    "difficulty": "easy",
-    "tags": [],
-    "mode": "compile",
-    "prerequisites": [],
-    "version": "1.0.0",
-    "locales": {
-      "en": {
-        "hint": "No hint this time",
-        "description": "This will not compile, can you fix it to compile successfully",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/mutability"
-      }
-    }
-  },
-  {
-    "path": "variables/variables2.md",
-    "id": "variables2",
-    "title": "variables2",
-    "category": "variables",
-    "difficulty": "easy",
-    "tags": [],
-    "mode": "compile",
-    "prerequisites": [],
-    "version": "1.0.0",
-    "locales": {
-      "en": {
-        "hint": "No hint this time",
-        "description": "This will not compile, can you fix it to compile successfully",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/mutability"
-      }
-    }
-  },
-  {
-    "path": "variables/variables3.md",
-    "id": "variables3",
-    "title": "variables3",
-    "category": "variables",
-    "difficulty": "easy",
-    "tags": [],
-    "mode": "compile",
-    "prerequisites": [],
-    "version": "1.0.0",
-    "locales": {
-      "en": {
-        "hint": "No hint this time",
-        "description": "This will not compile, can you fix it to compile successfully",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/mutability"
-      }
-    }
-  },
-  {
-    "path": "variables/variables4.md",
-    "id": "variables4",
-    "title": "variables4",
-    "category": "variables",
-    "difficulty": "easy",
-    "tags": [],
-    "mode": "compile",
-    "prerequisites": [],
-    "version": "1.0.0",
-    "locales": {
-      "en": {
-        "hint": "No hint this time",
-        "description": "This will not compile, can you fix it to compile successfully",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/mutability"
-      }
-    }
-  },
-  {
-    "path": "variables/variables5.md",
-    "id": "variables5",
-    "title": "variables5",
-    "category": "variables",
-    "difficulty": "easy",
-    "tags": [],
-    "mode": "compile",
-    "prerequisites": [],
-    "version": "1.0.0",
-    "locales": {
-      "en": {
-        "hint": "No hint this time",
-        "description": "This will not compile, can you fix it to compile successfully",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/mutability"
-      }
-    }
-  },
-  {
-    "path": "variables/variables6.md",
-    "id": "variables6",
-    "title": "variables6",
-    "category": "variables",
-    "difficulty": "easy",
-    "tags": [],
-    "mode": "compile",
-    "prerequisites": [],
-    "version": "1.0.0",
-    "locales": {
-      "en": {
-        "hint": "No hint this time",
-        "description": "This will not compile, can you fix it to compile successfully",
-        "docLink": "https://noir-lang.org/docs/dev/noir/concepts/mutability"
+        "hint": "Check if all three array elements are equal. Use logical AND (`&`) to combine equality comparisons.",
+        "description": "Combining basic concepts like arrays, loops, and conditionals is essential for building complex ZK applications\n\n#### Docs",
+        "docLink": "https://noir-lang.org/docs/noir/concepts/data_types/arrays#array-comparison"
       }
     }
   }

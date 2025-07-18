@@ -9,20 +9,16 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
-      ```
-      fn find_maximum<T>(values: [T; 5]) -> T where T: Maximum {
-          let mut maximum = values[0];
-          for i in 1..5 {
-            maximum = values[i].max(maximum);
-          }
-          maximum
-      }
-      ```
+    hint: >-
+      Trait bounds limit which types can be used with generics. Use `where T:
+      TraitName` to specify that T must implement the trait.
     description: >-
-      Trait Bounds: This exercise demonstrates how to use trait bounds with
-      generics
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/traits'
+      Trait bounds ensure generic functions only work with types that have the
+      required capabilities
+
+
+      #### Docs
+    docLink: 'https://noir-lang.org/docs/noir/concepts/generics#trait-bounds'
 ---
 ```noir
 trait Maximum {

@@ -9,12 +9,17 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: No hint this time
-    description: |-
-      TODO: Define a struct called 'Point' with two fields:
-      - x: Field
-      - y: Field
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
+    hint: >-
+      Struct definition uses the `struct` keyword followed by field names and
+      types. Each field needs a type annotation.
+    description: >-
+      Structs group related data together, making your zero-knowledge programs
+      more organized and easier to understand
+
+
+      #### Docs
+    docLink: >-
+      https://noir-lang.org/docs/noir/concepts/data_types/structs#struct-definition
 ---
 ```noir
 // structs1.nr

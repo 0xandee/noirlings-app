@@ -10,22 +10,16 @@ version: 1.0.0
 locales:
   en:
     hint: >-
-      ```
-          fn increment(&mut self) {
-              self.value = self.value + self.step;
-          }
-          fn update_step(&mut self, new_step: Field) {
-              self.step = new_step;
-          }
-      ```
+      Mutable references use `&mut`. They let you modify data through the
+      reference without moving the original value.
+    description: >-
+      Mutable references enable efficient in-place modifications while
+      maintaining Noir's safety guarantees
 
-      As you may have noticed we are not using dereferce symbol(*) because
-      compiler automatically dereferences the struct 
 
-      reference when you access its fields. This is called "auto-dereferencing"
-      or "auto-ref/deref".
-    description: No description here
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/mutability'
+      #### Docs
+    docLink: >-
+      https://noir-lang.org/docs/noir/concepts/data_types/references#mutable-references
 ---
 ```noir
 struct Counter {

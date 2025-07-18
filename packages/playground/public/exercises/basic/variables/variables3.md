@@ -9,9 +9,16 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: No hint this time
-    description: 'This will not compile, can you fix it to compile successfully'
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/mutability'
+    hint: >-
+      Variables are immutable by default in Noir. If you want to change a
+      variable's value, you need to make it mutable using a keyword.
+    description: >-
+      Variables are immutable by default - use `mut` keyword to make them
+      mutable when you need to change their values
+
+
+      #### Docs
+    docLink: 'https://noir-lang.org/docs/noir/concepts/mutability#mutable-variables'
 ---
 ```noir
 fn main() {

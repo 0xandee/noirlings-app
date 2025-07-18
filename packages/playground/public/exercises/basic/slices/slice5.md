@@ -20,8 +20,12 @@ locales:
       let sum = amounts.reduce(|acc: Field,x: Field| acc + x);
 
       ```
-    description: No description here
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
+    description: |-
+      No description here
+
+      #### Docs
+    docLink: >-
+      https://noir-lang.org/docs/noir/concepts/data_types/slices#slice-manipulation
 ---
 ```noir
 struct Transaction {
