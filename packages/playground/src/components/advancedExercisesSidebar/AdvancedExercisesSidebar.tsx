@@ -17,14 +17,14 @@ interface OrderedExercise {
         en: {
             hint: string;
             description?: string;
-            docLink?: string;  // New
+            docLink?: string;
         }
     };
     path?: string;
 }
 
 interface AdvancedExercisesSidebarProps {
-    selectExercise: (exercisePath: string, exerciseName: string, exerciseHint?: string, exerciseDescription?: string, exerciseDocLink?: string) => void;
+    selectExercise: (exercisePath: string) => void;
     currentExercise: string | null;
     finishedExercises: string[];
 }
@@ -66,12 +66,6 @@ const AdvancedExercisesSidebar: React.FC<AdvancedExercisesSidebarProps> = ({
 
     return (
         <div className="w-auto h-auto overflow-y-auto" style={{ color: 'var(--color-primary)' }}>
-            {/* <div className="p-4 border-b" style={{ borderColor: 'var(--border-color)' }}>
-                <h2 className="text-lg font-bold" style={{ color: 'var(--color-primary)' }}>Advanced Exercises</h2>
-                <p className="text-sm mt-1" style={{ color: 'var(--color-secondary)' }}>
-                    Master advanced Noir concepts
-                </p>
-            </div> */}
             {exercises.length === 0 ? (
                 <div className="p-4" style={{ color: 'var(--color-secondary)' }}>No advanced exercises available</div>
             ) : (
@@ -90,9 +84,7 @@ const AdvancedExercisesSidebar: React.FC<AdvancedExercisesSidebarProps> = ({
                                     color: isFinished ? 'var(--finished-text)' : (currentExercise === exerciseKey ? 'var(--color-primary)' : 'var(--color-secondary)'),
                                     fontWeight: 'normal'
                                 }}
-                                onClick={() =>
-                                    selectExercise(exerciseKey, exercise.title, exercise.locales.en.hint, exercise.locales.en.description, exercise.locales.en.docLink)  // Add docLink
-                                }
+                                onClick={() => selectExercise(exerciseKey)}
                             >
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                     <span>{formatExerciseName(exercise.title)}</span>

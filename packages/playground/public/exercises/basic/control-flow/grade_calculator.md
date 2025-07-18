@@ -9,9 +9,7 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
-      No hint this time
-      
+    hint: No hint this time
     description: |-
       Make the tests pass by completing the `grade_calculator` function.
       This function should return a letter grade based on the score:
@@ -20,18 +18,8 @@ locales:
       - 70-79: "C"
       - 60-69: "D"
       - Below 60: "F"
-      
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/control_flow'
 ---
-
-Make the tests pass by completing the `grade_calculator` function.
-This function should return a letter grade based on the score:
-- 90 and above: "A"
-- 80-89: "B"
-- 70-79: "C"
-- 60-69: "D"
-- Below 60: "F"
-
-
 ```noir
 fn grade_calculator(score: u8) -> str<1> {
     assert(score >= 0, "Score should be greater than or equal to 0");

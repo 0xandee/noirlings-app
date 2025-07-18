@@ -17,15 +17,9 @@ locales:
         false
       }
       ```
-      
-    description: |-
-      Learn about string declarations and basic assertions
-      
+    description: Learn about string declarations and basic assertions
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
 ---
-
-Learn about string declarations and basic assertions
-
-
 ```noir
 fn check_password(password: str<12>) -> bool {
     // TODO: Return true if the password:

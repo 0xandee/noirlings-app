@@ -19,15 +19,9 @@ locales:
       let slice2 = slice1.filter(|a| a as u64 <= 10);
       ```
       3. Return the slice `slice2`
-      
-    description: |-
-      No description here
-      
+    description: No description here
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
 ---
-
-No description here
-
-
 ```noir
 fn transform_slice(input: [Field]) -> [Field] {
     // TODO:

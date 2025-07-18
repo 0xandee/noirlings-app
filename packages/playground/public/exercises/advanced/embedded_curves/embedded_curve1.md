@@ -17,25 +17,16 @@ locales:
         is_infinite: bool
       }
       ```
-      
     description: |-
       Introduction to EmbeddedCurvePoint structure
-      
+
       TODO: Define a struct called 'EmbeddedCurvePoint' with three fields:
       - x: Field (x-coordinate)
       - y: Field (y-coordinate)
       - is_infinite: bool (flag indicating if it's the point at infinity)
-      
+    docLink: >-
+      https://noir-lang.org/docs/noir/standard_library/cryptographic_primitives/embedded_curve_ops
 ---
-
-Introduction to EmbeddedCurvePoint structure
-
-TODO: Define a struct called 'EmbeddedCurvePoint' with three fields:
-- x: Field (x-coordinate)
-- y: Field (y-coordinate)
-- is_infinite: bool (flag indicating if it's the point at infinity)
-
-
 ```noir
 fn main() {
     // Create a regular point

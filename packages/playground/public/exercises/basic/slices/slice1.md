@@ -15,16 +15,9 @@ locales:
       slice = slice.push_back(4);
       slice = slice.push_front(0);
       ```
-      
-      
-    description: |-
-      No description here
-      
+    description: No description here
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
 ---
-
-No description here
-
-
 ```noir
 fn main() {
     // TODO:

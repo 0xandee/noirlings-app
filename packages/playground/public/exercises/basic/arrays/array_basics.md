@@ -9,17 +9,12 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
-      No hint this time
-      
-    description: |-
-      This exercise will help you understand array creation, indexing, and basic operations
-      
+    hint: No hint this time
+    description: >-
+      This exercise will help you understand array creation, indexing, and basic
+      operations
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
 ---
-
-This exercise will help you understand array creation, indexing, and basic operations
-
-
 ```noir
 fn create_array() -> [u64; 5] {
     // TODO: Create and return an array with values [1, 2, 3, 4, 5]

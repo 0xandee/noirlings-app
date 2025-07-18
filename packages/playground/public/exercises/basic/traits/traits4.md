@@ -20,19 +20,15 @@ locales:
           }
       }
       ```
-      
-    description: |-
+    description: >-
       traits4.nr
+
       use the `hint` watch subcommand for a hint.
-      Default Trait Methods: This exercise shows how to work with default trait methods
-      
+
+      Default Trait Methods: This exercise shows how to work with default trait
+      methods
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/traits'
 ---
-
-traits4.nr
-use the `hint` watch subcommand for a hint.
-Default Trait Methods: This exercise shows how to work with default trait methods
-
-
 ```noir
 trait Counter {
     fn increment(self) -> Self;

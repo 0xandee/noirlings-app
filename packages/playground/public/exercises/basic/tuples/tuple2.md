@@ -13,15 +13,9 @@ locales:
       ```
       No hint this time
       ```
-      
-    description: |-
-      No description here
-      
+    description: No description here
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
 ---
-
-No description here
-
-
 ```noir
 fn create_coordinates(x: Field, y: Field, z: Field) -> (Field, Field, Field) {}
 

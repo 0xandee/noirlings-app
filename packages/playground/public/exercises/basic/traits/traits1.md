@@ -15,15 +15,11 @@ locales:
             self.width * self.height
       }
       ```
-      
-    description: |-
-      Basic Trait Implementation. This exercise introduces basic trait definition and implementation.
-      
+    description: >-
+      Basic Trait Implementation. This exercise introduces basic trait
+      definition and implementation.
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/traits'
 ---
-
-Basic Trait Implementation. This exercise introduces basic trait definition and implementation.
-
-
 ```noir
 // A trait for shapes that can calculate their area
 trait Shape {

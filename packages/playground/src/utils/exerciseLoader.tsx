@@ -13,11 +13,113 @@ import matter from 'gray-matter';
 export const BASIC_CATEGORIES = ["intro", "variables", "control-flow", "arrays", "structs", "references", "slices", "tuples", "strings", "integers", "traits", "fields", "quizs"];
 export const ADVANCED_CATEGORIES = ["hashes", "embedded_curves"];
 
+// Define an interface for exercise metadata
+export interface ExerciseData {
+  code: string;
+  metadata: {
+    title: string;
+    description: string | null;
+    hint: string | null;
+    docLink: string | null;
+  }
+}
+
+// Add this interface to the top where other interfaces are defined
+export interface Exercise {
+  id: string;
+  title: string;
+  category: string;
+  difficulty: string;
+  tags: string[];
+  mode: string;
+  prerequisites: string[];
+  version: string;
+  path: string;
+  locales: {
+    en: {
+      hint: string;
+      description: string;
+      docLink?: string;
+    }
+  }
+}
+
+// Define the desired order of categories
+const categoryOrder = [
+  "intro", 
+  "variables", 
+  "fields", 
+  "integers", 
+  "arrays", 
+  "control-flow", 
+  "structs", 
+  "traits", 
+  "tuples", 
+  "slices", 
+  "strings", 
+  "references", 
+  "quizs"
+];
+
+// Define the order of exercises within each category
+const exerciseOrder = {
+  "intro": ["intro1"],
+  "variables": ["variables1", "variables2", "variables3", "variables4", "variables5", "variables6"],
+  "fields": ["field1"],
+  "integers": ["integer1", "integer2"],
+  "arrays": ["array_basics", "array_advance"],
+  "control-flow": ["if1", "grade_calculator", "count_factors"],
+  "structs": ["structs1", "structs2", "structs3", "shopping_cart"],
+  "traits": ["traits1", "traits2", "traits3", "traits4", "traits5"],
+  "tuples": ["tuple1", "tuple2"],
+  "slices": ["slice1", "slice2", "slice3", "slice4", "slice5"],
+  "strings": ["string1", "string2"],
+  "references": ["reference1", "reference2"],
+  "quizs": ["quiz1"]
+};
+
 export async function getOrderedExercises() {
-    // TODO: Implement loading basic exercises from .md files
+    // Fetch the exercises from the index file
     const response = await fetch('/exercises/basic/index.json');
     if (!response.ok) throw new Error('Failed to fetch basic index');
-    return await response.json();
+    const exercises: Exercise[] = await response.json();
+    
+    // Sort exercises by category and then by exercise ID within category
+    return exercises.sort((a: Exercise, b: Exercise) => {
+        const categoryA = a.category;
+        const categoryB = b.category;
+        const idA = a.id;
+        const idB = b.id;
+        
+        // Get category indices
+        const catIndexA = categoryOrder.indexOf(categoryA);
+        const catIndexB = categoryOrder.indexOf(categoryB);
+        
+        // If categories are different, sort by category order
+        if (catIndexA !== catIndexB) {
+            // If category is not found in the order, place it at the end
+            if (catIndexA === -1) return 1;
+            if (catIndexB === -1) return -1;
+            return catIndexA - catIndexB;
+        }
+        
+        // If categories are the same, sort by exercise order within the category
+        if (categoryA in exerciseOrder) {
+            const exIndexA = exerciseOrder[categoryA as keyof typeof exerciseOrder].indexOf(idA);
+            const exIndexB = exerciseOrder[categoryA as keyof typeof exerciseOrder].indexOf(idB);
+            
+            // If both exercises are in the defined order, sort by that order
+            if (exIndexA !== -1 && exIndexB !== -1) {
+                return exIndexA - exIndexB;
+            }
+            // If only one is in the defined order, prioritize it
+            if (exIndexA !== -1) return -1;
+            if (exIndexB !== -1) return 1;
+        }
+        
+        // Fall back to alphabetical sorting by ID
+        return idA.localeCompare(idB);
+    });
 }
 
 export async function getAdvancedExercises() {
@@ -38,6 +140,36 @@ export async function loadExerciseContent(exercisePath: string): Promise<string>
     const { content } = matter(text);
     const codeMatch = content.match(/```noir\n([\s\S]*?)```/);
     return codeMatch ? codeMatch[1].trim() : '// No code found';
+}
+
+/**
+ * Load both code and metadata from an exercise file
+ * This new function eliminates the need for duplicated descriptions
+ */
+export async function loadExerciseData(exercisePath: string): Promise<ExerciseData> {
+    const parts = exercisePath.split('/');
+    const base = ADVANCED_CATEGORIES.includes(parts[0]) ? 'advanced' : 'basic';
+    const filePath = parts.join('/');
+    const response = await fetch(`/exercises/${base}/${filePath}.md`);
+    if (!response.ok) throw new Error(`Failed to fetch ${exercisePath}`);
+    
+    const text = await response.text();
+    const { data, content } = matter(text);
+    
+    // Extract code from the content
+    const codeMatch = content.match(/```noir\n([\s\S]*?)```/);
+    const code = codeMatch ? codeMatch[1].trim() : '// No code found';
+    
+    // Extract metadata from frontmatter
+    return {
+        code,
+        metadata: {
+            title: data.title || parts[1] || '',
+            description: data.locales?.en?.description || null,
+            hint: data.locales?.en?.hint || null,
+            docLink: data.locales?.en?.docLink || null
+        }
+    };
 }
 
 export const createFileFromExercise = (exercisePath: string, content: string): File => {

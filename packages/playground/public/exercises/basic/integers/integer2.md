@@ -9,17 +9,10 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
-      No hint this time
-      
-    description: |-
-      Learn about signed and unsigned integers with temperature conversion
-      
+    hint: No hint this time
+    description: Learn about signed and unsigned integers with temperature conversion
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
 ---
-
-Learn about signed and unsigned integers with temperature conversion
-
-
 ```noir
 fn celsius_to_fahrenheit(celsius: i8) -> i16 {
     // TODO: Convert Celsius to Fahrenheit

@@ -9,7 +9,7 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
+    hint: >-
       ```
           fn increment(&mut self) {
               self.value = self.value + self.step;
@@ -18,17 +18,15 @@ locales:
               self.step = new_step;
           }
       ```
-      As you may have noticed we are not using dereferce symbol(*) because compiler automatically dereferences the struct 
-      reference when you access its fields. This is called "auto-dereferencing" or "auto-ref/deref".
-      
-    description: |-
-      No description here
-      
+
+      As you may have noticed we are not using dereferce symbol(*) because
+      compiler automatically dereferences the struct 
+
+      reference when you access its fields. This is called "auto-dereferencing"
+      or "auto-ref/deref".
+    description: No description here
+    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/mutability'
 ---
-
-No description here
-
-
 ```noir
 struct Counter {
     value: Field,
