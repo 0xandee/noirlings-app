@@ -9,17 +9,17 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
-      ```
-      let kill_assists = wrapping_add(wrapping_mul(kills,2), assists);
-      if deaths > kill_assists {
-          0
-      } else {
-          kill_assists - deaths
-      }
-      ```
-    description: No description here
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
+    hint: >-
+      Regular arithmetic can overflow. Look for 'wrapping' methods that handle
+      overflow safely. Check the `use std::ops::` import section.
+    description: >-
+      ZK circuits need predictable behavior - wrapping methods provide safe
+      arithmetic that won't cause constraint system failures
+
+
+      #### Docs
+    docLink: >-
+      https://noir-lang.org/docs/noir/concepts/data_types/integers#wrapping-methods
 ---
 ```noir
 use std::{wrapping_add, wrapping_mul};

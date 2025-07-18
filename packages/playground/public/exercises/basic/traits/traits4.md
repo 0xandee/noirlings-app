@@ -9,25 +9,17 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
-      1. Implement `Counter` trait like this for Number
-      ```
-      impl Counter for Number {
-          fn increment(self) -> Self {
-            Number {
-              value: self.value + 1
-            }
-          }
-      }
-      ```
+    hint: >-
+      Default methods can be overridden in your implementation. Focus on
+      implementing the required methods first.
     description: >-
-      traits4.nr
+      Default methods reduce code duplication by providing common functionality
+      that types can use or override
 
-      use the `hint` watch subcommand for a hint.
 
-      Default Trait Methods: This exercise shows how to work with default trait
-      methods
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/traits'
+      #### Docs
+    docLink: >-
+      https://noir-lang.org/docs/noir/standard_library/traits#default-implementations
 ---
 ```noir
 trait Counter {

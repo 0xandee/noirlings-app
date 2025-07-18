@@ -9,27 +9,17 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
-      1. Implement Area trait for Circle
-      ```
-      impl Area for Circle {
-          fn area(self) -> Field {
-            3 * self.radius * self.radius
-          }
-      }
-      ```
-      2. Implement Perimeter trait for Circle
-      ```
-      impl Perimeter for Circle {
-          fn perimeter(self) -> Field {
-            2 * 3 * self.radius
-          }
-      }
-      ```
+    hint: >-
+      You can implement multiple traits for the same type with separate `impl`
+      blocks. Circle area uses π × r², perimeter uses 2 × π × r.
     description: >-
-      Multiple Trait Implementation: This exercise shows how to implement
-      multiple traits for a type
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/traits'
+      Types can implement multiple traits, allowing them to have diverse
+      capabilities while maintaining type safety
+
+
+      #### Docs
+    docLink: >-
+      https://noir-lang.org/docs/noir/standard_library/traits#multiple-trait-implementations
 ---
 ```noir
 trait Perimeter {

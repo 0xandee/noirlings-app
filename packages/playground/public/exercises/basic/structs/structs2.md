@@ -9,9 +9,17 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: No hint this time
-    description: No description here
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
+    hint: >-
+      Implementation blocks use `impl StructName { }`. Methods that take `self`
+      can access the struct's fields using `self.field_name`.
+    description: >-
+      Implementation blocks (`impl`) allow you to attach functions to your
+      custom types, creating object-like behavior
+
+
+      #### Docs
+    docLink: >-
+      https://noir-lang.org/docs/noir/concepts/data_types/structs#implementation-blocks
 ---
 ```noir
 struct Rectangle {

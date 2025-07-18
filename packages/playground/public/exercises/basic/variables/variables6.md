@@ -9,9 +9,16 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: No hint this time
-    description: 'This will not compile, can you fix it to compile successfully'
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/mutability'
+    hint: >-
+      Constants are declared differently than variables and are evaluated at
+      compile time. Look up the `const` keyword syntax.
+    description: >-
+      Constants are evaluated at compile time and cannot be changed - they're
+      useful for fixed parameters in your ZK circuits
+
+
+      #### Docs
+    docLink: 'https://noir-lang.org/docs/noir/concepts/mutability#constants'
 ---
 ```noir
 global NUMBER = 7;

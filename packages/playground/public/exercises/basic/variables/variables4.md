@@ -9,9 +9,16 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: No hint this time
-    description: 'This will not compile, can you fix it to compile successfully'
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/mutability'
+    hint: >-
+      Think about where the variable is declared versus where it's being used.
+      Variables have scope - they're only visible within their block.
+    description: >-
+      Variables have block scope - they're only accessible within the block
+      (between `{}`) where they're declared
+
+
+      #### Docs
+    docLink: 'https://noir-lang.org/docs/noir/concepts/mutability#variable-scope'
 ---
 ```noir
 fn main() {

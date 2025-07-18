@@ -9,18 +9,17 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
-      1. First create a new slice of doubled elements using `map` method.
-      ```
-      let slice1 = input.map(|a| a * 2);
-      ```
-      2. Filter elements greater than 10 using `filter method`
-      ```
-      let slice2 = slice1.filter(|a| a as u64 <= 10);
-      ```
-      3. Return the slice `slice2`
-    description: No description here
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
+    hint: >-
+      Chain operations: first `map()` to double elements, then `filter()` to
+      keep only elements ≤ 10. Each method returns a new slice.
+    description: >-
+      Functional slice operations often compile to more efficient circuits than
+      imperative approaches
+
+
+      #### Docs
+    docLink: >-
+      https://noir-lang.org/docs/noir/concepts/data_types/slices#functional-methods
 ---
 ```noir
 fn transform_slice(input: [Field]) -> [Field] {

@@ -746,7 +746,7 @@ function NoirEditor(props: PlaygroundProps) {
 
                 {currentExerciseHint && showHint && (
                   <div className="whitespace-pre-line rounded flex flex-col gap-2" style={{ color: 'var(--color-secondary)' }}>
-                    <span className="font-bold text-xl" style={{ color: 'var(--color-primary)' }}>Hint</span>
+                    <span className="font-bold text-base" >Hint</span>
                     <div className="markdown-body">
                       <ReactMarkdown>{currentExerciseHint.trim() !== "No hint this time" ? currentExerciseHint : ""}</ReactMarkdown>
                     </div>

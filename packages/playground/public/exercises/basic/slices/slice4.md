@@ -39,8 +39,11 @@ locales:
       stats.sum / stats.count
 
       ```
-    description: No description here
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/data_types'
+    description: |-
+      No description here
+
+      #### Docs
+    docLink: 'https://noir-lang.org/docs/noir/concepts/data_types/slices#slice-iteration'
 ---
 ```noir
 struct Stats {

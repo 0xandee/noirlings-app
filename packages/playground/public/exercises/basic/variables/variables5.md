@@ -9,9 +9,16 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: No hint this time
-    description: 'This will not compile, can you fix it to compile successfully'
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/mutability'
+    hint: >-
+      Variable shadowing lets you declare a new variable with the same name. The
+      new declaration 'shadows' (hides) the previous one.
+    description: >-
+      Variable shadowing allows you to reuse variable names in the same scope,
+      with the new declaration hiding the previous one
+
+
+      #### Docs
+    docLink: 'https://noir-lang.org/docs/noir/concepts/shadowing'
 ---
 ```noir
 fn main() {

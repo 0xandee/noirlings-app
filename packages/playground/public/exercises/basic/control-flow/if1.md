@@ -9,9 +9,16 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: No hint this time
-    description: Change `can_vote` method to make test cases pass.
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/control_flow'
+    hint: >-
+      If expressions in Noir return values. Make sure your conditional logic
+      returns the correct boolean value for voting eligibility.
+    description: >-
+      If expressions in Noir return values and must handle all code paths -
+      they're expressions, not just statements
+
+
+      #### Docs
+    docLink: 'https://noir-lang.org/docs/noir/concepts/control_flow#if-expressions'
 ---
 ```noir
 fn can_vote() -> bool {

@@ -9,12 +9,16 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: No hint this time
+    hint: >-
+      A factor is a number that divides evenly (remainder is 0). Use the modulo
+      operator `%` to check if `n % i == 0`.
     description: >-
-      Complete the `count_factors` function that counts the number of factors of
-      a given number, and `find_special_numbers` that finds numbers with exactly
-      k factors within a range
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/control_flow'
+      For loops in ZK circuits must have bounds known at compile time - this
+      allows the prover to generate the correct number of constraints
+
+
+      #### Docs
+    docLink: 'https://noir-lang.org/docs/noir/concepts/control_flow#for-loops'
 ---
 ```noir
 fn count_factors(n: u64) -> u64 {

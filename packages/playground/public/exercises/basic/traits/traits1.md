@@ -9,16 +9,17 @@ prerequisites: []
 version: 1.0.0
 locales:
   en:
-    hint: |-
-      ```
-      fn area(self) -> Field {
-            self.width * self.height
-      }
-      ```
+    hint: >-
+      Implement the trait using `impl TraitName for StructName { }`. The area of
+      a rectangle is width × height.
     description: >-
-      Basic Trait Implementation. This exercise introduces basic trait
-      definition and implementation.
-    docLink: 'https://noir-lang.org/docs/dev/noir/concepts/traits'
+      Traits define shared behavior that multiple types can implement, enabling
+      polymorphism in your ZK programs
+
+
+      #### Docs
+    docLink: >-
+      https://noir-lang.org/docs/noir/standard_library/traits#implementing-traits
 ---
 ```noir
 // A trait for shapes that can calculate their area
