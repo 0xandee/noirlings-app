@@ -14,21 +14,24 @@ import { ResultBox } from "../resultBox/result";
 import { editor } from "monaco-editor";
 import { FileSystem } from "../../utils/fileSystem";
 import ExercisesSidebar from "../exercisesSidebar/ExercisesSidebar";
+import AdvancedExercisesSidebar from "../advancedExercisesSidebar/AdvancedExercisesSidebar";
 import type { OrderedExercise } from "../exercisesSidebar/ExercisesSidebar";
-import { createFileFromExercise, loadExerciseContent, getOrderedExercises } from "../../utils/exerciseLoader";
+import { BASIC_CATEGORIES, ADVANCED_CATEGORIES, loadExerciseData, getOrderedExercises, getAdvancedExercises } from "../../utils/exerciseLoader";
 import ReactMarkdown from "react-markdown";
 import { formatExerciseName } from "../../utils/formatExerciseName";
 import { useAuth } from "../../hooks/useAuth";
 import { supabase } from "../../hooks/useAuth";
 import debounce from 'lodash/debounce';
+import { Link, useLocation } from "react-router-dom";
 
 // Add icons for theme toggle
-import { Moon, Sun, Github, Copy, RotateCcw, Play, Lightbulb } from 'lucide-react';
+import { Moon, Sun, Github, Copy, RotateCcw, Play, Lightbulb, ChevronLeft, ChevronRight } from 'lucide-react';
 
 // Add new imports
 import { compileCode } from "../../utils/generateProof";
 import { toast } from "react-toastify";
 import { CompiledCircuit } from "@noir-lang/types";
+import { createFileFromExercise } from "../../utils/exerciseLoader";
 
 type editorType = editor.IStandaloneCodeEditor;
 
@@ -55,7 +58,10 @@ function NoirEditor(props: PlaygroundProps) {
   const [codeInBuffer, setCodeInBuffer] = useState<string | undefined>("");
 
   // State for exercises
-  const [showExercisesSidebar] = useState<boolean>(true);
+  const [showExercisesSidebar, setShowExercisesSidebar] = useState<boolean>(() => {
+    const saved = localStorage.getItem("noir_sidebar_visible");
+    return saved !== null ? JSON.parse(saved) : true;
+  });
   const [currentExercise, setCurrentExercise] = useState<string | null>(null);
   const [currentExerciseTitle, setCurrentExerciseTitle] = useState<string | null>(null);
   const [currentExerciseHint, setCurrentExerciseHint] = useState<string | null>(null);
@@ -76,15 +82,31 @@ function NoirEditor(props: PlaygroundProps) {
     return saved ? JSON.parse(saved) : [];
   });
 
+  // Toggle function for exercises sidebar
+  const toggleExercisesSidebar = () => {
+    setShowExercisesSidebar(prev => {
+      const newState = !prev;
+      localStorage.setItem("noir_sidebar_visible", JSON.stringify(newState));
+      return newState;
+    });
+  };
+
   // Add states for last_exercise and theme (they already exist, but ensure sync)
   // Note: currentExercise is set from last_exercise
 
   // Add new state after existing states
   const [initialExerciseContent, setInitialExerciseContent] = useState<string>('');
+  const [currentDocLink, setCurrentDocLink] = useState<string | null>(null);
 
   const [copyTooltip, setCopyTooltip] = useState<{ visible: boolean; text: string; isClicked: boolean }>({ visible: false, text: 'Copy', isClicked: false });
   const [resetTooltip, setResetTooltip] = useState<{ visible: boolean; text: string; isClicked: boolean }>({ visible: false, text: 'Reset', isClicked: false });
   const [compileTooltip, setCompileTooltip] = useState<{ visible: boolean; text: string; isClicked: boolean }>({ visible: false, text: 'Compile', isClicked: false });
+
+  // Default documentation URL
+  const DEFAULT_DOC_URL = "https://noir-lang.org/docs";
+
+  // Add at top of NoirEditor:
+  const normalizePath = (path: string | null | undefined) => path ? path.replace(/\.nr$/, '') : '';
 
   // New function to load from Supabase
   const loadProgress = async () => {
@@ -96,12 +118,20 @@ function NoirEditor(props: PlaygroundProps) {
           return;
         }
         if (data) {
-          setFinishedExercises(data.finished_exercises as string[] || []);
+          setFinishedExercises((data.finished_exercises as string[] || []).map(normalizePath));
           if (data.last_exercise) {
-            // Load last exercise
-            const exercises = await getOrderedExercises();
-            const toLoad = exercises.find(ex => `${ex.category}/${ex.file}` === data.last_exercise) || exercises[0];
-            handleExerciseSelect(`${toLoad.category}/${toLoad.file}`, toLoad.name, toLoad.hint, toLoad.description);
+            // Check if last exercise belongs to current mode
+            const lastExerciseCategory = normalizePath(data.last_exercise).split('/')[0];
+            const currentModeCategories = props.isAdvancedMode ? ADVANCED_CATEGORIES : BASIC_CATEGORIES;
+            const lastExerciseInMode = currentModeCategories.includes(lastExerciseCategory);
+
+            if (lastExerciseInMode) {
+              // Load last exercise only if it belongs to current mode
+              const exercises = props.isAdvancedMode ? await getAdvancedExercises() : await getOrderedExercises();
+              const toLoad = exercises.find((ex: OrderedExercise) => `${ex.category}/${ex.id}` === normalizePath(data.last_exercise)) || exercises[0];
+              handleExerciseSelect(`${toLoad.category}/${toLoad.id}`);
+            }
+            // If last exercise doesn't belong to current mode, let the mode switch useEffect handle it
           }
           if (data.theme) setTheme(data.theme);
         }
@@ -123,8 +153,8 @@ function NoirEditor(props: PlaygroundProps) {
             return;
           }
 
-          const localFinished = JSON.parse(localStorage.getItem('noir_finished_exercises') || '[]');
-          const localLast = localStorage.getItem('noir_last_exercise');
+          const localFinished = JSON.parse(localStorage.getItem('noir_finished_exercises') || '[]').map(normalizePath);
+          const localLast = normalizePath(localStorage.getItem('noir_last_exercise') || '');
           const localTheme = localStorage.getItem('noir_theme') || 'dark';
 
           // Prepare merged data
@@ -183,7 +213,7 @@ function NoirEditor(props: PlaygroundProps) {
       if (user) {
         try {
           const { error } = await supabase.from('user_progress').update({
-            finished_exercises: finishedExercises,
+            finished_exercises: finishedExercises.map(normalizePath),
             last_exercise: currentExercise,
             theme: theme,
           }).eq('user_id', user!.id);
@@ -326,30 +356,28 @@ function NoirEditor(props: PlaygroundProps) {
     }
   }, [currentPath, oldPath, monacoEditor, fileSystem, codeInBuffer]);
 
-  const handleExerciseSelect = async (
-    exercisePath: string,
-    exerciseName: string,
-    exerciseHint?: string,
-    exerciseDescription?: string
-  ) => {
+  const handleExerciseSelect = async (exercisePath: string) => {
     try {
       // Save the selected exercise path to localStorage
       localStorage.setItem("noir_last_exercise", exercisePath);
-      // Load the exercise content
-      const content = await loadExerciseContent(exercisePath);
-      // In handleExerciseSelect, after const content = await loadExerciseContent(exercisePath);
-      setInitialExerciseContent(content);
-      // Create a new file system with the exercise content
-      const exerciseFile = createFileFromExercise(exercisePath, content);
+
+      // Load exercise with new function
+      const exerciseData = await loadExerciseData(exercisePath);
+      setInitialExerciseContent(exerciseData.code);
+
+      // Create file system with just the code
+      const exerciseFile = createFileFromExercise(exercisePath, exerciseData.code);
       setFilesystem(new FileSystem(exerciseFile));
-      // Set the current exercise and path
-      setCurrentExercise(exercisePath);
-      setCurrentExerciseTitle(exerciseName);
-      setCurrentExerciseHint(exerciseHint || null);
-      setCurrentExerciseDescription(exerciseDescription || null);
+
+      // Set metadata separately
+      setCurrentExercise(normalizePath(exercisePath));
+      setCurrentExerciseTitle(exerciseData.metadata.title);
+      setCurrentExerciseHint(exerciseData.metadata.hint);
+      setCurrentExerciseDescription(exerciseData.metadata.description);
       setCurrentPath("src/main.nr");
       setOldPath(undefined);
       setShowHint(false); // Hide hint by default for each new exercise
+      setCurrentDocLink(exerciseData.metadata.docLink);
     } catch (error) {
       console.error("Failed to load exercise:", error);
     }
@@ -357,37 +385,41 @@ function NoirEditor(props: PlaygroundProps) {
 
   // Auto-load the last or first exercise on initial mount
   useEffect(() => {
-    if (currentExercise !== null) return; // Don't override if already selected
     let cancelled = false;
     async function loadInitialExercise() {
       try {
-        const exercises = await getOrderedExercises();
+        const exercises = props.isAdvancedMode ? await getAdvancedExercises() : await getOrderedExercises();
         if (!exercises || exercises.length === 0) return;
-        // Try to load the last exercise from localStorage
-        const lastExercisePath = localStorage.getItem("noir_last_exercise");
-        let toLoad = exercises[0];
-        if (lastExercisePath) {
-          const found = exercises.find(
-            (ex) => `${ex.category}/${ex.file}` === lastExercisePath
-          );
-          if (found) toLoad = found;
-        }
-        if (!cancelled && toLoad) {
-          const exercisePath = `${toLoad.category}/${toLoad.file}`;
-          await handleExerciseSelect(
-            exercisePath,
-            toLoad.name,
-            toLoad.hint,
-            toLoad.description
-          );
+
+        // Check if current exercise belongs to the current mode
+        const currentCategory = currentExercise?.split('/')[0];
+        const currentModeCategories = props.isAdvancedMode ? ADVANCED_CATEGORIES : BASIC_CATEGORIES;
+        const currentExerciseInMode = currentCategory && currentModeCategories.includes(currentCategory);
+
+        console.log('Mode switch check:', {
+          isAdvancedMode: props.isAdvancedMode,
+          currentExercise,
+          currentCategory,
+          currentModeCategories,
+          currentExerciseInMode
+        });
+
+        // If current exercise doesn't belong to this mode, load first exercise of this mode
+        if (!currentExerciseInMode) {
+          const toLoad = exercises[0]; // Always load first exercise of the mode
+          if (!cancelled && toLoad) {
+            const exercisePath = `${toLoad.category}/${toLoad.id}`;
+            console.log('Loading exercise for mode:', exercisePath);
+            await handleExerciseSelect(exercisePath);
+          }
         }
       } catch (e) {
-        // Optionally handle error
+        console.error('Error in loadInitialExercise:', e);
       }
     }
     loadInitialExercise();
     return () => { cancelled = true; };
-  }, [currentExercise]);
+  }, [props.isAdvancedMode, currentExercise]);
 
   // Add effect to persist finishedExercises
   useEffect(() => {
@@ -396,29 +428,27 @@ function NoirEditor(props: PlaygroundProps) {
 
   const handleCompileSuccess = () => {
     if (currentExercise && !finishedExercises.includes(currentExercise)) {
-      setFinishedExercises((prev) => [...prev, currentExercise]);
+      setFinishedExercises((prev) => Array.from(new Set([...prev, currentExercise])));
     }
   };
 
-  // Fetch and store ordered exercises on mount
+  // Fetch and store exercises on mount (advanced or regular based on mode)
   useEffect(() => {
     let cancelled = false;
-    async function fetchOrdered() {
+    async function fetchExercises() {
       try {
-        const exercises = await getOrderedExercises();
+        const exercises = props.isAdvancedMode ? await getAdvancedExercises() : await getOrderedExercises();
         if (!cancelled) setOrderedExercises(exercises);
       } catch (e) {
         // Optionally handle error
       }
     }
-    fetchOrdered();
+    fetchExercises();
     return () => { cancelled = true; };
-  }, []);
+  }, [props.isAdvancedMode]);
 
   // Compute current exercise index
-  const currentExerciseIndex = orderedExercises.findIndex(
-    (ex) => `${ex.category}/${ex.file}` === currentExercise
-  );
+  const currentExerciseIndex = orderedExercises.findIndex((ex: OrderedExercise) => `${ex.category}/${ex.id}` === normalizePath(currentExercise));
 
   // Navigation handlers
   const handleForward = () => {
@@ -428,8 +458,8 @@ function NoirEditor(props: PlaygroundProps) {
     ) {
       const next = orderedExercises[currentExerciseIndex + 1];
       if (next) {
-        const exercisePath = `${next.category}/${next.file}`;
-        handleExerciseSelect(exercisePath, next.name, next.hint, next.description);
+        const exercisePath = `${next.category}/${next.id}`;
+        handleExerciseSelect(exercisePath);
       }
     }
   };
@@ -463,7 +493,7 @@ function NoirEditor(props: PlaygroundProps) {
       setCompileError(null);
       toast.success('Compiled!');
       if (currentExercise && !finishedExercises.includes(currentExercise)) {
-        setFinishedExercises((prev) => [...prev, currentExercise]);
+        setFinishedExercises((prev) => Array.from(new Set([...prev, currentExercise])));
       }
     } catch (err: unknown) {
       let message = "Unknown error";
@@ -486,11 +516,20 @@ function NoirEditor(props: PlaygroundProps) {
     await compile(fileSystem);
   };
 
+
   // Add useEffect to reset states when fileSystem changes (like in ActionsBox)
   useEffect(() => {
     setCompiledCode(null);
     setCompileError(null);
   }, [fileSystem]);
+
+  const location = useLocation();
+
+  const currentCategories = props.isAdvancedMode ? ADVANCED_CATEGORIES : BASIC_CATEGORIES;
+  const currentFinished = finishedExercises.filter(ex => {
+    const category = normalizePath(ex).split('/')[0];
+    return currentCategories.includes(category);
+  }).length;
 
   return (
     <div className="h-screen w-full flex flex-col">
@@ -500,11 +539,39 @@ function NoirEditor(props: PlaygroundProps) {
         style={{ backgroundColor: 'var(--bg-toolbar)', borderColor: 'var(--border-color)' }}
       >
         <div className="flex items-center gap-3 ml-2">
-          {theme === 'light' ? (
-            <img src="/noirlingsapplogo-white.png" alt="Noirlings Logo" className="h-4 w-auto" style={{ maxHeight: 32 }} />
-          ) : (
-            <img src="/noirlingsapplogo-white.png" alt="Noirlings Logo" className="h-4 w-auto" style={{ maxHeight: 32 }} />
-          )}
+          <Link
+            to="/"
+            style={{
+              color: location.pathname === "/" ? 'var(--color-accent)' : 'var(--color-secondary)',
+              textDecoration: 'none',
+            }}
+          >
+            {theme === 'light' ? (
+              <img src="/noirlingsapplogo-white.png" alt="Noirlings Logo" className="h-4 w-auto" style={{ maxHeight: 32 }} />
+            ) : (
+              <img src="/noirlingsapplogo-white.png" alt="Noirlings Logo" className="h-4 w-auto" style={{ maxHeight: 32 }} />
+            )}
+          </Link>
+          <div className="ml-4 flex gap-4 items-center">
+            <Link
+              to="/"
+              style={{
+                color: location.pathname === "/" ? 'var(--subheader-text)' : 'var(--header-text)',
+                textDecoration: 'none',
+              }}
+            >
+              Basic
+            </Link>
+            <Link
+              to="/advanced"
+              style={{
+                color: location.pathname === "/advanced" ? 'var(--subheader-text)' : 'var(--header-text)',
+                textDecoration: 'none',
+              }}
+            >
+              Advanced
+            </Link>
+          </div>
           {/* <a
             href="https://x.com/andeebtceth"
             target="_blank"
@@ -517,17 +584,6 @@ function NoirEditor(props: PlaygroundProps) {
           </a> */}
         </div>
         <div className="flex items-center gap-4">
-          {/* <button
-            className="text-white px-4 py-1 rounded hover:opacity-90 transition-opacity"
-            style={{
-              backgroundColor: 'var(--bg-toolbar-btn)',
-              color: 'var(--color-primary)'
-            }}
-            onClick={toggleExercisesSidebar}
-          >
-            {showExercisesSidebar ? "Hide Exercises List" : "Show Exercises List"}
-          </button> */}
-
           {/* Theme toggle button */}
           <button
             onClick={toggleTheme}
@@ -543,7 +599,7 @@ function NoirEditor(props: PlaygroundProps) {
           </button>
 
           <div className="text-base " style={{ color: "var(--header-text)" }}>
-            Finished: {finishedExercises.length}/{orderedExercises.length}
+            Finished: {currentFinished}/{orderedExercises.length}
           </div>
           <div>
             <div className="flex items-center">
@@ -613,28 +669,69 @@ function NoirEditor(props: PlaygroundProps) {
       {/* Main content area */}
       <div className="flex flex-1 overflow-hidden flex-col md:flex-row">
         {/* Exercises sidebar */}
-        {showExercisesSidebar && (
-          <div
-            className="min-w-[200px] border-r overflow-y-auto max-h-60 md:max-h-none"
-            style={{
-              backgroundColor: 'var(--bg-sidebar)',
-              borderColor: 'var(--border-color)'
-            }}
-          >
-            <ExercisesSidebar
-              selectExercise={(path: string, name: string, hint?: string, description?: string): void => { void handleExerciseSelect(path, name, hint, description); }}
-              currentExercise={currentExercise}
-              finishedExercises={finishedExercises}
-            />
+        <div
+          className="border-r overflow-y-auto max-h-60 md:max-h-none relative"
+          style={{
+            backgroundColor: 'var(--bg-sidebar)',
+            borderColor: 'var(--border-color)',
+            width: showExercisesSidebar ? 200 : 0,
+            minWidth: showExercisesSidebar ? 200 : 0,
+            transition: "width 0.3s ease-in-out",
+            overflow: "hidden",
+          }}
+        >
+          <div style={{ opacity: showExercisesSidebar ? 1 : 0, transition: "opacity 0.3s ease-in-out", width: 200, paddingTop: '0.5rem' }}>
+            {props.isAdvancedMode ? (
+              <AdvancedExercisesSidebar
+                selectExercise={(path: string): void => {
+                  void handleExerciseSelect(path);
+                }}
+                currentExercise={currentExercise}
+                finishedExercises={finishedExercises}
+              />
+            ) : (
+              <ExercisesSidebar
+                selectExercise={(path: string): void => {
+                  void handleExerciseSelect(path);
+                }}
+                currentExercise={currentExercise}
+                finishedExercises={finishedExercises}
+              />
+            )}
           </div>
-        )}
+        </div>
+
+        {/* Sidebar toggle button - positioned flush against right edge */}
+        <div className="relative">
+          <button
+            onClick={toggleExercisesSidebar}
+            className="absolute top-2 px-[0] py-4 rounded-r-md hover:opacity-80 transition-all duration-200 cursor-pointer z-20"
+            style={{
+              left: showExercisesSidebar ? '-1px' : '0px',
+              backgroundColor: 'var(--bg-sidebar)',
+              borderColor: 'var(--border-color)',
+              border: '1px solid var(--border-color)',
+              borderLeft: showExercisesSidebar ? 'none' : '1px solid var(--border-color)',
+              color: 'var(--color-secondary)',
+              transform: 'translateX(0)',
+              borderRadius: '0 0.375rem 0.375rem 0',
+            }}
+            aria-label={showExercisesSidebar ? "Collapse sidebar" : "Expand sidebar"}
+          >
+            {showExercisesSidebar ? (
+              <ChevronLeft size={16} color="var(--color-secondary)" />
+            ) : (
+              <ChevronRight size={16} color="var(--color-secondary)" />
+            )}
+          </button>
+        </div>
 
         {/* Info Panel + Editor side by side */}
-        <div className="flex flex-1 flex-row min-h-0 w-[calc(100%-200px)]">
+        <div className={`flex flex-1 flex-row min-h-0 transition-all duration-200 ease-in-out ${showExercisesSidebar ? 'w-[calc(100%-200px)]' : 'w-full'}`}>
           {/* Exercise Info Panel: only takes width if currentExercise is set */}
           {currentExercise ? (
             <div
-              className="hidden md:flex flex-col gap-4 border-r"
+              className="hidden md:flex flex-col border-r"
               style={{
                 backgroundColor: 'var(--bg-sidebar)',
                 borderColor: 'var(--border-color)',
@@ -644,29 +741,20 @@ function NoirEditor(props: PlaygroundProps) {
                 transition: isDragging ? "none" : "none",
                 userSelect: isDragging ? "none" : "auto",
                 cursor: isDragging ? "col-resize" : "default",
-                overflowY: "auto",
                 maxHeight: "100vh",
                 color: 'var(--color-primary)'
               }}
             >
-              <div className="p-6 pt-4">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="text-2xl font-bold" style={{ color: 'var(--color-primary)' }}>
-                    {currentExerciseTitle && formatExerciseName(currentExerciseTitle)}
-                  </div>
-                  {currentExerciseHint?.trim() === "No hint this time" ? (
-                    <button
-                      className="px-4 py-2 cursor-not-allowed opacity-50 border rounded"
-                      style={{
-                        borderColor: 'var(--border-color)',
-                        backgroundColor: 'transparent',
-                        color: 'var(--color-secondary)'
-                      }}
-                      disabled
-                    >
-                      No Hint
-                    </button>
-                  ) : (
+              {/* Scrollable content area */}
+              <div
+                className="flex-1 overflow-y-auto"
+                style={{ minHeight: 0 }}
+              >
+                <div className="p-6 pt-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="text-2xl font-bold" style={{ color: 'var(--color-primary)' }}>
+                      {currentExerciseTitle && formatExerciseName(currentExerciseTitle)}
+                    </div>
                     <button
                       className="px-3 py-2 cursor-pointer transition-opacity border rounded hover:opacity-80 flex items-center gap-2"
                       style={{ borderColor: 'var(--border-color)', backgroundColor: 'transparent', color: 'var(--color-secondary)' }}
@@ -675,45 +763,50 @@ function NoirEditor(props: PlaygroundProps) {
                       <Lightbulb size={16} color="var(--color-secondary)" />
                       {showHint ? "Hide Hint" : "Show Hint"}
                     </button>
+
+                  </div>
+                  {currentExerciseDescription && (
+                    <div style={{ color: 'var(--color-primary)' }} className="mb-6">
+                      {/* <span className="font-bold">Description</span> */}
+                      <div className="markdown-body">
+                        <ReactMarkdown>{currentExerciseDescription}</ReactMarkdown>
+                      </div>
+                      <div className="mt-3 break-words" style={{ borderColor: 'var(--border-color)' }}>
+                        <span style={{ color: 'var(--color-primary)' }}>
+                          <a href={currentDocLink || DEFAULT_DOC_URL} target="_blank" rel="noopener noreferrer" className="no-underline font-light" style={{ color: 'var(--color-accent)' }}>{currentDocLink || DEFAULT_DOC_URL}</a>
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {currentExerciseHint && showHint && (
+                    <div className="whitespace-pre-line rounded flex flex-col gap-2" style={{ color: 'var(--color-secondary)' }}>
+                      <span className="font-bold text-base" >Hint</span>
+                      <div className="markdown-body markdown-body-hint">
+                        <ReactMarkdown>{currentExerciseHint.trim() !== "No hint this time" ? currentExerciseHint : ""}</ReactMarkdown>
+                      </div>
+                    </div>
                   )}
                 </div>
-                {currentExerciseDescription && (
-                  <div style={{ color: 'var(--color-primary)' }} className="mb-6">
-                    {/* <span className="font-bold">Description</span> */}
-                    <div className="markdown-body">
-                      <ReactMarkdown>{currentExerciseDescription}</ReactMarkdown>
-                    </div>
-                  </div>
-                )}
-
-                {currentExerciseHint && currentExerciseHint.trim() !== "No hint this time" && showHint && (
-                  <div className="whitespace-pre-line rounded flex flex-col gap-2" style={{ color: 'var(--color-secondary)' }}>
-                    <span className="font-bold text-xl" style={{ color: 'var(--color-primary)' }}>Hint</span>
-                    <div className="markdown-body">
-                      <ReactMarkdown>{currentExerciseHint}</ReactMarkdown>
-                    </div>
-                    <div className="mt-3 pt-6 border-t" style={{ borderColor: 'var(--border-color)' }}>
-                      <span style={{ color: 'var(--color-primary)' }}>
-                        <a href="https://noir-lang.org/docs" target="_blank" rel="noopener noreferrer" className="underline" style={{ color: 'var(--color-accent)' }}>View Noir Documentation</a>
-                      </span>
-                    </div>
-                  </div>
-                )}
               </div>
+
+              {/* Fixed bottom ActionsBox */}
               {loaded && !proof && (
-                <ActionsBox
-                  project={fileSystem}
-                  onCompileSuccess={handleCompileSuccess}
-                  onForward={
-                    currentExerciseIndex !== -1 && currentExerciseIndex < orderedExercises.length - 1
-                      ? handleForward
-                      : undefined
-                  }
-                  compiledCode={compiledCode}
-                  compileError={compileError}
-                  pending={pending}
-                  compile={compile}
-                />
+                <div className="flex-shrink-0 mt-4">
+                  <ActionsBox
+                    project={fileSystem}
+                    onCompileSuccess={handleCompileSuccess}
+                    onForward={
+                      currentExerciseIndex !== -1 && currentExerciseIndex < orderedExercises.length - 1
+                        ? handleForward
+                        : undefined
+                    }
+                    compiledCode={compiledCode}
+                    compileError={compileError}
+                    pending={pending}
+                    compile={compile}
+                  />
+                </div>
               )}
             </div>
           ) : (

@@ -1,0 +1,4 @@
+---
+alwaysApply: false
+---
+Call Playwright MCP to make sure the app or that function works after changing the code.

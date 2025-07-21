@@ -7,7 +7,15 @@ import { ButtonContainer } from "../buttons/containers";
 import { FileSystem } from "../../utils/fileSystem";
 import pkg from '../../../package.json';
 
-export const ActionsBox = ({ project, onCompileSuccess, onForward, compiledCode, compileError, pending, compile }: { project: FileSystem; onCompileSuccess?: () => void; onForward?: () => void; compiledCode: CompiledCircuit | null; compileError: string | null; pending: boolean; compile: (project: FileSystem) => Promise<void>; }) => {
+export const ActionsBox = ({ project, onCompileSuccess, onForward, compiledCode, compileError, pending, compile }: { 
+  project: FileSystem; 
+  onCompileSuccess?: () => void; 
+  onForward?: () => void; 
+  compiledCode: CompiledCircuit | null; 
+  compileError: string | null; 
+  pending: boolean; 
+  compile: (project: FileSystem) => Promise<void>; 
+}) => {
 
   const [showSuccessAlert, setShowSuccessAlert] = useState(true);
   const [showErrorAlert, setShowErrorAlert] = useState(true);
@@ -40,7 +48,7 @@ export const ActionsBox = ({ project, onCompileSuccess, onForward, compiledCode,
   };
 
   return (
-    <>
+    <>      
       <form
         className="flex flex-auto flex-col justify-end"
         onSubmit={(e) => submit(e)}
@@ -93,11 +101,11 @@ export const ActionsBox = ({ project, onCompileSuccess, onForward, compiledCode,
             </div>
           )}
 
-          <div className="w-full flex flex-row justify-between items-center gap-4 mx-6 ">
+          <div className="w-full flex flex-row justify-between items-center gap-3 mx-6">
             <Button
               type="submit"
               $primary={true}
-              className={`cursor-pointer flex-1 h-12 flex items-center justify-center rounded hover:opacity-80 transition-opacity ${pending ? 'cursor-not-allowed opacity-80' : 'hover:scale-[1]'
+              className={`cursor-pointer flex-[2] h-12 flex items-center justify-center rounded hover:opacity-80 transition-opacity ${pending ? 'cursor-not-allowed opacity-80' : 'hover:scale-[1]'
                 }`}
               disabled={pending}
             >
@@ -125,7 +133,7 @@ export const ActionsBox = ({ project, onCompileSuccess, onForward, compiledCode,
           </div>
 
           <div className="flex flex-row justify-between mx-6 text-xs w-full opacity-50" style={{ color: 'var(--color-secondary)' }}>
-            <p>Press <span className="font-mono">Ctrl+Enter</span> to compile</p>
+            <p><span className="font-mono">Ctrl+Enter</span> to compile</p>
             <p>Noir v{pkg.dependencies['@noir-lang/noir_js']}</p>
           </div>
 

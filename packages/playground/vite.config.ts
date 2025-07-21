@@ -2,6 +2,7 @@ import react from "@vitejs/plugin-react";
 import { LibraryFormats, defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 import path from "path";
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 export default defineConfig(({ mode }: { mode: string }) => {
   console.log("Building in mode:", mode);
@@ -45,6 +46,7 @@ export default defineConfig(({ mode }: { mode: string }) => {
     },
     plugins: [
       react(),
+      nodePolyfills({ globals: { Buffer: true } }),
       dts({
         insertTypesEntry: true,
       }),

@@ -5,7 +5,7 @@
 :root {
   /* Light theme variables (default) */
   --bg-primary: #ffffff; /* Background */
-  --bg-secondary: #FFFFFF; /* Secondary */
+  --bg-secondary: #ffffff; /* Secondary */
   --bg-sidebar: #fafafa; /* Sidebar Light Background */
   --bg-toolbar: #0f172a; /* Primary */
   --bg-toolbar-btn: #f1f5f9; /* Accent */
@@ -18,7 +18,8 @@
   --code-color: #0f172a; /* Primary */
   --hint-bg: #f1f5f9; /* Muted */
   --finished-text: #4CAF50; /* Derived */
-  --header-text: #e4e4e7; /* Foreground */
+  --header-text: #d5d5d5; /* Foreground */
+  --subheader-text: #ffffff; /* Foreground */
 }
 
 [data-theme="dark"] {
@@ -39,6 +40,7 @@
   --separator-color: #09090b; /* Background */
   --finished-text: #4CAF50; /* Keep green for finished */
   --header-text: #99afd0; /* Foreground */
+  --subheader-text: #f8fafc; /* Foreground */
 }
 
 body {
@@ -70,9 +72,9 @@ body:not(#editor) {
   color: var(--color-accent);
 }
 
-.markdown-body p, ol {
-  margin-block-start: 1em;
-  margin-block-end: 1em;
+.markdown-body-hint ol {
+  margin-block-start: -1em;
+  margin-block-end: -1em;
 }
 
 .markdown-body pre {
@@ -83,7 +85,7 @@ body:not(#editor) {
   max-width: 100%;
   background: var(--hint-bg);
   border-radius: 4px;
-  padding: 0.5em;
+  padding: 1em;
   margin: 0.5em 0;
 }
 
@@ -109,4 +111,13 @@ body:not(#editor) {
 
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Exercise navigation styling */
+.exercise-nav-button {
+  transition: all 0.2s ease;
+}
+
+.exercise-nav-button:hover {
+  background-color: var(--bg-toolbar-btn);
 }
