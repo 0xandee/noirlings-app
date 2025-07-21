@@ -13,14 +13,14 @@ locales:
       Define a struct with three fields: `x: Field`, `y: Field`, and
       `is_infinite: bool`. This represents a point on an elliptic curve.
     description: >-
-      Embedded curves enable efficient elliptic curve operations within ZK
-      circuits, crucial for advanced cryptographic protocols
+      Learn to define elliptic curve points with x, y coordinates and infinity flag. Embedded curves enable efficient cryptographic operations within zero-knowledge circuits.
 
 
       #### Docs
     docLink: >-
       https://noir-lang.org/docs/noir/standard_library/cryptographic_primitives/embedded_curve_ops#curve-points
 ---
+
 ```noir
 fn main() {
     // Create a regular point

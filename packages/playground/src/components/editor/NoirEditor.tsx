@@ -25,7 +25,7 @@ import debounce from 'lodash/debounce';
 import { Link, useLocation } from "react-router-dom";
 
 // Add icons for theme toggle
-import { Moon, Sun, Github, Copy, RotateCcw, Play, Lightbulb } from 'lucide-react';
+import { Moon, Sun, Github, Copy, RotateCcw, Play, Lightbulb, ChevronLeft, ChevronRight } from 'lucide-react';
 
 // Add new imports
 import { compileCode } from "../../utils/generateProof";
@@ -58,7 +58,10 @@ function NoirEditor(props: PlaygroundProps) {
   const [codeInBuffer, setCodeInBuffer] = useState<string | undefined>("");
 
   // State for exercises
-  const [showExercisesSidebar] = useState<boolean>(true);
+  const [showExercisesSidebar, setShowExercisesSidebar] = useState<boolean>(() => {
+    const saved = localStorage.getItem("noir_sidebar_visible");
+    return saved !== null ? JSON.parse(saved) : true;
+  });
   const [currentExercise, setCurrentExercise] = useState<string | null>(null);
   const [currentExerciseTitle, setCurrentExerciseTitle] = useState<string | null>(null);
   const [currentExerciseHint, setCurrentExerciseHint] = useState<string | null>(null);
@@ -78,6 +81,15 @@ function NoirEditor(props: PlaygroundProps) {
     const saved = localStorage.getItem("noir_finished_exercises");
     return saved ? JSON.parse(saved) : [];
   });
+
+  // Toggle function for exercises sidebar
+  const toggleExercisesSidebar = () => {
+    setShowExercisesSidebar(prev => {
+      const newState = !prev;
+      localStorage.setItem("noir_sidebar_visible", JSON.stringify(newState));
+      return newState;
+    });
+  };
 
   // Add states for last_exercise and theme (they already exist, but ensure sync)
   // Note: currentExercise is set from last_exercise
@@ -348,15 +360,15 @@ function NoirEditor(props: PlaygroundProps) {
     try {
       // Save the selected exercise path to localStorage
       localStorage.setItem("noir_last_exercise", exercisePath);
-      
+
       // Load exercise with new function
       const exerciseData = await loadExerciseData(exercisePath);
       setInitialExerciseContent(exerciseData.code);
-      
+
       // Create file system with just the code
       const exerciseFile = createFileFromExercise(exercisePath, exerciseData.code);
       setFilesystem(new FileSystem(exerciseFile));
-      
+
       // Set metadata separately
       setCurrentExercise(normalizePath(exercisePath));
       setCurrentExerciseTitle(exerciseData.metadata.title);
@@ -543,7 +555,7 @@ function NoirEditor(props: PlaygroundProps) {
             <Link
               to="/"
               style={{
-                color: location.pathname === "/" ? 'var(--color-accent)' : 'var(--color-secondary)',
+                color: location.pathname === "/" ? 'var(--subheader-text)' : 'var(--header-text)',
                 textDecoration: 'none',
               }}
             >
@@ -552,7 +564,7 @@ function NoirEditor(props: PlaygroundProps) {
             <Link
               to="/advanced"
               style={{
-                color: location.pathname === "/advanced" ? 'var(--color-accent)' : 'var(--color-secondary)',
+                color: location.pathname === "/advanced" ? 'var(--subheader-text)' : 'var(--header-text)',
                 textDecoration: 'none',
               }}
             >
@@ -571,17 +583,6 @@ function NoirEditor(props: PlaygroundProps) {
           </a> */}
         </div>
         <div className="flex items-center gap-4">
-          {/* <button
-            className="text-white px-4 py-1 rounded hover:opacity-90 transition-opacity"
-            style={{
-              backgroundColor: 'var(--bg-toolbar-btn)',
-              color: 'var(--color-primary)'
-            }}
-            onClick={toggleExercisesSidebar}
-          >
-            {showExercisesSidebar ? "Hide Exercises List" : "Show Exercises List"}
-          </button> */}
-
           {/* Theme toggle button */}
           <button
             onClick={toggleTheme}
@@ -667,36 +668,65 @@ function NoirEditor(props: PlaygroundProps) {
       {/* Main content area */}
       <div className="flex flex-1 overflow-hidden flex-col md:flex-row">
         {/* Exercises sidebar */}
-        {showExercisesSidebar && (
-          <div
-            className="min-w-[200px] border-r overflow-y-auto max-h-60 md:max-h-none"
-            style={{
-              backgroundColor: 'var(--bg-sidebar)',
-              borderColor: 'var(--border-color)'
-            }}
-          >
+        <div
+          className="border-r overflow-y-auto max-h-60 md:max-h-none relative"
+          style={{
+            backgroundColor: 'var(--bg-sidebar)',
+            borderColor: 'var(--border-color)',
+            width: showExercisesSidebar ? 200 : 0,
+            minWidth: showExercisesSidebar ? 200 : 0,
+            transition: "width 0.3s ease-in-out",
+            overflow: "hidden",
+          }}
+        >
+          <div style={{ opacity: showExercisesSidebar ? 1 : 0, transition: "opacity 0.3s ease-in-out", width: 200, paddingTop: '0.5rem' }}>
             {props.isAdvancedMode ? (
-                              <AdvancedExercisesSidebar
-                  selectExercise={(path: string): void => { 
-                    void handleExerciseSelect(path); 
-                  }}
-                  currentExercise={currentExercise}
-                  finishedExercises={finishedExercises}
-                />
+              <AdvancedExercisesSidebar
+                selectExercise={(path: string): void => {
+                  void handleExerciseSelect(path);
+                }}
+                currentExercise={currentExercise}
+                finishedExercises={finishedExercises}
+              />
             ) : (
-                              <ExercisesSidebar
-                  selectExercise={(path: string): void => { 
-                    void handleExerciseSelect(path); 
-                  }}
-                  currentExercise={currentExercise}
-                  finishedExercises={finishedExercises}
-                />
+              <ExercisesSidebar
+                selectExercise={(path: string): void => {
+                  void handleExerciseSelect(path);
+                }}
+                currentExercise={currentExercise}
+                finishedExercises={finishedExercises}
+              />
             )}
           </div>
-        )}
+        </div>
+
+        {/* Sidebar toggle button - positioned flush against right edge */}
+        <div className="relative">
+          <button
+            onClick={toggleExercisesSidebar}
+            className="absolute top-2 px-[0] py-4 rounded-r-md hover:opacity-80 transition-all duration-200 cursor-pointer z-20"
+            style={{
+              left: showExercisesSidebar ? '-1px' : '0px',
+              backgroundColor: 'var(--bg-sidebar)',
+              borderColor: 'var(--border-color)',
+              border: '1px solid var(--border-color)',
+              borderLeft: showExercisesSidebar ? 'none' : '1px solid var(--border-color)',
+              color: 'var(--color-secondary)',
+              transform: 'translateX(0)',
+              borderRadius: '0 0.375rem 0.375rem 0',
+            }}
+            aria-label={showExercisesSidebar ? "Collapse sidebar" : "Expand sidebar"}
+          >
+            {showExercisesSidebar ? (
+              <ChevronLeft size={16} color="var(--color-secondary)" />
+            ) : (
+              <ChevronRight size={16} color="var(--color-secondary)" />
+            )}
+          </button>
+        </div>
 
         {/* Info Panel + Editor side by side */}
-        <div className="flex flex-1 flex-row min-h-0 w-[calc(100%-200px)]">
+        <div className={`flex flex-1 flex-row min-h-0 transition-all duration-200 ease-in-out ${showExercisesSidebar ? 'w-[calc(100%-200px)]' : 'w-full'}`}>
           {/* Exercise Info Panel: only takes width if currentExercise is set */}
           {currentExercise ? (
             <div

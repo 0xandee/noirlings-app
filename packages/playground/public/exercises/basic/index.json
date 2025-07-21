@@ -534,7 +534,7 @@
     "locales": {
       "en": {
         "hint": "1. We are going to use `Stats` struct to store sum and count. define initial value for accumulator\n```\nlet acc = Stats { sum: 0, count: 0 };\n```\n2. Use `fold` method to fold values. Here we are passing closure function that will process each element of slice. \n3. Remember to define explicit type in closure for `acc` and `x` as type must be known by this point.\n```\nlet stats = numbers.fold(acc, |acc: Stats, x: Field| Stats { sum: acc.sum + x, count: acc.count + 1 });\n```\n4. Return the average\n```\nstats.sum / stats.count\n```",
-        "description": "No description here\n\n#### Docs",
+        "description": "The fold operation lets you accumulate values using a custom struct, perfect for calculating statistics that require multiple pieces of information like sum and count\n\n#### Docs",
         "docLink": "https://noir-lang.org/docs/noir/concepts/data_types/slices#slice-iteration"
       }
     }
@@ -552,7 +552,7 @@
     "locales": {
       "en": {
         "hint": "```\nlet valid_transactions = transactions.filter(|txn: Transaction| txn.valid == true);\nlet amounts = valid_transactions.map(|txn: Transaction| txn.amount);\nlet sum = amounts.reduce(|acc: Field,x: Field| acc + x);\n```",
-        "description": "No description here\n\n#### Docs",
+        "description": "Functional programming pipelines combine filter, map, and reduce operations to process data efficiently, making complex transformations readable and composable\n\n#### Docs",
         "docLink": "https://noir-lang.org/docs/noir/concepts/data_types/slices#slice-manipulation"
       }
     }
