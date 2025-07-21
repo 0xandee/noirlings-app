@@ -32,9 +32,6 @@ import { compileCode } from "../../utils/generateProof";
 import { toast } from "react-toastify";
 import { CompiledCircuit } from "@noir-lang/types";
 import { createFileFromExercise } from "../../utils/exerciseLoader";
-import { executeTests } from "../../utils/testRunner";
-import { TestResults } from "../../utils/testDiscovery";
-import { TestResultBox } from "../testResultBox/TestResultBox";
 
 type editorType = editor.IStandaloneCodeEditor;
 
@@ -104,11 +101,6 @@ function NoirEditor(props: PlaygroundProps) {
   const [copyTooltip, setCopyTooltip] = useState<{ visible: boolean; text: string; isClicked: boolean }>({ visible: false, text: 'Copy', isClicked: false });
   const [resetTooltip, setResetTooltip] = useState<{ visible: boolean; text: string; isClicked: boolean }>({ visible: false, text: 'Reset', isClicked: false });
   const [compileTooltip, setCompileTooltip] = useState<{ visible: boolean; text: string; isClicked: boolean }>({ visible: false, text: 'Compile', isClicked: false });
-
-  // Test-related state
-  const [testResults, setTestResults] = useState<TestResults | null>(null);
-  const [testError, setTestError] = useState<string | null>(null);
-  const [testsPending, setTestsPending] = useState<boolean>(false);
 
   // Default documentation URL
   const DEFAULT_DOC_URL = "https://noir-lang.org/docs";
@@ -524,41 +516,11 @@ function NoirEditor(props: PlaygroundProps) {
     await compile(fileSystem);
   };
 
-  // Test execution handler
-  const handleRunTests = async () => {
-    setTestError(null);
-    setTestResults(null);
-    setTestsPending(true);
-    
-    try {
-      const results = await executeTests(fileSystem);
-      setTestResults(results);
-      
-      if (results.summary.failed > 0) {
-        toast.warning(`Tests completed: ${results.summary.passed} passed, ${results.summary.failed} failed`);
-      } else {
-        toast.success(`All ${results.summary.total} tests passed!`);
-      }
-    } catch (err: unknown) {
-      let message = "Unknown error running tests";
-      if (err instanceof Error) {
-        message = err.message;
-      } else if (typeof err === "string") {
-        message = err;
-      }
-      setTestError(message);
-      toast.error(`Test execution failed: ${message}`);
-    } finally {
-      setTestsPending(false);
-    }
-  };
 
   // Add useEffect to reset states when fileSystem changes (like in ActionsBox)
   useEffect(() => {
     setCompiledCode(null);
     setCompileError(null);
-    setTestResults(null);
-    setTestError(null);
   }, [fileSystem]);
 
   const location = useLocation();
@@ -843,8 +805,6 @@ function NoirEditor(props: PlaygroundProps) {
                     compileError={compileError}
                     pending={pending}
                     compile={compile}
-                    onRunTests={handleRunTests}
-                    testsPending={testsPending}
                   />
                 </div>
               )}
@@ -1003,13 +963,6 @@ function NoirEditor(props: PlaygroundProps) {
             <div className="w-full shadow rounded-br-lg flex flex-col md:flex-row flex-wrap sticky bottom-0 z-10"
               style={{ backgroundColor: 'var(--bg-secondary)' }}>
               {loaded && proof && <ResultBox proof={proof} setProof={setProof} />}
-              {loaded && (testResults || testError || testsPending) && (
-                <TestResultBox 
-                  testResults={testResults}
-                  error={testError}
-                  isRunning={testsPending}
-                />
-              )}
             </div>
           </div>
         </div>
