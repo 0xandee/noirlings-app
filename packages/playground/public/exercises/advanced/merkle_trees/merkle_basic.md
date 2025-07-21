@@ -15,6 +15,7 @@ locales:
       1. Merkle Root Computation
 
       ```noir
+
       fn compute_merkle_root(leaves: [Field; 4]) -> Field {
           // Level 1: Hash adjacent pairs
           let level2_0 = hash_pair(leaves[0], leaves[1]);
@@ -23,11 +24,13 @@ locales:
           // Level 2: Hash the two level2 values to get root
           hash_pair(level2_0, level2_1)
       }
+
       ```
 
       2. Leaf Change Testing
 
       ```noir
+
       fn test_leaf_change_affects_root(original_leaves: [Field; 4], leaf_index: u32, new_value: Field) -> bool {
           let original_root = compute_merkle_root(original_leaves);
           
@@ -37,11 +40,13 @@ locales:
           
           original_root != new_root
       }
+
       ```
 
       3. Tree Depth Calculation
 
       ```noir
+
       fn calculate_tree_depth(num_leaves: u32) -> u32 {
           let mut depth = 0;
           let mut current = 1;
@@ -53,6 +58,7 @@ locales:
           
           depth
       }
+
       ```
     description: >-
       Merkle trees enable efficient verification of large data structures with tamper-evident properties. Learn to build trees from leaf data and understand how changes propagate to the root.

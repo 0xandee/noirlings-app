@@ -15,6 +15,7 @@ locales:
       1. Simplified Keccak Implementation
 
       ```noir
+
       fn educational_keccak<let N: u32>(input: [u8; N]) -> [u8; 32] {
           let mut state: [u64; 25] = [0; 25];
           
@@ -38,11 +39,13 @@ locales:
           }
           output
       }
+
       ```
 
       2. State Conversion Functions
 
       ```noir
+
       fn state_to_bytes(state: [u64; 25]) -> [u8; 200] {
           let mut bytes = [0; 200];
           for i in 0..25 {
@@ -63,11 +66,13 @@ locales:
           }
           state
       }
+
       ```
 
       3. Ethereum Address Computation
 
       ```noir
+
       fn compute_ethereum_address(public_key_x: [u8; 32], public_key_y: [u8; 32]) -> [u8; 20] {
           let mut public_key = [0; 64];
           for i in 0..32 {
@@ -82,6 +87,7 @@ locales:
           }
           address
       }
+
       ```
     description: >-
       Keccak is Ethereum's cryptographic hash function using sponge construction. Learn to implement Keccak256 for Ethereum compatibility and understand its role in blockchain applications.

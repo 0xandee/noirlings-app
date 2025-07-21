@@ -15,14 +15,17 @@ locales:
       1. Blake2s Hash Function
 
       ```noir
+
       fn demo_blake2s_blackbox(data: [u8; 32]) -> [u8; 32] {
           std::hash::blake2s(data)
       }
+
       ```
 
       2. Circuit vs Black Box Comparison
 
       ```noir
+
       fn circuit_hash_simulation(data: [u8; 32]) -> Field {
           // Inefficient circuit implementation
           let mut result = 0;
@@ -31,19 +34,23 @@ locales:
           }
           result
       }
+
       ```
 
       3. AES128 Encryption
 
       ```noir
+
       fn demo_aes_encryption(plaintext: [u8; 16], key: [u8; 16]) -> [u8; 16] {
           std::aes128::encrypt(plaintext, key)
       }
+
       ```
 
       4. ECDSA Signature Verification
 
       ```noir
+
       fn demo_ecdsa_verification(
           message_hash: [u8; 32],
           public_key: [u8; 64],
@@ -73,11 +80,13 @@ locales:
           
           std::ecdsa_secp256k1::verify_signature(message_hash, pub_key_x, pub_key_y, signature)
       }
+
       ```
 
       5. Performance Comparison Pattern
 
       ```noir
+
       fn performance_test() -> bool {
           let data = [1; 32];
           let key = [42; 16];
@@ -90,6 +99,7 @@ locales:
           // Black box functions are significantly faster
           hash_result.len() == 32 & encrypted.len() == 16
       }
+
       ```
     description: >-
       Black box functions provide optimized implementations of common cryptographic operations with better performance than circuit equivalents. Learn to use hash functions, encryption, and signature verification efficiently.

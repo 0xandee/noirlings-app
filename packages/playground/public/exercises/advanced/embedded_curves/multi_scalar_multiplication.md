@@ -15,17 +15,20 @@ locales:
       1. Efficient MSM Implementation
 
       ```noir
+
       fn efficient_msm(
           scalars: [EmbeddedCurveScalar; N],
           points: [EmbeddedCurvePoint; N]
       ) -> EmbeddedCurvePoint {
           multi_scalar_mul(points, scalars)
       }
+
       ```
 
       2. Naive MSM for Comparison
 
       ```noir
+
       fn naive_msm(
           scalars: [EmbeddedCurveScalar; N],
           points: [EmbeddedCurvePoint; N]
@@ -37,11 +40,13 @@ locales:
           }
           result
       }
+
       ```
 
       3. Batch Signature Verification
 
       ```noir
+
       fn batch_verify_signatures(
           messages: [Field; N],
           signatures_r: [EmbeddedCurveScalar; N],
@@ -52,6 +57,7 @@ locales:
           let combined_point = multi_scalar_mul(public_keys, signatures_s);
           !combined_point.is_infinite
       }
+
       ```
     description: >-
       Multi-scalar multiplication (MSM) is an optimization technique for computing multiple scalar multiplications simultaneously. Learn to implement efficient batch verification of signatures and proof aggregation using MSM algorithms like Pippenger's method.

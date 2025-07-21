@@ -32,6 +32,9 @@ import { compileCode } from "../../utils/generateProof";
 import { toast } from "react-toastify";
 import { CompiledCircuit } from "@noir-lang/types";
 import { createFileFromExercise } from "../../utils/exerciseLoader";
+import { executeTests } from "../../utils/testRunner";
+import { TestResults } from "../../utils/testDiscovery";
+import { TestResultBox } from "../testResultBox/TestResultBox";
 
 type editorType = editor.IStandaloneCodeEditor;
 
@@ -101,6 +104,11 @@ function NoirEditor(props: PlaygroundProps) {
   const [copyTooltip, setCopyTooltip] = useState<{ visible: boolean; text: string; isClicked: boolean }>({ visible: false, text: 'Copy', isClicked: false });
   const [resetTooltip, setResetTooltip] = useState<{ visible: boolean; text: string; isClicked: boolean }>({ visible: false, text: 'Reset', isClicked: false });
   const [compileTooltip, setCompileTooltip] = useState<{ visible: boolean; text: string; isClicked: boolean }>({ visible: false, text: 'Compile', isClicked: false });
+
+  // Test-related state
+  const [testResults, setTestResults] = useState<TestResults | null>(null);
+  const [testError, setTestError] = useState<string | null>(null);
+  const [testsPending, setTestsPending] = useState<boolean>(false);
 
   // Default documentation URL
   const DEFAULT_DOC_URL = "https://noir-lang.org/docs";
@@ -516,10 +524,41 @@ function NoirEditor(props: PlaygroundProps) {
     await compile(fileSystem);
   };
 
+  // Test execution handler
+  const handleRunTests = async () => {
+    setTestError(null);
+    setTestResults(null);
+    setTestsPending(true);
+    
+    try {
+      const results = await executeTests(fileSystem);
+      setTestResults(results);
+      
+      if (results.summary.failed > 0) {
+        toast.warning(`Tests completed: ${results.summary.passed} passed, ${results.summary.failed} failed`);
+      } else {
+        toast.success(`All ${results.summary.total} tests passed!`);
+      }
+    } catch (err: unknown) {
+      let message = "Unknown error running tests";
+      if (err instanceof Error) {
+        message = err.message;
+      } else if (typeof err === "string") {
+        message = err;
+      }
+      setTestError(message);
+      toast.error(`Test execution failed: ${message}`);
+    } finally {
+      setTestsPending(false);
+    }
+  };
+
   // Add useEffect to reset states when fileSystem changes (like in ActionsBox)
   useEffect(() => {
     setCompiledCode(null);
     setCompileError(null);
+    setTestResults(null);
+    setTestError(null);
   }, [fileSystem]);
 
   const location = useLocation();
@@ -730,7 +769,7 @@ function NoirEditor(props: PlaygroundProps) {
           {/* Exercise Info Panel: only takes width if currentExercise is set */}
           {currentExercise ? (
             <div
-              className="hidden md:flex flex-col gap-4 border-r"
+              className="hidden md:flex flex-col border-r"
               style={{
                 backgroundColor: 'var(--bg-sidebar)',
                 borderColor: 'var(--border-color)',
@@ -740,63 +779,74 @@ function NoirEditor(props: PlaygroundProps) {
                 transition: isDragging ? "none" : "none",
                 userSelect: isDragging ? "none" : "auto",
                 cursor: isDragging ? "col-resize" : "default",
-                overflowY: "auto",
                 maxHeight: "100vh",
                 color: 'var(--color-primary)'
               }}
             >
-              <div className="p-6 pt-4">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="text-2xl font-bold" style={{ color: 'var(--color-primary)' }}>
-                    {currentExerciseTitle && formatExerciseName(currentExerciseTitle)}
-                  </div>
-                  <button
-                    className="px-3 py-2 cursor-pointer transition-opacity border rounded hover:opacity-80 flex items-center gap-2"
-                    style={{ borderColor: 'var(--border-color)', backgroundColor: 'transparent', color: 'var(--color-secondary)' }}
-                    onClick={() => setShowHint((prev) => !prev)}
-                  >
-                    <Lightbulb size={16} color="var(--color-secondary)" />
-                    {showHint ? "Hide Hint" : "Show Hint"}
-                  </button>
+              {/* Scrollable content area */}
+              <div
+                className="flex-1 overflow-y-auto"
+                style={{ minHeight: 0 }}
+              >
+                <div className="p-6 pt-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="text-2xl font-bold" style={{ color: 'var(--color-primary)' }}>
+                      {currentExerciseTitle && formatExerciseName(currentExerciseTitle)}
+                    </div>
+                    <button
+                      className="px-3 py-2 cursor-pointer transition-opacity border rounded hover:opacity-80 flex items-center gap-2"
+                      style={{ borderColor: 'var(--border-color)', backgroundColor: 'transparent', color: 'var(--color-secondary)' }}
+                      onClick={() => setShowHint((prev) => !prev)}
+                    >
+                      <Lightbulb size={16} color="var(--color-secondary)" />
+                      {showHint ? "Hide Hint" : "Show Hint"}
+                    </button>
 
+                  </div>
+                  {currentExerciseDescription && (
+                    <div style={{ color: 'var(--color-primary)' }} className="mb-6">
+                      {/* <span className="font-bold">Description</span> */}
+                      <div className="markdown-body">
+                        <ReactMarkdown>{currentExerciseDescription}</ReactMarkdown>
+                      </div>
+                      <div className="mt-3 break-words" style={{ borderColor: 'var(--border-color)' }}>
+                        <span style={{ color: 'var(--color-primary)' }}>
+                          <a href={currentDocLink || DEFAULT_DOC_URL} target="_blank" rel="noopener noreferrer" className="no-underline font-light" style={{ color: 'var(--color-accent)' }}>{currentDocLink || DEFAULT_DOC_URL}</a>
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {currentExerciseHint && showHint && (
+                    <div className="whitespace-pre-line rounded flex flex-col gap-2" style={{ color: 'var(--color-secondary)' }}>
+                      <span className="font-bold text-base" >Hint</span>
+                      <div className="markdown-body markdown-body-hint">
+                        <ReactMarkdown>{currentExerciseHint.trim() !== "No hint this time" ? currentExerciseHint : ""}</ReactMarkdown>
+                      </div>
+                    </div>
+                  )}
                 </div>
-                {currentExerciseDescription && (
-                  <div style={{ color: 'var(--color-primary)' }} className="mb-6">
-                    {/* <span className="font-bold">Description</span> */}
-                    <div className="markdown-body">
-                      <ReactMarkdown>{currentExerciseDescription}</ReactMarkdown>
-                    </div>
-                    <div className="mt-3 break-words" style={{ borderColor: 'var(--border-color)' }}>
-                      <span style={{ color: 'var(--color-primary)' }}>
-                        <a href={currentDocLink || DEFAULT_DOC_URL} target="_blank" rel="noopener noreferrer" className="no-underline font-light" style={{ color: 'var(--color-accent)' }}>{currentDocLink || DEFAULT_DOC_URL}</a>
-                      </span>
-                    </div>
-                  </div>
-                )}
-
-                {currentExerciseHint && showHint && (
-                  <div className="whitespace-pre-line rounded flex flex-col gap-2" style={{ color: 'var(--color-secondary)' }}>
-                    <span className="font-bold text-base" >Hint</span>
-                    <div className="markdown-body">
-                      <ReactMarkdown>{currentExerciseHint.trim() !== "No hint this time" ? currentExerciseHint : ""}</ReactMarkdown>
-                    </div>
-                  </div>
-                )}
               </div>
+
+              {/* Fixed bottom ActionsBox */}
               {loaded && !proof && (
-                <ActionsBox
-                  project={fileSystem}
-                  onCompileSuccess={handleCompileSuccess}
-                  onForward={
-                    currentExerciseIndex !== -1 && currentExerciseIndex < orderedExercises.length - 1
-                      ? handleForward
-                      : undefined
-                  }
-                  compiledCode={compiledCode}
-                  compileError={compileError}
-                  pending={pending}
-                  compile={compile}
-                />
+                <div className="flex-shrink-0 mt-4">
+                  <ActionsBox
+                    project={fileSystem}
+                    onCompileSuccess={handleCompileSuccess}
+                    onForward={
+                      currentExerciseIndex !== -1 && currentExerciseIndex < orderedExercises.length - 1
+                        ? handleForward
+                        : undefined
+                    }
+                    compiledCode={compiledCode}
+                    compileError={compileError}
+                    pending={pending}
+                    compile={compile}
+                    onRunTests={handleRunTests}
+                    testsPending={testsPending}
+                  />
+                </div>
               )}
             </div>
           ) : (
@@ -953,6 +1003,13 @@ function NoirEditor(props: PlaygroundProps) {
             <div className="w-full shadow rounded-br-lg flex flex-col md:flex-row flex-wrap sticky bottom-0 z-10"
               style={{ backgroundColor: 'var(--bg-secondary)' }}>
               {loaded && proof && <ResultBox proof={proof} setProof={setProof} />}
+              {loaded && (testResults || testError || testsPending) && (
+                <TestResultBox 
+                  testResults={testResults}
+                  error={testError}
+                  isRunning={testsPending}
+                />
+              )}
             </div>
           </div>
         </div>

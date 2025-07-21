@@ -15,6 +15,7 @@ locales:
       1. Basic ECDSA Verification
 
       ```noir
+
       fn verify_ecdsa_signature(
           message_hash: [u8; 32],
           public_key_x: [u8; 32],
@@ -23,11 +24,13 @@ locales:
       ) -> bool {
           verify_signature(message_hash, public_key_x, public_key_y, signature)
       }
+
       ```
 
       2. Invalid Message Test
 
       ```noir
+
       fn test_invalid_message(
           message_hash: [u8; 32],
           wrong_message_hash: [u8; 32],
@@ -40,11 +43,13 @@ locales:
           
           valid_sig & !invalid_sig
       }
+
       ```
 
       3. Invalid Public Key Test
 
       ```noir
+
       fn test_invalid_public_key(
           message_hash: [u8; 32],
           public_key_x: [u8; 32],
@@ -58,6 +63,7 @@ locales:
           
           valid_sig & !invalid_sig
       }
+
       ```
     description: >-
       ECDSA is a widely-used digital signature scheme based on elliptic curve cryptography. Learn to verify signatures using secp256k1 and understand message integrity validation.

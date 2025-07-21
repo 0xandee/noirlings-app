@@ -15,6 +15,7 @@ locales:
       1. Date Operations
 
       ```noir
+
       impl Date {
           fn to_field(self) -> Field {
               // Encode as YYYYMMDD format
@@ -43,11 +44,13 @@ locales:
               year_valid & month_valid & day_valid
           }
       }
+
       ```
 
       2. Identity Commitment
 
       ```noir
+
       impl IdentityCommitment {
           fn new(birth_date: Date, secret: Field) -> Self {
               let commitment = pedersen_hash([birth_date.to_field(), secret]);
@@ -76,11 +79,13 @@ locales:
               }
           }
       }
+
       ```
 
       3. Age Category System
 
       ```noir
+
       impl AgeCategory {
           fn get_range(self) -> (u32, u32) {
               match self {
@@ -95,11 +100,13 @@ locales:
               age >= min_age && age <= max_age
           }
       }
+
       ```
 
       4. Age Range Proofs
 
       ```noir
+
       fn prove_age_range(self, min_age: u32, max_age: u32) -> AgeRangeProof {
           let actual_age = self.birth_date.age_in_years();
           let is_valid = (actual_age >= min_age) & (actual_age <= max_age);
@@ -135,11 +142,13 @@ locales:
               is_valid
           }
       }
+
       ```
 
       5. Verification System
 
       ```noir
+
       impl AgeVerificationSystem {
           fn new() -> Self {
               AgeVerificationSystem {
@@ -174,11 +183,13 @@ locales:
               is_trusted & proof.is_valid
           }
       }
+
       ```
 
       6. Zero-Knowledge Age Verification
 
       ```noir
+
       fn zero_knowledge_age_check(
           birth_date: Date,
           secret: Field,
@@ -196,10 +207,9 @@ locales:
           
           commitment_valid & age_proof.is_valid
       }
+
       ```
 
-      #### Docs
-    docLink: "https://noir-lang.org/docs/noir/standard_library/cryptographic_primitives"
     description: >-
       Privacy-preserving age verification allows proving that someone meets age requirements without revealing their actual birth date. Learn to implement zero-knowledge age verification using range proofs and secure date arithmetic for identity applications.
 ---

@@ -15,6 +15,7 @@ locales:
       1. Recursive Proof Verification
 
       ```noir
+
       fn verify_recursive_proof(
           proof: [Field; 93],
           public_inputs: [Field; 1],
@@ -23,11 +24,13 @@ locales:
       ) -> bool {
           std::verify_proof(proof, public_inputs, key_hash, public_input)
       }
+
       ```
 
       2. Two-Proof Aggregation
 
       ```noir
+
       fn aggregate_two_proofs(
           proof1: [Field; 93],
           public_inputs1: [Field; 1],
@@ -40,11 +43,13 @@ locales:
           
           proof1_valid & proof2_valid
       }
+
       ```
 
       3. Chain Verification
 
       ```noir
+
       fn chain_verification(
           proof1: [Field; 93],
           public_inputs1: [Field; 1],
@@ -63,21 +68,25 @@ locales:
           
           proof1_valid & proof2_valid & chain_valid
       }
+
       ```
 
       4. Recursive Function Pattern
 
       ```noir
+
       #[recursive]
       fn simple_computation(x: Field, y: Field) -> pub Field {
           // Computation that can be recursively verified
           x * x + y * y
       }
+
       ```
 
       5. Main Verification Function
 
       ```noir
+
       fn main(
           x: Field,
           y: Field,
@@ -93,6 +102,7 @@ locales:
           
           computation_correct & proof_valid & test_computation
       }
+
       ```
     description: >-
       Recursive proofs enable proof aggregation and verification chains in zero-knowledge systems. Learn to implement recursive proof verification and understand proof composition patterns.

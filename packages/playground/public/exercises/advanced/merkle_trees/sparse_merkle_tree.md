@@ -15,6 +15,7 @@ locales:
       1. Tree Initialization with Default Hashes
 
       ```noir
+
       fn new() -> Self {
           let mut default_hashes = [0; TREE_DEPTH + 1];
           default_hashes[0] = EMPTY_LEAF;
@@ -30,11 +31,13 @@ locales:
               default_hashes: default_hashes
           }
       }
+
       ```
 
       2. Key-Value Update
 
       ```noir
+
       fn update(&mut self, key: Field, value: Field) {
           let path = self.key_to_path(key, TREE_DEPTH);
           
@@ -73,20 +76,24 @@ locales:
           
           self.root = current_hash;
       }
+
       ```
 
       3. Value Retrieval
 
       ```noir
+
       fn get(&self, key: Field) -> Field {
           let leaf_key = self.node_key(0, key);
           self.nodes.get(leaf_key).unwrap_or(EMPTY_LEAF)
       }
+
       ```
 
       4. Proof Generation
 
       ```noir
+
       fn generate_proof(&self, key: Field) -> ([Field; TREE_DEPTH], Field) {
           let mut sibling_path = [0; TREE_DEPTH];
           let path = self.key_to_path(key, TREE_DEPTH);
@@ -103,11 +110,13 @@ locales:
           
           (sibling_path, value)
       }
+
       ```
 
       5. Proof Verification
 
       ```noir
+
       fn verify_proof(
           root: Field,
           key: Field,
@@ -129,6 +138,7 @@ locales:
           
           current_hash == root
       }
+
       ```
     description: >-
       Sparse Merkle trees are optimized data structures for large, mostly empty sets. Learn to implement efficient sparse trees that store only non-default values, enabling scalable membership proofs and state management in blockchain applications.

@@ -15,6 +15,7 @@ locales:
       1. Single Byte Encoding
 
       ```noir
+
       fn encode_single_byte(byte: u8) -> [u8] {
           if byte <= RLP_SINGLE_BYTE_MAX {
               [byte]
@@ -22,11 +23,13 @@ locales:
               [RLP_SHORT_STRING_OFFSET + 1, byte]
           }
       }
+
       ```
 
       2. Byte Array Encoding
 
       ```noir
+
       fn encode_bytes(data: [u8]) -> [u8] {
           let len = data.len();
           
@@ -58,11 +61,13 @@ locales:
               return result;
           }
       }
+
       ```
 
       3. List Encoding
 
       ```noir
+
       fn encode_list(items: [[u8]]) -> [u8] {
           let mut total_length = 0;
           for item in items {
@@ -97,11 +102,13 @@ locales:
               return result;
           }
       }
+
       ```
 
       4. Length Encoding Helper
 
       ```noir
+
       fn to_minimal_bytes(value: u32) -> [u8] {
           if value == 0 {
               return [];
@@ -127,11 +134,13 @@ locales:
           
           result
       }
+
       ```
 
       5. Transaction Encoding
 
       ```noir
+
       impl EthereumTransaction {
           fn encode(&self) -> [u8] {
               let nonce_bytes = encode_integer(self.nonce);
@@ -153,6 +162,7 @@ locales:
               encode_list(fields)
           }
       }
+
       ```
     description: >-
       RLP (Recursive Length Prefix) is Ethereum's encoding scheme for serializing arbitrary data structures. Learn to implement RLP encoding to serialize transactions, blocks, and state data for use in zero-knowledge proofs and blockchain verification.

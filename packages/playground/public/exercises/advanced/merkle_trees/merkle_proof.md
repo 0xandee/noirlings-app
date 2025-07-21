@@ -15,6 +15,7 @@ locales:
       1. Merkle Proof Verification
 
       ```noir
+
       fn verify_merkle_proof(proof: MerkleProof, root: Field) -> bool {
           let mut current_hash = proof.leaf;
           let mut index = proof.index;
@@ -35,11 +36,13 @@ locales:
           
           current_hash == root
       }
+
       ```
 
       2. Merkle Proof Generation
 
       ```noir
+
       fn generate_merkle_proof(leaves: [Field; 8], leaf_index: u32) -> MerkleProof {
           let mut path = [0; 3];
           let mut current_level = leaves;
@@ -65,11 +68,13 @@ locales:
               path: path
           }
       }
+
       ```
 
       3. Exclusion Proof Verification
 
       ```noir
+
       fn verify_exclusion_proof(
           leaf: Field,
           proof: MerkleProof,
@@ -81,17 +86,20 @@ locales:
           
           proof_valid & leaf_different
       }
+
       ```
 
       4. Batch Proof Verification
 
       ```noir
+
       fn batch_verify_proofs(proofs: [MerkleProof; 2], root: Field) -> bool {
           let proof1_valid = verify_merkle_proof(proofs[0], root);
           let proof2_valid = verify_merkle_proof(proofs[1], root);
           
           proof1_valid & proof2_valid
       }
+
       ```
     description: >-
       Merkle proofs enable efficient verification of data inclusion without revealing entire datasets. Learn to implement proof verification, generation, and understand privacy-preserving properties.

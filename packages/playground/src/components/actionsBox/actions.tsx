@@ -1,16 +1,41 @@
 import React, { FormEvent, useState, useEffect } from "react";
-import { ChevronRight, CheckCircle, X, Play } from "lucide-react";
+import { ChevronRight, CheckCircle, X, Play, TestTube } from "lucide-react";
 
 import { CompiledCircuit } from "@noir-lang/types";
 import { Button } from "../buttons/buttons";
 import { ButtonContainer } from "../buttons/containers";
 import { FileSystem } from "../../utils/fileSystem";
+import { hasTests } from "../../utils/testDiscovery";
+import { decodeSnippet } from "../../utils/shareSnippet";
 import pkg from '../../../package.json';
 
-export const ActionsBox = ({ project, onCompileSuccess, onForward, compiledCode, compileError, pending, compile }: { project: FileSystem; onCompileSuccess?: () => void; onForward?: () => void; compiledCode: CompiledCircuit | null; compileError: string | null; pending: boolean; compile: (project: FileSystem) => Promise<void>; }) => {
+export const ActionsBox = ({ project, onCompileSuccess, onForward, compiledCode, compileError, pending, compile, onRunTests, testsPending }: { 
+  project: FileSystem; 
+  onCompileSuccess?: () => void; 
+  onForward?: () => void; 
+  compiledCode: CompiledCircuit | null; 
+  compileError: string | null; 
+  pending: boolean; 
+  compile: (project: FileSystem) => Promise<void>; 
+  onRunTests?: () => Promise<void>;
+  testsPending?: boolean;
+}) => {
 
   const [showSuccessAlert, setShowSuccessAlert] = useState(true);
   const [showErrorAlert, setShowErrorAlert] = useState(true);
+
+  // Check if current project has test functions
+  const mainFile = project.getByPath('src/main.nr');
+  let decodedContent = '';
+  if (mainFile && mainFile.type === 'file') {
+    try {
+      decodedContent = decodeSnippet(mainFile.content as string);
+    } catch {
+      // If decoding fails, use content as-is (might already be plain text)
+      decodedContent = mainFile.content as string;
+    }
+  }
+  const projectHasTests = mainFile && mainFile.type === 'file' && hasTests(decodedContent);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -40,7 +65,7 @@ export const ActionsBox = ({ project, onCompileSuccess, onForward, compiledCode,
   };
 
   return (
-    <>
+    <>      
       <form
         className="flex flex-auto flex-col justify-end"
         onSubmit={(e) => submit(e)}
@@ -93,13 +118,13 @@ export const ActionsBox = ({ project, onCompileSuccess, onForward, compiledCode,
             </div>
           )}
 
-          <div className="w-full flex flex-row justify-between items-center gap-4 mx-6 ">
+          <div className="w-full flex flex-row justify-between items-center gap-3 mx-6">
             <Button
               type="submit"
               $primary={true}
-              className={`cursor-pointer flex-1 h-12 flex items-center justify-center rounded hover:opacity-80 transition-opacity ${pending ? 'cursor-not-allowed opacity-80' : 'hover:scale-[1]'
+              className={`cursor-pointer ${projectHasTests ? 'flex-1' : 'flex-[2]'} h-12 flex items-center justify-center rounded hover:opacity-80 transition-opacity ${pending || testsPending ? 'cursor-not-allowed opacity-80' : 'hover:scale-[1]'
                 }`}
-              disabled={pending}
+              disabled={pending || testsPending}
             >
               <div className="flex items-center justify-center gap-2">
                 {pending ? <></> : <Play className="w-5 h-5" />}
@@ -107,10 +132,26 @@ export const ActionsBox = ({ project, onCompileSuccess, onForward, compiledCode,
               </div>
             </Button>
 
+            {projectHasTests && onRunTests && (
+              <Button
+                type="button"
+                $primary={false}
+                className={`cursor-pointer flex-1 h-12 flex items-center justify-center rounded hover:opacity-80 transition-opacity ${pending || testsPending ? 'cursor-not-allowed opacity-80' : 'hover:scale-[1]'
+                  }`}
+                disabled={pending || testsPending}
+                onClick={() => onRunTests()}
+              >
+                <div className="flex items-center justify-center gap-2">
+                  {testsPending ? <></> : <TestTube className="w-5 h-5" />}
+                  <span>{testsPending ? "Running..." : "Run Tests"}</span>
+                </div>
+              </Button>
+            )}
+
             <button
               type="button"
               className="cursor-pointer w-12 h-12 flex items-center justify-center group rounded hover:opacity-80 transition-opacity"
-              disabled={pending || !onForward}
+              disabled={pending || testsPending || !onForward}
               onClick={onForward}
               title="Go to next exercise"
               style={{

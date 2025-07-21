@@ -15,6 +15,7 @@ locales:
       1. Tree Initialization
 
       ```noir
+
       fn new() -> Self {
           IndexedMerkleTree {
               nodes: [0; 511],
@@ -23,11 +24,13 @@ locales:
               root: 0
           }
       }
+
       ```
 
       2. Value Insertion
 
       ```noir
+
       fn insert(&mut self, value: Field) -> u32 {
           // Check if already exists
           let existing_index = self.get_index(value);
@@ -43,11 +46,13 @@ locales:
           
           leaf_index
       }
+
       ```
 
       3. Membership Check
 
       ```noir
+
       fn contains(&self, value: Field) -> bool {
           self.get_index(value) != 0
       }
@@ -60,11 +65,13 @@ locales:
           }
           0
       }
+
       ```
 
       4. Membership Proof Generation
 
       ```noir
+
       fn generate_membership_proof(&self, value: Field) -> (bool, [Field; TREE_DEPTH], u32) {
           let leaf_index = self.get_index(value);
           
@@ -83,11 +90,13 @@ locales:
           
           (true, sibling_path, leaf_index)
       }
+
       ```
 
       5. Tree Node Updates
 
       ```noir
+
       fn update_tree_nodes(&mut self, leaf_index: u32, leaf_value: Field) {
           // Set leaf value
           let leaf_node_index = get_node_index(0, leaf_index);
@@ -109,6 +118,7 @@ locales:
           
           self.root = self.nodes[get_node_index(TREE_DEPTH, 0)];
       }
+
       ```
 
       #### Docs
