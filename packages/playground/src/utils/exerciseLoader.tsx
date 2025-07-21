@@ -11,71 +11,80 @@ import matter from 'gray-matter';
 // Remove all old content except createFileFromExercise.
 // Add:
 export const BASIC_CATEGORIES = ["intro", "variables", "control-flow", "arrays", "structs", "references", "slices", "tuples", "strings", "integers", "traits", "fields", "quizs"];
-export const ADVANCED_CATEGORIES = ["hashes", "embedded_curves"];
+export const ADVANCED_CATEGORIES = [
+    "hashes",
+    "embedded_curves",
+    "merkle_trees",
+    "signatures",
+    "optimization",
+    "ethereum",
+    "privacy",
+    "recursive_proofs"
+];
 
 // Define an interface for exercise metadata
 export interface ExerciseData {
-  code: string;
-  metadata: {
-    title: string;
-    description: string | null;
-    hint: string | null;
-    docLink: string | null;
-  }
+    code: string;
+    metadata: {
+        title: string;
+        description: string | null;
+        hint: string | null;
+        docLink: string | null;
+    }
 }
 
 // Add this interface to the top where other interfaces are defined
 export interface Exercise {
-  id: string;
-  title: string;
-  category: string;
-  difficulty: string;
-  tags: string[];
-  mode: string;
-  prerequisites: string[];
-  version: string;
-  path: string;
-  locales: {
-    en: {
-      hint: string;
-      description: string;
-      docLink?: string;
+    id: string;
+    title: string;
+    category: string;
+    difficulty: string;
+    tags: string[];
+    mode: string;
+    prerequisites: string[];
+    version: string;
+    path: string;
+    locales: {
+        en: {
+            hint: string;
+            description: string;
+            docLink?: string;
+        }
     }
-  }
 }
 
 // Define the desired order of categories
 const categoryOrder = [
-  "intro", 
-  "variables", 
-  "fields", 
-  "integers", 
-  "arrays", 
-  "control-flow", 
-  "structs", 
-  "traits", 
-  "tuples", 
-  "slices", 
-  "strings", 
-  "references", 
-  "quizs"
+    "intro",
+    "variables",
+    "fields",
+    "integers",
+    "arrays",
+    "control-flow",
+    "structs",
+    "traits",
+    "tuples",
+    "slices",
+    "strings",
+    "references",
+    "quizs"
 ];
 
 // Define the order of exercises within each category
 const exerciseOrder = {
-  "intro": ["intro1"],
-  "variables": ["variables1", "variables2", "variables3", "variables4", "variables5", "variables6"],
-  "fields": ["field1"],
-  "integers": ["integer1", "integer2"],
-  "arrays": ["array_basics", "array_advance"],
-  "control-flow": ["if1", "grade_calculator", "count_factors"],
-  "structs": ["structs1", "structs2", "structs3", "shopping_cart"],
-  "traits": ["traits1", "traits2", "traits3", "traits4", "traits5"],
-  "tuples": ["tuple1", "tuple2"],
-  "slices": ["slice1", "slice2", "slice3", "slice4", "slice5"],
-  "strings": ["string1", "string2"],
-  "references": ["reference1", "reference2"],
-  "quizs": ["quiz1"]
+    "intro": ["intro1"],
+    "variables": ["variables1", "variables2", "variables3", "variables4", "variables5", "variables6"],
+    "fields": ["field1"],
+    "integers": ["integer1", "integer2"],
+    "arrays": ["array_basics", "array_advance"],
+    "control-flow": ["if1", "grade_calculator", "count_factors"],
+    "structs": ["structs1", "structs2", "structs3", "shopping_cart"],
+    "traits": ["traits1", "traits2", "traits3", "traits4", "traits5"],
+    "tuples": ["tuple1", "tuple2"],
+    "slices": ["slice1", "slice2", "slice3", "slice4", "slice5"],
+    "strings": ["string1", "string2"],
+    "references": ["reference1", "reference2"],
+    "quizs": ["quiz1"]
 };
 
 export async function getOrderedExercises() {
@@ -83,18 +92,18 @@ export async function getOrderedExercises() {
     const response = await fetch('/exercises/basic/index.json');
     if (!response.ok) throw new Error('Failed to fetch basic index');
     const exercises: Exercise[] = await response.json();
-    
+
     // Sort exercises by category and then by exercise ID within category
     return exercises.sort((a: Exercise, b: Exercise) => {
         const categoryA = a.category;
         const categoryB = b.category;
         const idA = a.id;
         const idB = b.id;
-        
+
         // Get category indices
         const catIndexA = categoryOrder.indexOf(categoryA);
         const catIndexB = categoryOrder.indexOf(categoryB);
-        
+
         // If categories are different, sort by category order
         if (catIndexA !== catIndexB) {
             // If category is not found in the order, place it at the end
@@ -102,12 +111,12 @@ export async function getOrderedExercises() {
             if (catIndexB === -1) return -1;
             return catIndexA - catIndexB;
         }
-        
+
         // If categories are the same, sort by exercise order within the category
         if (categoryA in exerciseOrder) {
             const exIndexA = exerciseOrder[categoryA as keyof typeof exerciseOrder].indexOf(idA);
             const exIndexB = exerciseOrder[categoryA as keyof typeof exerciseOrder].indexOf(idB);
-            
+
             // If both exercises are in the defined order, sort by that order
             if (exIndexA !== -1 && exIndexB !== -1) {
                 return exIndexA - exIndexB;
@@ -116,7 +125,7 @@ export async function getOrderedExercises() {
             if (exIndexA !== -1) return -1;
             if (exIndexB !== -1) return 1;
         }
-        
+
         // Fall back to alphabetical sorting by ID
         return idA.localeCompare(idB);
     });
@@ -152,14 +161,14 @@ export async function loadExerciseData(exercisePath: string): Promise<ExerciseDa
     const filePath = parts.join('/');
     const response = await fetch(`/exercises/${base}/${filePath}.md`);
     if (!response.ok) throw new Error(`Failed to fetch ${exercisePath}`);
-    
+
     const text = await response.text();
     const { data, content } = matter(text);
-    
+
     // Extract code from the content
     const codeMatch = content.match(/```noir\n([\s\S]*?)```/);
     const code = codeMatch ? codeMatch[1].trim() : '// No code found';
-    
+
     // Extract metadata from frontmatter
     return {
         code,

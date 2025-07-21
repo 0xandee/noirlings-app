@@ -20,13 +20,17 @@ locales:
       let sum = amounts.reduce(|acc: Field,x: Field| acc + x);
 
       ```
-    description: |-
-      No description here
+    description: >-
+      Functional programming pipelines combine filter, map, and reduce
+      operations to process data efficiently, making complex transformations
+      readable and composable
+
 
       #### Docs
     docLink: >-
       https://noir-lang.org/docs/noir/concepts/data_types/slices#slice-manipulation
 ---
+
 ```noir
 struct Transaction {
     amount: Field,

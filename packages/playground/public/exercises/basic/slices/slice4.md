@@ -39,12 +39,16 @@ locales:
       stats.sum / stats.count
 
       ```
-    description: |-
-      No description here
+    description: >-
+      The fold operation lets you accumulate values using a custom struct,
+      perfect for calculating statistics that require multiple pieces of
+      information like sum and count
+
 
       #### Docs
-    docLink: 'https://noir-lang.org/docs/noir/concepts/data_types/slices#slice-iteration'
+    docLink: "https://noir-lang.org/docs/noir/concepts/data_types/slices#slice-iteration"
 ---
+
 ```noir
 struct Stats {
     sum: Field,

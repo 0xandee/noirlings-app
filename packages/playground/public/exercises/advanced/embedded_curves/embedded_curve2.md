@@ -10,9 +10,42 @@ version: 1.0.0
 locales:
   en:
     hint: >-
-      Implement the required methods: generator returns a specific point,
-      point_at_infinity has special coordinates, and negation flips the
-      y-coordinate.
+      Implement the required methods: generator returns a specific point, point_at_infinity has special coordinates, and negation flips the y-coordinate.
+
+      1. Generator function implementation
+
+      ```noir
+
+      pub fn generator() -> EmbeddedCurvePoint {
+        EmbeddedCurvePoint {
+          x: 1,
+          y: 17631683881184975370165255887551781615748388533673675138860,
+          is_infinite: false
+        }
+      }
+
+      ```
+
+      2. Point At Infinity
+
+      ```noir
+
+      pub fn point_at_infinity() -> EmbeddedCurvePoint {
+        EmbeddedCurvePoint { x: 0, y: 0, is_infinite: true }
+      }
+
+      ```
+
+      3. Negation Implementation
+
+      ```noir
+
+      pub fn neg(self) -> EmbeddedCurvePoint {
+        EmbeddedCurvePoint { x: self.x, y: -self.y, is_infinite: self.is_infinite }
+      }
+
+      ```
+
     description: >-
       Curve operations form the basis of many ZK protocols - understanding
       points, generators, and group operations is essential
@@ -22,6 +55,7 @@ locales:
     docLink: >-
       https://noir-lang.org/docs/noir/standard_library/cryptographic_primitives/embedded_curve_ops#point-operations
 ---
+
 ```noir
 struct EmbeddedCurvePoint {
     x: Field,
