@@ -15,25 +15,31 @@ locales:
       1. Basic Pedersen Hash Implementation
 
       ```noir
+
       fn compute_pedersen_hash(x: Field, y: Field) -> Field {
           std::hash::pedersen_hash([x, y])
       }
+
       ```
 
       2. Hash Array Implementation
 
       ```noir
+
       fn hash_array(data: [Field; N]) -> Field {
           std::hash::pedersen_hash(data)
       }
+
       ```
 
       3. Incremental Hash Implementation
 
       ```noir
+
       fn incremental_hash(base: Field, new_data: Field) -> Field {
           std::hash::pedersen_hash([base, new_data])
       }
+
       ```
     description: >-
       Pedersen hash is a cryptographic hash function based on elliptic curve operations, widely used in zero-knowledge proofs for its deterministic properties and collision resistance.

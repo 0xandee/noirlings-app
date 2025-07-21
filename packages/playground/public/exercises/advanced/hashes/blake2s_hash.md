@@ -15,14 +15,17 @@ locales:
       1. Basic Blake2s Hash Implementation
 
       ```noir
+
       fn compute_blake2s_hash<let N: u32>(input: [u8; N]) -> [u8; 32] {
           std::hash::blake2s(input)
       }
+
       ```
 
       2. Avalanche Effect Test
 
       ```noir
+
       fn test_avalanche_effect() -> bool {
           let input1 = [1, 2, 3, 4];
           let input2 = [1, 2, 3, 5]; // Only last byte different
@@ -32,11 +35,13 @@ locales:
           
           hash1 != hash2
       }
+
       ```
 
       3. Deterministic Hashing Test
 
       ```noir
+
       fn test_deterministic_hashing() -> bool {
           let input = [42, 123, 255, 0, 100];
           let hash1 = compute_blake2s_hash(input);
@@ -44,11 +49,13 @@ locales:
           
           hash1 == hash2
       }
+
       ```
 
       4. Variable Input Size Handling
 
       ```noir
+
       fn test_variable_input_sizes() -> bool {
           let small_input = [1];
           let medium_input = [1, 2, 3, 4, 5, 6, 7, 8];
@@ -62,6 +69,7 @@ locales:
           (hash_medium != hash_large) &
           (hash_small != hash_large)
       }
+
       ```
     description: >-
       Blake2s is a fast cryptographic hash function that outperforms SHA-2 while maintaining high security. Learn to implement Blake2s hashing and explore its deterministic and avalanche properties.

@@ -72,9 +72,9 @@ body:not(#editor) {
   color: var(--color-accent);
 }
 
-.markdown-body ol {
-  margin-block-start: 0em;
-  margin-block-end: 0em;
+.markdown-body-hint ol {
+  margin-block-start: -1em;
+  margin-block-end: -1em;
 }
 
 .markdown-body pre {

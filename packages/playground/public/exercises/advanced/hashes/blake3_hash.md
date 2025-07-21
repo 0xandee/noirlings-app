@@ -15,24 +15,29 @@ locales:
       1. Basic Blake3 Hash Implementation
 
       ```noir
+
       fn compute_blake3_hash<let N: u32>(input: [u8; N]) -> [u8; 32] {
           std::hash::blake3(input)
       }
+
       ```
 
       2. Blake Function Comparison
 
       ```noir
+
       fn compare_blake_functions<let N: u32>(input: [u8; N]) -> ([u8; 32], [u8; 32]) {
           let blake3_hash = std::hash::blake3(input);
           let blake2s_hash = std::hash::blake2s(input);
           (blake3_hash, blake2s_hash)
       }
+
       ```
 
       3. Scalability Testing
 
       ```noir
+
       fn test_blake3_scalability() -> bool {
           let small_input = [1, 2, 3];
           let medium_input = [1; 32];
@@ -46,11 +51,13 @@ locales:
           (hash_medium != hash_large) &
           (hash_small != hash_large)
       }
+
       ```
 
       4. Structured Data Hashing
 
       ```noir
+
       fn hash_structured_data(
           timestamp: u32,
           user_id: u32,
@@ -70,6 +77,7 @@ locales:
           
           compute_blake3_hash(data)
       }
+
       ```
     description: >-
       Blake3 is a modern cryptographic hash function with tree structure enabling parallelization and incremental updates. Learn to implement Blake3 and compare it with Blake2s performance.

@@ -15,6 +15,7 @@ locales:
       1. Account Encoding and Hashing
 
       ```noir
+
       impl EthereumAccount {
           fn encode_rlp(self) -> [u8] {
               // RLP encode account fields: [nonce, balance, storage_root, code_hash]
@@ -31,11 +32,13 @@ locales:
               keccak256(rlp_data)
           }
       }
+
       ```
 
       2. Trie Node Operations
 
       ```noir
+
       impl TrieNode {
           fn from_rlp(rlp_data: [u8]) -> Self {
               let decoded = decode_rlp(rlp_data);
@@ -76,11 +79,13 @@ locales:
               keccak256(rlp_data)
           }
       }
+
       ```
 
       3. Account Proof Verification
 
       ```noir
+
       fn verify_account_proof(
           state_root: [u8; 32],
           proof: StateProof
@@ -95,11 +100,13 @@ locales:
               (false, EthereumAccount { nonce: 0, balance: [0; 32], storage_root: [0; 32], code_hash: [0; 32] })
           }
       }
+
       ```
 
       4. Key Path Conversion
 
       ```noir
+
       fn address_to_key_path(address: [u8; 20]) -> [u8; 64] {
           let hash = keccak256(address);
           bytes_to_nibbles(hash)
@@ -118,11 +125,13 @@ locales:
           }
           nibbles
       }
+
       ```
 
       5. Trie Traversal
 
       ```noir
+
       fn traverse_trie_proof(
           root_hash: [u8; 32],
           key_path: [u8; 64],
@@ -156,11 +165,13 @@ locales:
           
           (false, [])
       }
+
       ```
 
       6. Storage Proof Verification
 
       ```noir
+
       fn verify_storage_proof(
           storage_root: [u8; 32],
           storage_proof: StorageProof
@@ -175,6 +186,7 @@ locales:
               false
           }
       }
+
       ```
     description: >-
       Ethereum state proofs allow verification of account balances, storage values, and contract state without downloading the entire blockchain. Learn to implement and verify Merkle Patricia Trie proofs for secure state verification in zero-knowledge applications.

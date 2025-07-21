@@ -15,45 +15,55 @@ locales:
       1. Basic Scalar Multiplication
 
       ```noir
+
       fn scalar_multiply(point: EmbeddedCurvePoint, scalar: EmbeddedCurveScalar) -> EmbeddedCurvePoint {
           fixed_base_scalar_mul(scalar, point)
       }
+
       ```
 
       2. Point Addition
 
       ```noir
+
       fn point_add(p1: EmbeddedCurvePoint, p2: EmbeddedCurvePoint) -> EmbeddedCurvePoint {
           std::embedded_curve_ops::add(p1, p2)
       }
+
       ```
 
       3. Point Doubling
 
       ```noir
+
       fn point_double(point: EmbeddedCurvePoint) -> EmbeddedCurvePoint {
           point_add(point, point)
       }
+
       ```
 
       4. Multi-Scalar Multiplication
 
       ```noir
+
       fn multi_scalar_multiplication(
           points: [EmbeddedCurvePoint; 3],
           scalars: [EmbeddedCurveScalar; 3]
       ) -> EmbeddedCurvePoint {
           multi_scalar_mul(points, scalars)
       }
+
       ```
 
       5. Public Key Generation
 
       ```noir
+
       fn generate_public_key(private_key: EmbeddedCurveScalar) -> EmbeddedCurvePoint {
           let generator = EmbeddedCurvePoint::generator();
           scalar_multiply(generator, private_key)
       }
+
       ```
     description: >-
       Scalar multiplication is fundamental to elliptic curve cryptography, enabling public key generation and digital signatures. Learn to implement the double-and-add algorithm for efficient point operations.

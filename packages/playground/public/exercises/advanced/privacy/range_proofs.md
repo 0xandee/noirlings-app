@@ -15,6 +15,7 @@ locales:
       1. Amount Commitment Creation
 
       ```noir
+
       impl AmountCommitment {
           fn new(amount: u64, blinding: Field) -> Self {
               let commitment = pedersen_hash([amount as Field, blinding]);
@@ -25,20 +26,24 @@ locales:
               }
           }
       }
+
       ```
 
       2. Commitment Verification
 
       ```noir
+
       fn verify(self) -> bool {
           let expected_commitment = pedersen_hash([self.amount as Field, self.blinding]);
           expected_commitment == self.commitment
       }
+
       ```
 
       3. Homomorphic Addition
 
       ```noir
+
       fn add(self, other: AmountCommitment) -> AmountCommitment {
           AmountCommitment {
               amount: self.amount + other.amount,
@@ -46,11 +51,13 @@ locales:
               commitment: self.commitment + other.commitment
           }
       }
+
       ```
 
       4. Range Proof Verification
 
       ```noir
+
       fn verify_range_proof(value: u64, bits: u32) -> bool {
           // Binary decomposition check
           let mut binary_sum = 0;
@@ -65,11 +72,13 @@ locales:
           
           binary_sum == value
       }
+
       ```
 
       5. Zero-Knowledge Balance Check
 
       ```noir
+
       fn prove_balance(
           input_commitment: AmountCommitment,
           output_commitment: AmountCommitment,
@@ -81,6 +90,7 @@ locales:
           
           input_commitment.commitment == total_output.commitment
       }
+
       ```
     description: >-
       Range proofs allow you to prove that a secret value lies within a specific range without revealing the actual value. Learn to implement zero-knowledge range proofs using binary decomposition and commitment schemes for privacy-preserving applications.

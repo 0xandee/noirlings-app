@@ -15,6 +15,7 @@ locales:
       1. Voter Operations
 
       ```noir
+
       impl Voter {
           fn commitment(self) -> Field {
               pedersen_hash([self.voter_id, self.secret])
@@ -24,11 +25,13 @@ locales:
               pedersen_hash([self.nullifier_secret, election_id])
           }
       }
+
       ```
 
       2. Vote Choice Encoding
 
       ```noir
+
       impl VoteChoice {
           fn to_field(self) -> Field {
               match self {
@@ -48,11 +51,13 @@ locales:
               }
           }
       }
+
       ```
 
       3. Election Management
 
       ```noir
+
       impl Election {
           fn new(election_id: Field, voters: [Voter]) -> Self {
               // Build Merkle tree from voter commitments
@@ -121,11 +126,13 @@ locales:
               true
           }
       }
+
       ```
 
       4. Vote Verification
 
       ```noir
+
       fn verify_vote(
           &self,
           ballot: EncryptedBallot,
@@ -154,11 +161,13 @@ locales:
           
           merkle_valid & nullifier_valid & proof_valid
       }
+
       ```
 
       5. Vote Encryption and Tallying
 
       ```noir
+
       fn encrypt_vote(vote: VoteChoice, randomness: Field, public_key: Field) -> Field {
           // Simple additive encryption for homomorphic tallying
           let vote_value = vote.to_field();
@@ -187,11 +196,13 @@ locales:
           
           (yes_count, no_count, abstain_count)
       }
+
       ```
 
       6. Merkle Proof Verification
 
       ```noir
+
       fn verify_merkle_proof(
           root: Field,
           leaf: Field,
@@ -207,6 +218,7 @@ locales:
           
           current_hash == root
       }
+
       ```
 
       #### Docs

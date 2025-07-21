@@ -15,6 +15,7 @@ locales:
       1. RLP Item Methods
 
       ```noir
+
       impl RLPItem {
           fn as_bytes(self) -> [u8] {
               match self {
@@ -44,11 +45,13 @@ locales:
               }
           }
       }
+
       ```
 
       2. Main RLP Decoding
 
       ```noir
+
       fn decode_rlp(encoded: [u8]) -> RLPItem {
           if encoded.len() == 0 {
               return RLPItem::Bytes([]);
@@ -81,11 +84,13 @@ locales:
               item
           }
       }
+
       ```
 
       3. Bytes Decoding
 
       ```noir
+
       fn decode_rlp_bytes(encoded: [u8], offset: u32) -> (RLPItem, u32) {
           let first_byte = encoded[offset];
           
@@ -109,11 +114,13 @@ locales:
               (RLPItem::Bytes(bytes), next_offset + length)
           }
       }
+
       ```
 
       4. List Decoding
 
       ```noir
+
       fn decode_rlp_list(encoded: [u8], offset: u32) -> (RLPItem, u32) {
           let first_byte = encoded[offset];
           let mut items = [];
@@ -145,11 +152,13 @@ locales:
           
           (RLPItem::List(items), current_offset)
       }
+
       ```
 
       5. Helper Functions
 
       ```noir
+
       fn parse_long_length(encoded: [u8], offset: u32, length_of_length: u32) -> (u32, u32) {
           let mut length = 0;
           for i in 0..length_of_length {
@@ -169,6 +178,7 @@ locales:
           }
           result
       }
+
       ```
     description: >-
       RLP decoding is the reverse process of RLP encoding, used to deserialize Ethereum data structures. Learn to implement robust RLP decoding to parse transactions, blocks, and state data for verification in zero-knowledge circuits.

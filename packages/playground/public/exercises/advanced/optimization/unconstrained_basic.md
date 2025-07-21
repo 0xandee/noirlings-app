@@ -15,6 +15,7 @@ locales:
       1. Constrained Square Root (Many Constraints)
 
       ```noir
+
       fn expensive_sqrt_constrained(x: Field) -> Field {
           let mut guess = x / 2;
           
@@ -25,11 +26,13 @@ locales:
           
           guess
       }
+
       ```
 
       2. Unconstrained Square Root (Zero Constraints)
 
       ```noir
+
       unconstrained fn expensive_sqrt_unconstrained(x: Field) -> Field {
           let mut guess = x / 2;
           
@@ -40,22 +43,26 @@ locales:
           
           guess
       }
+
       ```
 
       3. Result Verification (Few Constraints)
 
       ```noir
+
       fn verify_sqrt_result(x: Field, claimed_sqrt: Field) -> bool {
           let square = claimed_sqrt * claimed_sqrt;
           let diff = if square > x { square - x } else { x - square };
           
           diff < 100  // Allow small error tolerance
       }
+
       ```
 
       4. Unconstrained Factorization
 
       ```noir
+
       unconstrained fn find_factors_unconstrained(n: Field) -> (Field, Field) {
           if n == 0 { return (0, 0); }
           if n == 1 { return (1, 1); }
@@ -68,14 +75,17 @@ locales:
           
           (1, n)
       }
+
       ```
 
       5. Factorization Verification
 
       ```noir
+
       fn verify_factorization(n: Field, factor1: Field, factor2: Field) -> bool {
           factor1 * factor2 == n
       }
+
       ```
 
     description: >-
