@@ -5,15 +5,9 @@
     "packages/*"
   ],
   "scripts": {
-<<<<<<< HEAD
-    "build": "yarn workspace @andeebtceth/noirlings-app run build",
-    "dev": "yarn workspace @andeebtceth/noirlings-app run dev",
-    "start": "yarn workspace @andeebtceth/noirlings-app run start",
-=======
     "build": "yarn generate-exercises && NODE_OPTIONS=--max-old-space-size=8192 && yarn workspace @andeebtceth/noirlings-app run build",
     "dev": "yarn generate-exercises && yarn workspace @andeebtceth/noirlings-app run dev",
     "start": "yarn generate-exercises && yarn workspace @andeebtceth/noirlings-app run start",
->>>>>>> feat/refactor-exercises-structure-and-expand-curriculum
     "serve": "yarn workspace @andeebtceth/noirlings-app run preview",
     "publish": "yarn generate-exercises && yarn workspace @andeebtceth/noirlings-app run publish",
     "server": "yarn workspace @andeebtceth/noirlings-app run server",

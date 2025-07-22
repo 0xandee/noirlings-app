@@ -805,6 +805,8 @@ function NoirEditor(props: PlaygroundProps) {
                     compileError={compileError}
                     pending={pending}
                     compile={compile}
+                    setProof={setProof}
+                    threads={navigator.hardwareConcurrency || 1}
                   />
                 </div>
               )}
@@ -962,7 +964,7 @@ function NoirEditor(props: PlaygroundProps) {
 
             <div className="w-full shadow rounded-br-lg flex flex-col md:flex-row flex-wrap sticky bottom-0 z-10"
               style={{ backgroundColor: 'var(--bg-secondary)' }}>
-              {loaded && proof && <ResultBox proof={proof} setProof={setProof} />}
+              {loaded && proof && <ResultBox proof={proof} setProof={setProof} compiledCode={compiledCode} threads={navigator.hardwareConcurrency || 1} />}
             </div>
           </div>
         </div>
