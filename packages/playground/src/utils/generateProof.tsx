@@ -16,17 +16,43 @@ export const compileCode = async (fileSystem: FileSystem) => {
   const fm = createFileManager("/");
 
   try {
-    // Write all files to the file manager
+    // Create a proper Noir project structure
+    const projectName = "playground_circuit";
+    
+    // Create Nargo.toml file
+    const nargoToml = `[package]
+name = "${projectName}"
+type = "bin"
+authors = [""]
+compiler_version = ">=0.19.0"
+
+[dependencies]`;
+    
+    await fm.writeFile("Nargo.toml", stringToStream(nargoToml));
+    
+    // Write source files to src directory (following the existing pattern)
     const files = fileSystem.flatten().filter((item) => item.type === "file");
     console.log("Writing files:", files.map(f => f.name));
     
     for (const file of files) {
-      const data = decodeSnippet(file.content as string);
-      await fm.writeFile(`./${file.name}`, stringToStream(data));
+      let data: string;
+      try {
+        // Try to decode the content first (in case it's encoded like examples)
+        data = decodeSnippet(file.content as string);
+      } catch {
+        // If decoding fails, use the content as-is (for playground text)
+        data = file.content as string;
+      }
+      
+      // Remove test functions for circuit compilation
+      const cleanedData = data.replace(/#\[test\][\s\S]*?fn test_[^{]*\{[^}]*\}/g, '').trim();
+      
+      // Write files to src directory as expected by Noir
+      await fm.writeFile(`src/${file.name}`, stringToStream(cleanedData));
     }
 
     console.log("Compiling circuit...");
-    const compiled = await compile(fm, "/root");
+    const compiled = await compile(fm, "/");
     
     // Enhanced error checking
     if (!compiled) {

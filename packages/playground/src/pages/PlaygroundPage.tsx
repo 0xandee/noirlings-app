@@ -16,11 +16,6 @@ type EditorType = editor.IStandaloneCodeEditor;
 
 const DEFAULT_CODE = `fn main(x: u32, y: pub u32) {
     assert(x != y);
-}
-
-#[test]
-fn test_main() {
-    main(1, 2);
 }`;
 
 const PlaygroundPage: React.FC = () => {
@@ -43,14 +38,16 @@ const PlaygroundPage: React.FC = () => {
   const [fileSystem, setFileSystem] = useState<FileSystem>(() => {
     const mainFile: File = {
       name: "main.nr",
+      type: "file",
       content: DEFAULT_CODE,
       path: "src/main.nr"
     };
-    const rootFile: File = {
+    const srcFolder: File = {
       name: "src",
-      children: [mainFile]
+      type: "folder",
+      items: [mainFile]
     };
-    return new FileSystem(rootFile);
+    return new FileSystem(srcFolder);
   });
 
   // Tooltips
@@ -101,14 +98,16 @@ const PlaygroundPage: React.FC = () => {
         // Update file system
         const updatedFile: File = {
           name: "main.nr",
+          type: "file",
           content: newCode,
           path: "src/main.nr"
         };
-        const rootFile: File = {
+        const srcFolder: File = {
           name: "src",
-          children: [updatedFile]
+          type: "folder",
+          items: [updatedFile]
         };
-        setFileSystem(new FileSystem(rootFile));
+        setFileSystem(new FileSystem(srcFolder));
       });
     }
   }, [monacoEditor]);
