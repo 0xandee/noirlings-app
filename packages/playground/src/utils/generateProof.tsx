@@ -13,24 +13,23 @@ const stringToStream = (data: string) => {
 
 export const compileCode = async (fileSystem: FileSystem) => {
   console.log("Starting compilation...");
+  // Create a fresh FileManager for each compilation to avoid file accumulation
   const fm = createFileManager("/");
 
   try {
-    // Create a proper Noir project structure
-    const projectName = "playground_circuit";
-    
-    // Create Nargo.toml file
+    // Use the exact same structure as working examples
     const nargoToml = `[package]
-name = "${projectName}"
-type = "bin"
+name = "test"
 authors = [""]
-compiler_version = ">=0.19.0"
+compiler_version = ">=0.18.0"
+type = "bin"
 
 [dependencies]`;
     
+    console.log("Writing Nargo.toml...");
     await fm.writeFile("Nargo.toml", stringToStream(nargoToml));
     
-    // Write source files to src directory (following the existing pattern)
+    // Process files from the file system
     const files = fileSystem.flatten().filter((item) => item.type === "file");
     console.log("Writing files:", files.map(f => f.name));
     
@@ -47,11 +46,17 @@ compiler_version = ">=0.19.0"
       // Remove test functions for circuit compilation
       const cleanedData = data.replace(/#\[test\][\s\S]*?fn test_[^{]*\{[^}]*\}/g, '').trim();
       
-      // Write files to src directory as expected by Noir
-      await fm.writeFile(`src/${file.name}`, stringToStream(cleanedData));
+      // Extract just the filename from the full path (file.name already includes path)
+      const fileName = file.name.split('/').pop() || file.name;
+      const filePath = `src/${fileName}`;
+      
+      console.log(`Writing file: ${filePath} with content:`, cleanedData.substring(0, 100) + "...");
+      
+      // Write file with correct path structure
+      await fm.writeFile(filePath, stringToStream(cleanedData));
     }
 
-    console.log("Compiling circuit...");
+    console.log("Starting Noir compilation...");
     const compiled = await compile(fm, "/");
     
     // Enhanced error checking

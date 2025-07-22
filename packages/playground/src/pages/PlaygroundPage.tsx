@@ -14,7 +14,7 @@ import { Moon, Sun, Github, Copy, Download, Play, Zap } from 'lucide-react';
 
 type EditorType = editor.IStandaloneCodeEditor;
 
-const DEFAULT_CODE = `fn main(x: u32, y: pub u32) {
+const DEFAULT_CODE = `fn main(x: Field, y: pub Field) {
     assert(x != y);
 }`;
 
