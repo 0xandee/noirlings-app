@@ -1,14 +1,10 @@
 import React, { FormEvent, useState, useEffect } from "react";
-import { ChevronRight, CheckCircle, X, Play, Zap } from "lucide-react";
+import { ChevronRight, CheckCircle, X, Play } from "lucide-react";
 
 import { CompiledCircuit } from "@noir-lang/types";
-import { InputMap } from "@noir-lang/noirc_abi";
 import { Button } from "../buttons/buttons";
 import { ButtonContainer } from "../buttons/containers";
 import { FileSystem } from "../../utils/fileSystem";
-import { generateProof } from "../../utils/generateProof";
-import { ProofData } from "../../types";
-import { toast } from "react-toastify";
 import pkg from '../../../package.json';
 
 export const ActionsBox = ({ 
@@ -18,9 +14,7 @@ export const ActionsBox = ({
   compiledCode, 
   compileError, 
   pending, 
-  compile,
-  setProof,
-  threads = 1
+  compile
 }: { 
   project: FileSystem; 
   onCompileSuccess?: () => void; 
@@ -29,39 +23,10 @@ export const ActionsBox = ({
   compileError: string | null; 
   pending: boolean; 
   compile: (project: FileSystem) => Promise<void>; 
-  setProof?: React.Dispatch<React.SetStateAction<ProofData | null>>;
-  threads?: number;
 }) => {
 
   const [showSuccessAlert, setShowSuccessAlert] = useState(true);
   const [showErrorAlert, setShowErrorAlert] = useState(true);
-  const [provingPending, setProvingPending] = useState(false);
-  const [inputs, setInputs] = useState<InputMap>({});
-
-  const handleProve = async () => {
-    if (!compiledCode || !setProof) return;
-    
-    setProvingPending(true);
-    try {
-      const proof = await generateProof({
-        circuit: compiledCode,
-        input: inputs,
-        threads: threads
-      });
-      
-      setProof({
-        proof: Array.from(proof.proof).join(','),
-        publicInputs: proof.publicInputs.map(input => input.toString())
-      });
-      
-      toast.success('Proof generated successfully!');
-    } catch (error: any) {
-      console.error('Proof generation failed:', error);
-      toast.error(`Proof generation failed: ${error.message}`);
-    } finally {
-      setProvingPending(false);
-    }
-  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -71,15 +36,12 @@ export const ActionsBox = ({
         compile(project).then(() => {
           if (onCompileSuccess) onCompileSuccess();
         });
-      } else if (e.altKey && e.key === 'Enter' && !provingPending && compiledCode && setProof) {
-        e.preventDefault();
-        handleProve();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [compile, project, onCompileSuccess, pending, handleProve, provingPending, compiledCode, setProof]);
+  }, [compile, project, onCompileSuccess, pending]);
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -93,18 +55,6 @@ export const ActionsBox = ({
     if (onCompileSuccess) onCompileSuccess();
   };
 
-  const handleInputChange = (key: string, value: string) => {
-    setInputs(prev => ({
-      ...prev,
-      [key]: value
-    }));
-  };
-
-  // Simple input extraction from compiled circuit
-  const getCircuitInputs = () => {
-    if (!compiledCode?.abi) return [];
-    return compiledCode.abi.parameters || [];
-  };
 
   return (
     <>      
@@ -160,63 +110,7 @@ export const ActionsBox = ({
             </div>
           )}
 
-          {/* Input fields for proving (if circuit has inputs) */}
-          {compiledCode && getCircuitInputs().length > 0 && (
-            <div className="mx-6 mb-4 p-4 rounded" 
-              style={{ 
-                backgroundColor: 'var(--bg-sidebar)', 
-                borderColor: 'var(--border-color)',
-                border: '1px solid var(--border-color)'
-              }}
-            >
-              <h4 className="text-sm font-medium mb-3" style={{ color: 'var(--color-primary)' }}>
-                Circuit Inputs
-              </h4>
-              <div className="space-y-2">
-                {getCircuitInputs().map((param: any) => (
-                  <div key={param.name} className="flex flex-col">
-                    <label 
-                      className="text-xs mb-1" 
-                      style={{ color: 'var(--color-secondary)' }}
-                    >
-                      {param.name}
-                    </label>
-                    <input
-                      type="text"
-                      value={typeof inputs[param.name] === 'string' ? inputs[param.name] as string : ''}
-                      onChange={(e) => handleInputChange(param.name, e.target.value)}
-                      placeholder={`Enter ${param.name}`}
-                      className="px-3 py-2 text-sm rounded border"
-                      style={{
-                        backgroundColor: 'var(--bg-secondary)',
-                        borderColor: 'var(--border-color)',
-                        color: 'var(--color-primary)'
-                      }}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
-          {/* Workflow Status Indicator */}
-          <div className="mx-6 mb-3">
-            <div className="flex items-center gap-2 text-xs" style={{ color: 'var(--color-secondary)' }}>
-              <span>Status:</span>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-1">
-                  <div className={`w-2 h-2 rounded-full ${compiledCode ? 'bg-green-500' : 'bg-gray-400'}`}></div>
-                  <span>Compiled</span>
-                </div>
-                {compiledCode && setProof && (
-                  <div className="flex items-center gap-1">
-                    <div className={`w-2 h-2 rounded-full ${getCircuitInputs().length === 0 || Object.keys(inputs).length >= getCircuitInputs().length ? 'bg-green-500' : 'bg-yellow-500'}`}></div>
-                    <span>Inputs {getCircuitInputs().length > 0 ? `(${Object.keys(inputs).length}/${getCircuitInputs().length})` : '(Ready)'}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
 
           <div className="w-full flex flex-row justify-between items-center gap-3 mx-6">
             <div className="flex gap-2 flex-[2]">
@@ -232,25 +126,6 @@ export const ActionsBox = ({
                   <span>{pending ? "Compiling..." : "Compile"}</span>
                 </div>
               </Button>
-
-              {compiledCode && setProof && (
-                <Button
-                  type="button"
-                  onClick={handleProve}
-                  disabled={provingPending || !compiledCode}
-                  className={`cursor-pointer flex-1 h-12 flex items-center justify-center rounded hover:opacity-80 transition-opacity ${provingPending ? 'cursor-not-allowed opacity-80' : 'hover:scale-[1]'}`}
-                  style={{
-                    backgroundColor: 'var(--color-accent)',
-                    color: 'var(--color-primary)',
-                    border: 'none'
-                  }}
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    {provingPending ? <></> : <Zap className="w-4 h-4" />}
-                    <span>{provingPending ? "Proving..." : "Prove"}</span>
-                  </div>
-                </Button>
-              )}
             </div>
 
             <button
@@ -273,9 +148,6 @@ export const ActionsBox = ({
           <div className="flex flex-row justify-between mx-6 text-xs w-full opacity-50" style={{ color: 'var(--color-secondary)' }}>
             <div className="flex gap-4">
               <p><span className="font-mono">Ctrl+Enter</span> to compile</p>
-              {compiledCode && setProof && (
-                <p><span className="font-mono">Alt+Enter</span> to prove</p>
-              )}
             </div>
             <p>Noir v{pkg.dependencies['@noir-lang/noir_js']}</p>
           </div>
