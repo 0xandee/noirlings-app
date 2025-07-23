@@ -1,7 +1,6 @@
-import { CompiledCircuit } from "@noir-lang/types";
+import { CompiledCircuit, InputMap } from "@noir-lang/types";
 import { BarretenbergBackend, BarretenbergVerifier } from "@noir-lang/backend_barretenberg";
 import { Noir } from "@noir-lang/noir_js";
-import { InputMap } from "@noir-lang/noirc_abi";
 
 import { compile, createFileManager } from "@noir-lang/noir_wasm";
 import { FileSystem } from "./fileSystem";
@@ -113,8 +112,8 @@ export async function generateProof({
 }) {
   try {
     console.log("Creating backend and Noir instance...");
-    // Follow tutorial pattern exactly - no options needed
-    const backend = new BarretenbergBackend(circuit as any);
+    // Use working BarretenbergBackend with beta.6 compatibility
+    const backend = new BarretenbergBackend(circuit);
     const noir = new Noir(circuit);
     
     console.log("Backend and Noir instance created successfully");
@@ -189,15 +188,15 @@ export async function verifyProof({
 }) {
   try {
     console.log("Initializing backend and verifier...");
-    // Follow tutorial pattern exactly
-    const backend = new BarretenbergBackend(circuit as any);
+    // Use working BarretenbergBackend with beta.6 compatibility
+    const backend = new BarretenbergBackend(circuit);
     const verifier = new BarretenbergVerifier();
     
     console.log("Getting verification key...");
     const verificationKey = await backend.getVerificationKey();
     
     console.log("Verifying proof...");
-    // Use the exact tutorial pattern: verifier.verifyProof(proof, verificationKey)
+    // Use the working verifier pattern
     const proofData = {
       proof,
       publicInputs

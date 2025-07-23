@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Moon, Sun, Minus } from 'lucide-react';
+import { Moon, Sun } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
 import { Auth } from './Auth';
 

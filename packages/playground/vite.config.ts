@@ -13,11 +13,9 @@ export default defineConfig(({ mode }: { mode: string }) => {
     optimizeDeps: {
       exclude: [
         "@noir-lang/noir_wasm",
-        "@noir-lang/backend_barretenberg", 
+        "@noir-lang/backend_barretenberg",
         "@noir-lang/noir_js",
-        "@noir-lang/types",
-        "@noir-lang/acvm_js",
-        "@noir-lang/noirc_abi"
+        "@noir-lang/types"
       ],
       esbuildOptions: {
         target: "esnext",
@@ -53,47 +51,12 @@ export default defineConfig(({ mode }: { mode: string }) => {
       dts({
         insertTypesEntry: true,
       }),
-      // Custom plugin to serve WASM files correctly
-      {
-        name: 'wasm-loader',
-        configureServer(server) {
-          server.middlewares.use((req, res, next) => {
-            if (req.url?.includes('noirc_abi_wasm_bg.wasm')) {
-              const wasmPath = path.resolve(__dirname, '../../node_modules/@noir-lang/noirc_abi/web/noirc_abi_wasm_bg.wasm');
-              if (fs.existsSync(wasmPath)) {
-                res.setHeader('Content-Type', 'application/wasm');
-                res.end(fs.readFileSync(wasmPath));
-                return;
-              }
-            }
-            if (req.url?.includes('acvm_js_bg.wasm')) {
-              const wasmPath = path.resolve(__dirname, '../../node_modules/@noir-lang/acvm_js/web/acvm_js_bg.wasm');
-              if (fs.existsSync(wasmPath)) {
-                res.setHeader('Content-Type', 'application/wasm');
-                res.end(fs.readFileSync(wasmPath));
-                return;
-              }
-            }
-            next();
-          });
-        }
-      }
     ],
     server: {
       proxy: {
         "/api": "http://localhost:5173",
       },
-      fs: {
-        allow: [
-          '.', 
-          '..',
-          '../../',
-          '../../node_modules',
-          '/Users/0xandee/Documents/Github/noirlings-app/node_modules'
-        ]
-      },
     },
-    assetsInclude: ['**/*.wasm'],
   };
 
   if (mode === "development") {
