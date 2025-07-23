@@ -11,23 +11,23 @@ export const Auth: React.FC = () => {
         <img
           src={user.user_metadata.avatar_url}
           alt="User avatar"
-          className="w-10 h-10 rounded-l object-cover ml-3 border border-r-0"
-          style={{ 
-            color: "var(--header-text)", 
-            borderColor: 'var(--border-color)', 
-            backgroundColor: 'transparent' 
+          className="w-10 h-10 rounded-l object-cover border border-r-0"
+          style={{
+            color: "var(--header-text)",
+            borderColor: 'var(--border-color)',
+            backgroundColor: 'transparent'
           }}
         />
       ) : (
-        <div className="ml-3" />
+        <div className="" />
       )}
 
       <button
         className={`text-base px-4 py-2 ${user ? 'rounded-r border-l-0 ' : 'rounded'} hover:opacity-80 transition-opacity border flex items-center gap-2 cursor-pointer`}
-        style={{ 
-          color: "var(--header-text)", 
-          borderColor: 'var(--border-color)', 
-          backgroundColor: 'transparent' 
+        style={{
+          color: "var(--header-text)",
+          borderColor: 'var(--border-color)',
+          backgroundColor: 'transparent'
         }}
         onClick={user ? logout : login}
       >

@@ -10,10 +10,10 @@ interface HeaderProps {
   totalCount?: number;
 }
 
-export const Header: React.FC<HeaderProps> = ({ 
-  showProgress = false, 
-  completedCount = 0, 
-  totalCount = 0 
+export const Header: React.FC<HeaderProps> = ({
+  showProgress = false,
+  completedCount = 0,
+  totalCount = 0
 }) => {
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
@@ -35,31 +35,31 @@ export const Header: React.FC<HeaderProps> = ({
           )}
         </Link>
         <div className="ml-4 flex gap-4 items-center">
-          <Link 
-            to="/" 
-            style={{ 
-              color: location.pathname === "/" ? 'var(--subheader-text)' : 'var(--header-text)' 
+          <Link
+            to="/"
+            style={{
+              color: location.pathname === "/" ? 'var(--subheader-text)' : 'var(--header-text)'
             }}
-            className="hover:opacity-80 transition-opacity"
+            className="hover:opacity-80 transition-opacity no-underline"
           >
             Basic
           </Link>
-          <Link 
-            to="/advanced" 
-            style={{ 
-              color: location.pathname === "/advanced" ? 'var(--subheader-text)' : 'var(--header-text)' 
+          <Link
+            to="/advanced"
+            style={{
+              color: location.pathname === "/advanced" ? 'var(--subheader-text)' : 'var(--header-text)'
             }}
-            className="hover:opacity-80 transition-opacity"
+            className="hover:opacity-80 transition-opacity no-underline"
           >
             Advanced
           </Link>
-          <Minus size={14} style={{ color: 'var(--border-color)', opacity: 0.6, transform: 'rotate(90deg)' }} />
-          <Link 
-            to="/playground" 
-            style={{ 
-              color: location.pathname === "/playground" ? 'var(--subheader-text)' : 'var(--header-text)' 
+          {/* <Minus size={18} style={{ color: 'var(--header-text)',  transform: 'rotate(90deg)', opacity: 0.6   }} /> */}
+          <Link
+            to="/playground"
+            style={{
+              color: location.pathname === "/playground" ? 'var(--subheader-text)' : 'var(--header-text)'
             }}
-            className="hover:opacity-80 transition-opacity"
+            className="hover:opacity-80 transition-opacity no-underline"
           >
             Playground
           </Link>

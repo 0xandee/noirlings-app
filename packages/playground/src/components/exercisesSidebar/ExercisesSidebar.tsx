@@ -88,7 +88,7 @@ const ExercisesSidebar: React.FC<ExercisesSidebarProps> = ({
                             >
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                     <span>{formatExerciseName(exercise.title)}</span>
-                                    {isFinished && <span title="Completed" style={{ color: 'var(--finished-text)' }}>✓</span>}
+                                    {isFinished && <span title="Completed" style={{ color: 'var(--finished-text)' }}></span>}
                                 </div>
                             </div>
                         );
