@@ -17,8 +17,8 @@
   ],
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc && vite build",
-    "build:vercel": "tsc && vite build --mode vercel",
+    "build": "NODE_OPTIONS=--max-old-space-size=8192 tsc && NODE_OPTIONS=--max-old-space-size=8192 vite build",
+    "build:vercel": "NODE_OPTIONS=--max-old-space-size=8192 tsc && NODE_OPTIONS=--max-old-space-size=8192 vite build --mode vercel",
     "vercel-build": "yarn build:vercel",
     "build:watch": "tsc && vite build -w",
     "dev": "vite",

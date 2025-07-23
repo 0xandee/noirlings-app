@@ -12,7 +12,7 @@
     "serve": "yarn workspace @andeebtceth/noirlings-app run preview",
     "publish": "yarn generate-exercises && yarn workspace @andeebtceth/noirlings-app run publish",
     "server": "yarn workspace @andeebtceth/noirlings-app run server",
-    "vercel-build": "yarn generate-exercises && NODE_OPTIONS=--max-old-space-size=8192 && yarn workspace @andeebtceth/noirlings-app build",
+    "vercel-build": "yarn generate-exercises && yarn workspace @andeebtceth/noirlings-app run build:vercel",
     "generate-exercises": "yarn generate-exercises:ts",
     "generate-exercises:ts": "ts-node --project scripts/tsconfig.json scripts/generate_exercise_jsons.ts"
   },

@@ -113,7 +113,8 @@ export async function generateProof({
   try {
     console.log("Creating backend and Noir instance...");
     // Use working BarretenbergBackend with beta.6 compatibility
-    const backend = new BarretenbergBackend(circuit);
+    // Type assertion to handle version compatibility between packages
+    const backend = new BarretenbergBackend(circuit as any);
     const noir = new Noir(circuit);
     
     console.log("Backend and Noir instance created successfully");
@@ -189,7 +190,8 @@ export async function verifyProof({
   try {
     console.log("Initializing backend and verifier...");
     // Use working BarretenbergBackend with beta.6 compatibility
-    const backend = new BarretenbergBackend(circuit);
+    // Type assertion to handle version compatibility between packages
+    const backend = new BarretenbergBackend(circuit as any);
     const verifier = new BarretenbergVerifier();
     
     console.log("Getting verification key...");
