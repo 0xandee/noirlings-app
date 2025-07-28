@@ -17,7 +17,7 @@ console.log('[useAuth] Environment variables loaded:', {
 // Create a safe Supabase client that handles missing environment variables
 let supabase: ReturnType<typeof createClient> | null = null;
 
-console.log('[useAuth] Attempting to initialize Supabase client...');
+console.log('[useAuth] Attempting to initialize Supabase client.......');
 
 try {
     // Only create client if both URL and key are properly configured
@@ -54,7 +54,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     useEffect(() => {
         console.log('[useAuth] Setting up auth state listener...');
-        
+
         if (!supabase) {
             console.warn('[useAuth] Skipping auth state listener setup - Supabase client not configured');
             return;
@@ -72,10 +72,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 userEmail: session?.user?.email || null,
                 sessionExpiry: session?.expires_at ? new Date(session.expires_at * 1000).toISOString() : null
             });
-            
+
             const newUser = session?.user ?? null;
             setUser(newUser);
-            
+
             if (newUser) {
                 console.log('[useAuth] User authenticated:', {
                     id: newUser.id,
@@ -110,7 +110,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const login = async () => {
         const startTime = Date.now();
         const redirectUrl = window.location.origin;
-        
+
         console.log('[useAuth] Login attempt started:', {
             timestamp: new Date().toISOString(),
             redirectUrl,
@@ -131,9 +131,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     redirectTo: redirectUrl,
                 },
             });
-            
+
             const duration = Date.now() - startTime;
-            
+
             if (error) {
                 console.error('[useAuth] OAuth login failed:', {
                     error: error.message,
@@ -142,7 +142,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 });
                 throw error;
             }
-            
+
             console.log('[useAuth] OAuth login initiated successfully:', {
                 duration: `${duration}ms`,
                 provider: 'github',
@@ -162,7 +162,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const logout = async () => {
         const startTime = Date.now();
-        
+
         console.log('[useAuth] Logout attempt started:', {
             timestamp: new Date().toISOString(),
             currentUser: user ? {
@@ -180,9 +180,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
             console.log('[useAuth] Initiating logout...');
             const { error } = await supabase.auth.signOut();
-            
+
             const duration = Date.now() - startTime;
-            
+
             if (error) {
                 console.error('[useAuth] Logout failed:', {
                     error: error.message,
@@ -191,7 +191,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 });
                 throw error;
             }
-            
+
             console.log('[useAuth] Logout completed successfully:', {
                 duration: `${duration}ms`,
                 timestamp: new Date().toISOString()
