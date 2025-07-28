@@ -12,7 +12,7 @@
     "locales": {
       "en": {
         "hint": "This exercise is already complete! Study the structure of the main function and the test - this is the basic template for all Noir programs.",
-        "description": "Every Noir program must have a `main` function - this is the entry point where your zero-knowledge circuit begins execution\n\n#### Docs",
+        "description": "Noir is an open-source DSL (Domain specific language) for construction of privacy-preserving zk programs.\n\nZK programs are programs that can generate short proof of statements without revealing all inputs to the statements.\n\nWelcome to Noirlings! This is a project based on the original [Noirlings](https://github.com/raven-house/noirlings) by [@satyambnsal](https://x.com/satyambnsal).\nLike what you see? Contribute to [Noirlings.app](https://github.com/0xandee/noirlings-app) and follow [@andeebtceth](https://x.com/andeebtceth)!\n\n#### Docs",
         "docLink": "https://noir-lang.org/docs/getting_started"
       }
     }

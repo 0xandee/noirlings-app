@@ -1,5 +1,6 @@
 import "react-toastify/dist/ReactToastify.css";
 import React, { useRef, useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useMonaco } from "../../hooks/useMonaco";
 import { useTheme } from "../../hooks/useTheme";
 import {
@@ -15,7 +16,7 @@ import { FileSystem } from "../../utils/fileSystem";
 import ExercisesSidebar from "../exercisesSidebar/ExercisesSidebar";
 import AdvancedExercisesSidebar from "../advancedExercisesSidebar/AdvancedExercisesSidebar";
 import type { OrderedExercise } from "../exercisesSidebar/ExercisesSidebar";
-import { BASIC_CATEGORIES, ADVANCED_CATEGORIES, loadExerciseData, getOrderedExercises, getAdvancedExercises } from "../../utils/exerciseLoader";
+import { BASIC_CATEGORIES, ADVANCED_CATEGORIES, loadExerciseData, getOrderedExercises, getAdvancedExercises, Exercise } from "../../utils/exerciseLoader";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -24,6 +25,8 @@ import { useAuth } from "../../hooks/useAuth";
 import { supabase } from "../../hooks/useAuth";
 import debounce from 'lodash/debounce';
 import { Header } from '../Header';
+import { SEOHead } from '../SEOHead';
+import { getRouteSEO } from '../../utils/seo';
 
 // Add icons for theme toggle
 import { Copy, RotateCcw, Play, Lightbulb, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -85,6 +88,7 @@ const CodeBlock = ({ node, inline, className, children, theme, ...props }: CodeB
 function NoirEditor(props: PlaygroundProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const separatorRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
 
   const { theme, setTheme } = useTheme();
   const { monaco, loaded } = useMonaco(theme);
@@ -153,6 +157,15 @@ function NoirEditor(props: PlaygroundProps) {
 
   // Add at top of NoirEditor:
   const normalizePath = (path: string | null | undefined) => path ? path.replace(/\.nr$/, '') : '';
+
+  // SEO state management
+  const [currentExerciseData, setCurrentExerciseData] = useState<Exercise | undefined>();
+  const [currentCategory, setCurrentCategory] = useState<string | undefined>();
+  
+  // Generate SEO data based on current route and exercise
+  const seoData = React.useMemo(() => {
+    return getRouteSEO(location.pathname, currentExerciseData, currentCategory);
+  }, [location.pathname, currentExerciseData, currentCategory]);
 
   // New function to load from Supabase
   const loadProgress = async () => {
@@ -424,6 +437,18 @@ function NoirEditor(props: PlaygroundProps) {
       setOldPath(undefined);
       setShowHint(false); // Hide hint by default for each new exercise
       setCurrentDocLink(exerciseData.metadata.docLink);
+      
+      // Update SEO states
+      const parts = exercisePath.split('/');
+      const category = parts[0];
+      setCurrentCategory(category);
+      
+      // Find the full exercise data for SEO
+      const exercises = props.isAdvancedMode ? await getAdvancedExercises() : await getOrderedExercises();
+      const fullExerciseData = exercises.find((ex: OrderedExercise) => `${ex.category}/${ex.id}` === normalizePath(exercisePath));
+      if (fullExerciseData) {
+        setCurrentExerciseData(fullExerciseData as Exercise);
+      }
     } catch (error) {
       console.error("Failed to load exercise:", error);
     }
@@ -577,6 +602,7 @@ function NoirEditor(props: PlaygroundProps) {
 
   return (
     <div className="h-screen w-full flex flex-col">
+      <SEOHead seoData={seoData} exercise={currentExerciseData} />
       <Header 
         showProgress={true} 
         completedCount={currentFinished} 
