@@ -95,7 +95,7 @@ export default defineConfig(({ mode }: { mode: string }) => {
         include: (isVercel || isNetlify || isRailway) ? ['buffer'] : ['buffer', 'process'],
         globals: {
           Buffer: true,
-          global: true,
+          global: false, // Disable global polyfill to avoid globalThis export issues
           process: !(isVercel || isNetlify || isRailway),
         },
       }),
