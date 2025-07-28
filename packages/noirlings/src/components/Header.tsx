@@ -22,7 +22,9 @@ export const Header: React.FC<HeaderProps> = ({
     <div className="px-4 py-2 flex justify-between items-center border-b" style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--bg-toolbar)' }}>
       <div className="flex items-center gap-3 ml-2">
         <Link
-          to="/"
+          to="https://github.com/0xandee/noirlings-app"
+          target="_blank"
+          rel="noopener noreferrer"
           style={{
             color: location.pathname === "/" ? 'var(--color-accent)' : 'var(--color-secondary)',
             textDecoration: 'none',
@@ -64,9 +66,8 @@ export const Header: React.FC<HeaderProps> = ({
             aria-label="Open Noir Playground in new tab"
           >
             Playground
-            <ExternalLink size={14} />
+            <ExternalLink className="ml-1" size={14} />
           </a>
-          {/* <Minus size={18} style={{ color: 'var(--header-text)',  transform: 'rotate(90deg)', opacity: 0.6   }} /> */}
         </div>
       </div>
       <div className="flex items-center gap-4">

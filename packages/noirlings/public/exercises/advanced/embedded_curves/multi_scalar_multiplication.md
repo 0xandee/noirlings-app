@@ -67,10 +67,24 @@ locales:
 ---
 
 ```noir
-use std::embedded_curve_ops::{EmbeddedCurvePoint, EmbeddedCurveScalar, multi_scalar_mul};
+use std::embedded_curve_ops::{EmbeddedCurvePoint, EmbeddedCurveScalar, multi_scalar_mul, fixed_base_scalar_mul, add};
+
+// Helper function for point at infinity
+fn point_at_infinity() -> EmbeddedCurvePoint {
+    EmbeddedCurvePoint { x: 0, y: 0, is_infinite: true }
+}
+
+// Helper function for generator point
+fn generator() -> EmbeddedCurvePoint {
+    EmbeddedCurvePoint {
+        x: 1,
+        y: 17631683881184975370165255887551781615748388533673675138860,
+        is_infinite: false
+    }
+}
 
 // TODO: Implement efficient multi-scalar multiplication
-fn efficient_msm(
+fn efficient_msm<let N: u32>(
     scalars: [EmbeddedCurveScalar; N],
     points: [EmbeddedCurvePoint; N]
 ) -> EmbeddedCurvePoint {
@@ -80,22 +94,22 @@ fn efficient_msm(
 }
 
 // TODO: Compare naive vs optimized MSM
-fn naive_msm(
+fn naive_msm<let N: u32>(
     scalars: [EmbeddedCurveScalar; N],
     points: [EmbeddedCurvePoint; N]
 ) -> EmbeddedCurvePoint {
     // Hint: Implement using individual scalar multiplications and additions
     // This will be slower but helps understand the optimization benefits
-    let mut result = EmbeddedCurvePoint::point_at_infinity();
+    let mut result = point_at_infinity();
     for i in 0..N {
-        let product = points[i].scalar_mul(scalars[i]);
-        result = result.add(product);
+        let product = fixed_base_scalar_mul(scalars[i], points[i]);
+        result = add(result, product);
     }
     result
 }
 
 // TODO: Implement batch signature verification scenario
-fn batch_verify_signatures(
+fn batch_verify_signatures<let N: u32>(
     messages: [Field; N],
     signatures_r: [EmbeddedCurveScalar; N],
     signatures_s: [EmbeddedCurveScalar; N],
@@ -116,17 +130,18 @@ fn test_msm_efficiency() {
         EmbeddedCurveScalar::from_field(789)
     ];
 
-    let points = [
-        EmbeddedCurvePoint::generator(),
-        EmbeddedCurvePoint::generator().double(),
-        EmbeddedCurvePoint::generator().double().double()
-    ];
+    let gen = generator();
+    let gen_double = add(gen, gen);
+    let gen_quad = add(gen_double, gen_double);
+    let points = [gen, gen_double, gen_quad];
 
     let result_efficient = efficient_msm(scalars, points);
     let result_naive = naive_msm(scalars, points);
 
     // Both methods should produce the same result
-    assert(result_efficient.eq(result_naive));
+    assert(result_efficient.x == result_naive.x);
+    assert(result_efficient.y == result_naive.y);
+    assert(result_efficient.is_infinite == result_naive.is_infinite);
 }
 
 #[test]
@@ -136,17 +151,18 @@ fn test_msm_properties() {
         EmbeddedCurveScalar::from_field(3)
     ];
 
-    let points = [
-        EmbeddedCurvePoint::generator(),
-        EmbeddedCurvePoint::generator().double()
-    ];
+    let gen = generator();
+    let gen_double = add(gen, gen);
+    let points = [gen, gen_double];
 
     let result = efficient_msm(scalars, points);
 
     // Should equal: 5*G + 3*(2*G) = 5*G + 6*G = 11*G
-    let expected = EmbeddedCurvePoint::generator().scalar_mul(EmbeddedCurveScalar::from_field(11));
+    let expected = fixed_base_scalar_mul(EmbeddedCurveScalar::from_field(11), generator());
 
-    assert(result.eq(expected));
+    assert(result.x == expected.x);
+    assert(result.y == expected.y);
+    assert(result.is_infinite == expected.is_infinite);
 }
 
 #[test]
@@ -171,11 +187,10 @@ fn test_batch_signature_verification() {
         EmbeddedCurveScalar::from_field(125)
     ];
 
-    let public_keys = [
-        EmbeddedCurvePoint::generator(),
-        EmbeddedCurvePoint::generator().double(),
-        EmbeddedCurvePoint::generator().double().double()
-    ];
+    let gen = generator();
+    let gen_double = add(gen, gen);
+    let gen_quad = add(gen_double, gen_double);
+    let public_keys = [gen, gen_double, gen_quad];
 
     // The batch verification should handle multiple signatures efficiently
     let is_valid = batch_verify_signatures(messages, signatures_r, signatures_s, public_keys);

@@ -1,5 +1,5 @@
 <p align="center">
- <img width="240" alt="twitter-avatar" src="https://github.com/user-attachments/assets/5b7f5676-54a2-4399-a022-b637078dc7d7" />
+ <img width="240" alt="noirlings-app-logo" src="https://github.com/user-attachments/assets/5b7f5676-54a2-4399-a022-b637078dc7d7" />
 </p>
 
 <h1 align="center">Noirlings.app</h1>
@@ -8,23 +8,77 @@
   <strong>Learn Noir, fast ⚡️</strong>
 </p>
 
+<p align="center">
+  <a href="https://noir-lang.org/">
+    <img alt="Noir" src="https://img.shields.io/badge/noir-v1.0.0--beta.9-black?style=flat-square">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://www.noirlings.app">🚀 Live Demo</a>
+</p>
+
+<p align="center">
+  <img src="packages/noirlings/public/noirlings-screenshot.png" alt="Noirlings.app Interface" width="800" />
+</p>
+
 Noirlings.app is a modern, interactive playground for the [Noir](https://noir-lang.org/) programming language. It's designed to help you learn Noir quickly and intuitively, with hands-on exercises, instant feedback, and a beautiful, responsive UI.
+
+## 📚 Exercise Categories
+
+### 🟢 Basic Exercises (36 total)
+
+- **Intro & Variables** (7 exercises) - Master Noir fundamentals: main functions, let bindings, mutability, scope, and constants
+- **Data Types** (5 exercises) - Learn fields, integers, arrays, strings, and tuples for ZK circuit development
+- **Control Flow & Logic** (3 exercises) - Implement conditional logic, loops, and decision-making in zero-knowledge programs
+- **Structs & Traits** (9 exercises) - Build custom types, implementation blocks, and generic programming patterns
+- **Advanced Data** (7 exercises) - Work with slices, references, and functional programming methods
+- **Knowledge Check** (1 exercise) - Quiz combining multiple Noir concepts
+
+### 🔴 Advanced Exercises (39 total)
+
+- **Cryptographic Hashes** (4 exercises) - Implement Pedersen, Blake2s, Blake3, and Keccak256 hash functions
+- **Elliptic Curves** (4 exercises) - Master curve operations, point arithmetic, and scalar multiplication
+- **Merkle Trees** (4 exercises) - Build basic trees, verify proofs, and work with sparse/indexed variants
+- **Privacy & Zero-Knowledge** (13 exercises) - Create range proofs, commitments, private voting, and transaction systems
+- **Ethereum Integration** (9 exercises) - Work with RLP encoding, Patricia tries, and blockchain state proofs
+- **Advanced Cryptography** (4 exercises) - Implement ECDSA signatures, recursive proofs, and circuit optimizations
 
 ---
 
-## Monorepo Structure
+## 🏗️ Project Structure
 
 This project uses [Yarn Workspaces](https://classic.yarnpkg.com/en/docs/workspaces/) for a modular, scalable codebase:
 
 ```
 packages/
-  playground/   # Main Noir playground app (React + Vite)
-  exercises/    # Exercise content and logic
+  noirlings/           # Main Noir playground app (React + Vite)
+    src/
+      components/       # React components
+      hooks/           # Custom React hooks
+      pages/           # Application pages
+      utils/           # Utility functions
+    public/
+      exercises/       # Exercise content and logic
+        basic/         # Beginner exercises
+        advanced/      # Advanced topics
+scripts/              # Build and utility scripts
 ```
 
 ---
 
-## Getting Started
+## 🛠️ Tech Stack
+
+- **Frontend**: React 18, TypeScript, Tailwind CSS
+- **Editor**: Monaco Editor with custom Noir syntax highlighting
+- **Noir**: v1.0.0-beta.9 with @noir-lang/noir_js and noir_wasm
+- **Authentication**: Supabase
+- **Build Tool**: Vite with custom plugins (WASM, Node polyfills)
+- **Deployment**: Vercel with edge functions
+- **Analytics**: Vercel Analytics & Speed Insights
+- **Package Manager**: Yarn 4 with workspaces
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
@@ -41,14 +95,18 @@ yarn install
 
 ### Environment Variables
 
-To configure Supabase for authentication, set the following environment variables in a `.env` file at the project root:
+To configure Supabase for authentication, create a `.env` file at the project root:
 
-- `VITE_SUPABASE_URL`: The URL of your Supabase project (found in your Supabase dashboard under Settings > API).
-- `VITE_SUPABASE_ANON_KEY`: The anonymous public key for your Supabase project (also found under Settings > API).
+```bash
+cp .env.example .env
+```
 
-These variables are required to initialize the Supabase client in `packages/playground/src/hooks/useAuth.tsx`.
+Then update the following variables:
 
-For a template, refer to the `.env.example` file provided in the project root.
+- `VITE_SUPABASE_URL`: Your Supabase project URL (Settings > API in Supabase dashboard)
+- `VITE_SUPABASE_ANON_KEY`: Your Supabase anonymous public key (Settings > API)
+
+These variables are required to initialize the Supabase client in `packages/noirlings/src/hooks/useAuth.tsx`.
 
 ### Development
 
@@ -66,6 +124,19 @@ yarn build
 
 Builds the playground for production to the `dist/` directory.
 
+### Development Commands
+
+```bash
+# Run without regenerating exercises (faster for UI development)
+yarn dev-no-exercises
+
+# Generate exercise JSON files
+yarn generate-exercises
+
+# Preview production build locally
+yarn serve
+```
+
 ### Deployment (Vercel)
 
 This project is optimized for [Vercel](https://vercel.com/):
@@ -82,36 +153,24 @@ vercel --prod
 
 ---
 
-## Share Your Progress
+## 🤝 Contributing
 
-Noirlings.app makes it easy to share your learning journey:
+We welcome contributions! Here's how you can help:
 
-- Use the **Share on X** button in the playground toolbar to tweet your progress and tag [@NoirLang](https://x.com/NoirLang).
-- All shares are tracked with Vercel Analytics for insights.
-
----
-
-## Follow the Author
-
-Made with ❤️ by [@andeebtceth](https://x.com/andeebtceth). Follow for updates and Noir tips!
+- 🐛 **Report bugs** - Found an issue? Open a GitHub issue
+- ✨ **Suggest features** - Have ideas? We'd love to hear them
+- 📝 **Add exercises** - Create new learning content
+- 👨‍💻 **Improve code** - Submit pull requests with enhancements
+- 📚 **Update docs** - Help improve documentation
 
 ---
 
-## Contributing
-
-Contributions are welcome! Please open issues or pull requests to help improve Noirlings.app.
-
----
-
-## Credits
+## 🙏 Credits
 
 - **Original Noirlings** — This project is inspired by and builds upon the original [Noirlings](https://github.com/raven-house/noirlings) by [@satyambnsal](https://x.com/satyambnsal)
-- [Noir Programming Language](https://noir-lang.org/)
-- [Monaco Editor](https://microsoft.github.io/monaco-editor/)
-- [Vercel](https://vercel.com/)
-- [React](https://react.dev/)
-- [Tailwind CSS](https://tailwindcss.com/)
-
----
-
-For more details, see the [CHANGELOG.md](CHANGELOG.md).
+- [Noir Programming Language](https://noir-lang.org/) - The amazing ZK programming language
+- [Monaco Editor](https://microsoft.github.io/monaco-editor/) - Code editor that powers VS Code
+- [Vercel](https://vercel.com/) - Deployment and hosting platform
+- [React](https://react.dev/) - UI library
+- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
+- [Supabase](https://supabase.com/) - Backend-as-a-Service for authentication

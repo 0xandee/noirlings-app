@@ -22,6 +22,12 @@ locales:
 ---
 
 ```noir
+struct EmbeddedCurvePoint {
+    x: Field,
+    y: Field,
+    is_infinite: bool,
+}
+
 fn main() {
     // Create a regular point
     let point = EmbeddedCurvePoint { x: 1, y: 2, is_infinite: false };

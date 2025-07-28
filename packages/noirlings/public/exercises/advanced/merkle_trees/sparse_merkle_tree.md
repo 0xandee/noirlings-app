@@ -26,7 +26,9 @@ locales:
           }
           
           SparseMerkleTree {
-              nodes: std::collections::BTreeMap::new(),
+              node_keys: [0; 1024],
+              node_values: [0; 1024],
+              node_count: 0,
               root: default_hashes[TREE_DEPTH],
               default_hashes: default_hashes
           }
@@ -44,9 +46,9 @@ locales:
           // Set leaf value
           let leaf_key = self.node_key(0, key);
           if value == EMPTY_LEAF {
-              self.nodes.remove(leaf_key);
+              self.smt_remove(leaf_key);
           } else {
-              self.nodes.insert(leaf_key, value);
+              self.smt_insert(leaf_key, value);
           }
           
           // Update path to root
@@ -56,7 +58,7 @@ locales:
           for level in 1..=TREE_DEPTH {
               let sibling_position = position ^ 1; // Flip last bit for sibling
               let sibling_key = self.node_key(level - 1, sibling_position);
-              let sibling_hash = self.nodes.get(sibling_key).unwrap_or(self.default_hashes[level - 1]);
+              let sibling_hash = self.smt_get(sibling_key, self.default_hashes[level - 1]);
               
               if path[(TREE_DEPTH - level) as Field] { // Right child
                   current_hash = self.hash_children(sibling_hash, current_hash);
@@ -66,9 +68,9 @@ locales:
               
               let node_key = self.node_key(level, position / 2);
               if current_hash == self.default_hashes[level] {
-                  self.nodes.remove(node_key);
+                  self.smt_remove(node_key);
               } else {
-                  self.nodes.insert(node_key, current_hash);
+                  self.smt_insert(node_key, current_hash);
               }
               
               position = position / 2;
@@ -85,7 +87,55 @@ locales:
 
       fn get(&self, key: Field) -> Field {
           let leaf_key = self.node_key(0, key);
-          self.nodes.get(leaf_key).unwrap_or(EMPTY_LEAF)
+          self.smt_get(leaf_key, EMPTY_LEAF)
+      }
+
+      ```
+
+      3.5. Array-based Key-Value Store Methods
+
+      ```noir
+
+      impl SparseMerkleTree {
+          fn smt_get(&self, key: Field, default_value: Field) -> Field {
+              for i in 0..self.node_count {
+                  if self.node_keys[i] == key {
+                      return self.node_values[i];
+                  }
+              }
+              default_value
+          }
+          
+          fn smt_insert(&mut self, key: Field, value: Field) {
+              // Check if key already exists
+              for i in 0..self.node_count {
+                  if self.node_keys[i] == key {
+                      self.node_values[i] = value;
+                      return;
+                  }
+              }
+              
+              // Add new key-value pair if space available
+              if self.node_count < 1024 {
+                  self.node_keys[self.node_count] = key;
+                  self.node_values[self.node_count] = value;
+                  self.node_count += 1;
+              }
+          }
+          
+          fn smt_remove(&mut self, key: Field) {
+              for i in 0..self.node_count {
+                  if self.node_keys[i] == key {
+                      // Shift remaining elements down
+                      for j in i..(self.node_count - 1) {
+                          self.node_keys[j] = self.node_keys[j + 1];
+                          self.node_values[j] = self.node_values[j + 1];
+                      }
+                      self.node_count -= 1;
+                      return;
+                  }
+              }
+          }
       }
 
       ```
@@ -154,9 +204,10 @@ global TREE_DEPTH: u32 = 32; // Support 2^32 possible leaves (can be extended)
 global EMPTY_LEAF: Field = 0; // Default value for empty leaves
 
 struct SparseMerkleTree {
-    // Only store non-empty nodes (key -> value mapping)
-    // Key format: level_position (e.g., "5_123" for level 5, position 123)
-    nodes: std::collections::BTreeMap<Field, Field>,
+    // Only store non-empty nodes using arrays (Noir-compatible implementation)
+    node_keys: [Field; 1024],    // Keys for stored nodes
+    node_values: [Field; 1024],  // Values for stored nodes
+    node_count: u32,             // Number of active nodes
     // Root hash
     root: Field,
     // Default hashes for each level (precomputed for efficiency)

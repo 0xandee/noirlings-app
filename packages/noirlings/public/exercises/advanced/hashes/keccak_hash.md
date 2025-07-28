@@ -2,7 +2,7 @@
 id: keccak_hash
 title: keccak_hash
 category: hashes
-difficulty: medium
+difficulty: hard
 tags: []
 mode: test
 prerequisites: []
@@ -10,66 +10,53 @@ version: 1.0.0
 locales:
   en:
     hint: >-
-      Keccak is Ethereum's hash function using the sponge construction with keccakf1600 permutation. Implement state conversions and Ethereum-specific applications.
+      Keccak is Ethereum's hash function using sponge construction. Focus on practical applications using available Keccak functions rather than implementing the complex sponge construction from scratch.
 
-      1. Simplified Keccak Implementation
+      1. Using Available Keccak Functions
 
       ```noir
+      // Use the standard library Keccak256 function
+      fn compute_keccak256<let N: u32>(input: [u8; N]) -> [u8; 32] {
+          // Import and use std::hash::keccak256 when available
+          // For educational purposes, we'll use keccakf1600 with proper padding
+          keccak256_simplified(input)
+      }
+      
+      // Educational implementation showing key concepts
+      fn keccak256_simplified<let N: u32>(input: [u8; N]) -> [u8; 32] {
+          // This is a simplified educational version
+          // In practice, use the standard library function
+          let mut padded_input = pad_message(input);
+          let final_state = absorb_and_squeeze(padded_input);
+          extract_hash(final_state)
+      }
+      ```
 
-      fn educational_keccak<let N: u32>(input: [u8; N]) -> [u8; 32] {
-          let mut state: [u64; 25] = [0; 25];
+      2. Message Padding (Educational)
+
+      ```noir
+      fn pad_message<let N: u32>(input: [u8; N]) -> [u8; 136] {
+          // Keccak256 uses rate = 136 bytes (1088 bits)
+          let mut padded = [0; 136];
           
-          // XOR input into state (simplified)
+          // Copy input
           for i in 0..N {
-              if i < 136 { // Rate = 1088 bits = 136 bytes for Keccak256
-                  let byte_index = i % 8;
-                  let word_index = i / 8;
-                  if word_index < 25 {
-                      state[word_index] ^= (input[i] as u64) << (byte_index * 8);
-                  }
+              if i < 136 {
+                  padded[i] = input[i];
               }
           }
           
-          state = keccakf1600(state);
+          // Add padding: append 0x01, then zeros, then 0x80 at the end
+          if N < 135 {
+              padded[N] = 0x01;
+              padded[135] = 0x80;
+          }
           
-          let state_bytes = state_to_bytes(state);
-          let mut output = [0; 32];
-          for i in 0..32 {
-              output[i] = state_bytes[i];
-          }
-          output
+          padded
       }
-
       ```
 
-      2. State Conversion Functions
-
-      ```noir
-
-      fn state_to_bytes(state: [u64; 25]) -> [u8; 200] {
-          let mut bytes = [0; 200];
-          for i in 0..25 {
-              let word = state[i];
-              for j in 0..8 {
-                  bytes[i * 8 + j] = ((word >> (j * 8)) & 0xFF) as u8;
-              }
-          }
-          bytes
-      }
-
-      fn bytes_to_state(bytes: [u8; 200]) -> [u64; 25] {
-          let mut state = [0; 25];
-          for i in 0..25 {
-              for j in 0..8 {
-                  state[i] |= (bytes[i * 8 + j] as u64) << (j * 8);
-              }
-          }
-          state
-      }
-
-      ```
-
-      3. Ethereum Address Computation
+      3. Ethereum Address Computation (Practical Application)
 
       ```noir
 
@@ -90,7 +77,7 @@ locales:
 
       ```
     description: >-
-      Keccak is Ethereum's cryptographic hash function using sponge construction. Learn to implement Keccak256 for Ethereum compatibility and understand its role in blockchain applications.
+      Keccak is Ethereum's cryptographic hash function using sponge construction. Learn to use Keccak256 for Ethereum compatibility, understand its unique properties, and implement practical blockchain applications without getting lost in low-level implementation details.
 
       #### Docs
     docLink: >-

@@ -15,33 +15,56 @@ locales:
       1. RLP Item Structure
 
       ```noir
-      enum RLPItem {
-          Bytes([u8]),
-          List([RLPItem]),
+      struct RLPItem {
+          item_type: u8, // 0 = Bytes, 1 = List
+          bytes_data: [u8; 256],
+          bytes_length: u32,
+          list_data: [RLPItem; 32],
+          list_length: u32,
       }
       ```
 
       2. Basic Decoding Logic
 
       ```noir
-      fn decode_rlp(encoded: [u8]) -> RLPItem {
-          if encoded.len() == 0 {
-              return RLPItem::Bytes([]);
+      fn decode_rlp<let N: u32>(encoded: [u8; N]) -> RLPItem {
+          if N == 0 {
+              return RLPItem {
+                  item_type: 0,
+                  bytes_data: [0; 256],
+                  bytes_length: 0,
+                  list_data: [RLPItem { item_type: 0, bytes_data: [0; 256], bytes_length: 0, list_data: [RLPItem::empty(); 32], list_length: 0 }; 32],
+                  list_length: 0
+              };
           }
           
           let first_byte = encoded[0];
           
           if first_byte <= 0x7f {
               // Single byte
-              RLPItem::Bytes([first_byte])
+              RLPItem {
+                  item_type: 0,
+                  bytes_data: [first_byte, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                  bytes_length: 1,
+                  list_data: [RLPItem::empty(); 32],
+                  list_length: 0
+              }
           } else if first_byte <= 0xb7 {
               // Short string
               let length = (first_byte - 0x80) as u32;
-              let mut bytes = [0; length];
+              let mut bytes_data = [0; 256];
               for i in 0..length {
-                  bytes[i] = encoded[1 + i];
+                  if i < 256 {
+                      bytes_data[i] = encoded[1 + i];
+                  }
               }
-              RLPItem::Bytes(bytes)
+              RLPItem {
+                  item_type: 0,
+                  bytes_data,
+                  bytes_length: length,
+                  list_data: [RLPItem::empty(); 32],
+                  list_length: 0
+              }
           } else if first_byte <= 0xf7 {
               // Short list
               decode_short_list(encoded)
@@ -57,16 +80,14 @@ locales:
       ```noir
       impl RLPItem {
           fn is_bytes(self) -> bool {
-              match self {
-                  RLPItem::Bytes(_) => true,
-                  RLPItem::List(_) => false
-              }
+              self.item_type == 0
           }
           
-          fn as_bytes(self) -> [u8] {
-              match self {
-                  RLPItem::Bytes(bytes) => bytes,
-                  RLPItem::List(_) => [] // Error case
+          fn as_bytes(self) -> ([u8; 256], u32) {
+              if self.item_type == 0 {
+                  (self.bytes_data, self.bytes_length)
+              } else {
+                  ([0; 256], 0) // Error case
               }
           }
       }

@@ -10,41 +10,23 @@ version: 1.0.0
 locales:
   en:
     hint: >-
-      Implement the required methods: generator returns a specific point, point_at_infinity has special coordinates, and negation flips the y-coordinate.
+      Implement the required methods by understanding elliptic curve group properties:
 
-      1. Generator function implementation
+      1. **Generator Point**: Every elliptic curve has a generator point G that generates the cyclic group. For Grumpkin curve, the generator has:
+         - x-coordinate: 1 (simple base point)
+         - y-coordinate: A specific large value (check Grumpkin curve specification)
+         - is_infinite: false (it's a regular point, not the identity)
 
-      ```noir
+      2. **Point At Infinity**: The additive identity element of the elliptic curve group:
+         - Represents the "zero" element in elliptic curve addition
+         - By convention: x=0, y=0, is_infinite=true
+         - For any point P: P + O = O + P = P (where O is point at infinity)
 
-      pub fn generator() -> EmbeddedCurvePoint {
-        EmbeddedCurvePoint {
-          x: 1,
-          y: 17631683881184975370165255887551781615748388533673675138860,
-          is_infinite: false
-        }
-      }
-
-      ```
-
-      2. Point At Infinity
-
-      ```noir
-
-      pub fn point_at_infinity() -> EmbeddedCurvePoint {
-        EmbeddedCurvePoint { x: 0, y: 0, is_infinite: true }
-      }
-
-      ```
-
-      3. Negation Implementation
-
-      ```noir
-
-      pub fn neg(self) -> EmbeddedCurvePoint {
-        EmbeddedCurvePoint { x: self.x, y: -self.y, is_infinite: self.is_infinite }
-      }
-
-      ```
+      3. **Point Negation**: In elliptic curve groups, negation flips the point across the x-axis:
+         - Same x-coordinate (point stays on same vertical line)
+         - Opposite y-coordinate (reflection across x-axis)
+         - Same infinity status (finite points stay finite)
+         - Mathematical property: P + (-P) = O (point at infinity)
 
     description: >-
       Curve operations form the basis of many ZK protocols - understanding

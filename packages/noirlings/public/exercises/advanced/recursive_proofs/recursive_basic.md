@@ -10,7 +10,20 @@ version: 1.0.0
 locales:
   en:
     hint: >-
-      Recursive proofs enable one Noir program to verify another program's proof. Use std::verify_proof with proper proof components and implement aggregation patterns.
+      Recursive proofs enable one Noir program to verify another program's proof within a zero-knowledge circuit. This powerful technique allows proof aggregation, where multiple proofs can be combined into a single proof, enabling scalable verification systems.
+
+      **Key Concepts:**
+      - **Proof**: Array of field elements containing the cryptographic proof data (typically 93 fields for Noir)
+      - **Public Inputs**: Values that are revealed during verification (not hidden by zero-knowledge)
+      - **Key Hash**: Cryptographic hash of the verification key used to generate the original proof
+      - **Aggregation**: Combining multiple proofs into one for efficient batch verification
+      - **Chaining**: Linking proofs where one proof's output becomes another's input
+
+      **When to use recursive proofs:**
+      - Batch verification of multiple transactions
+      - Building proof trees for scalability
+      - Creating privacy-preserving audit trails
+      - Implementing roll-up style scaling solutions
 
       1. Recursive Proof Verification
 
