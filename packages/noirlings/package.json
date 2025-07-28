@@ -25,6 +25,7 @@
     "build:watch": "tsc && vite build -w",
     "dev": "vite",
     "preview": "vite preview",
+    "preview:railway": "vite preview --outDir ../../dist",
     "publish": "yarn build && yarn npm publish --access public",
     "server": "node --experimental-specifier-resolution=node src/server/server.js",
     "server:dev": "nodemon --experimental-specifier-resolution=node src/server/server.js",

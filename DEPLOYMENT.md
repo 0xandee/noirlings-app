@@ -44,7 +44,7 @@ Railway might work due to:
 2. **Configure Build** (automatic):
    - Railway uses the `railway.json` config
    - Build: `cd packages/noirlings && yarn install && NODE_OPTIONS=--max-old-space-size=8192 vite build --mode railway`
-   - Start: `cd packages/noirlings && yarn preview`
+   - Start: `npx serve dist -s -n -L -p $PORT` (static file server for SPA)
 
 3. **Environment Variables**:
    Set in Railway dashboard → Variables tab:

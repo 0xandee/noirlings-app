@@ -5,7 +5,7 @@
     "buildCommand": "cd packages/noirlings && yarn install && NODE_OPTIONS=--max-old-space-size=8192 vite build --mode railway"
   },
   "deploy": {
-    "startCommand": "cd packages/noirlings && yarn preview",
+    "startCommand": "npx serve dist -s -n -L -p $PORT",
     "healthcheckPath": "/",
     "healthcheckTimeout": 300,
     "restartPolicyType": "ON_FAILURE",
