@@ -44,7 +44,7 @@ locales:
           }
           bits
       }
-      
+
       fn bits_to_value(bits: [u8; 32]) -> u64 {
           let mut value = 0;
           let mut power = 1;
@@ -54,7 +54,7 @@ locales:
           }
           value
       }
-      
+
       fn verify_bit_constraint(bit: u8) -> bool {
           // Bit must be 0 or 1: bit * (bit - 1) = 0
           let bit_field = bit as Field;
@@ -115,7 +115,7 @@ locales:
           let total_output = output_commitment.add(fee_commitment);
           input_commitment.commitment == total_output.commitment
       }
-      
+
       // Batch verification for efficiency
       fn batch_verify_range_proofs<let N: u32>(proofs: [RangeProof; N]) -> [bool; N] {
           let mut results = [false; N];
@@ -124,7 +124,7 @@ locales:
           }
           results
       }
-      
+
       // Privacy-preserving auction bidding
       fn verify_bid_constraints(
           bid_commitment: AmountCommitment,
@@ -149,12 +149,6 @@ locales:
       3. Generate and verify zero-knowledge range proofs
       4. Build advanced applications like balance verification and private auctions
       5. Optimize with batch verification for scalability
-
-      #### Learning Progression
-      - **Foundation**: Commitment schemes and basic cryptographic primitives
-      - **Basic**: Binary decomposition and bit constraint verification
-      - **Intermediate**: Complete range proof generation and verification
-      - **Advanced**: Real-world applications with complex constraint systems
 
       #### Docs
     docLink: "https://noir-lang.org/docs/noir/standard_library/cryptographic_primitives"
@@ -196,13 +190,13 @@ impl AmountCommitment {
             commitment: 0
         }
     }
-    
+
     fn verify(self) -> bool {
         // Verify commitment matches computed hash
         // Hint: Recompute hash and compare with stored commitment
         false
     }
-    
+
     fn add(self, other: AmountCommitment) -> AmountCommitment {
         // Homomorphic addition of commitments
         // Hint: Add amounts, blindings, and commitments separately
@@ -248,20 +242,20 @@ impl RangeProof {
     fn generate(amount: u64, blinding: Field, range_min: u64, range_max: u64) -> Self {
         // Generate range proof for amount in [range_min, range_max]
         // Hint: Decompose (amount - range_min) to ensure non-negativity
-        
+
         // Step 1: Shift amount to ensure non-negativity
         let shifted_amount = amount - range_min;
-        
+
         // Step 2: Decompose to bits
         let bits = decompose_to_bits(shifted_amount, 32);
-        
+
         // Step 3: Create bit commitments
         let mut bit_commitments = [0; 32];
         for i in 0..32 {
             // TODO: Create commitment for each bit
             bit_commitments[i] = 0;
         }
-        
+
         RangeProof {
             commitment: pedersen_hash([amount as Field, blinding]),
             proof_bits: bits,
@@ -270,22 +264,22 @@ impl RangeProof {
             range_max
         }
     }
-    
+
     fn verify(self) -> bool {
         // Verify range proof validity
         // Hint: Check bit constraints, reconstruction, and bounds
-        
+
         // Step 1: Verify each bit is 0 or 1
         for i in 0..32 {
             if !verify_bit_constraint(self.proof_bits[i]) {
                 return false;
             }
         }
-        
+
         // Step 2: Verify reconstruction
         let reconstructed = bits_to_value(self.proof_bits);
         let amount = reconstructed + self.range_min;
-        
+
         // Step 3: Check bounds
         // TODO: Verify amount is within [range_min, range_max]
         false
@@ -300,10 +294,10 @@ fn prove_balance(
 ) -> bool {
     // Prove input = output + fee without revealing amounts
     // Hint: Use homomorphic addition to verify balance equation
-    
+
     // Create fee commitment (no blinding for transparency)
     let fee_commitment = AmountCommitment::new(fee, 0);
-    
+
     // TODO: Verify input_commitment = output_commitment + fee_commitment
     false
 }
@@ -324,17 +318,17 @@ fn verify_bid_constraints(
 ) -> bool {
     // Verify bidding constraints for privacy-preserving auctions
     // Hint: Check bid range, deposit validity, and sufficiency
-    
+
     // Check bid is within auction bounds
     let bid_range_valid = (bid_commitment.amount >= min_bid) & (bid_commitment.amount <= max_bid);
-    
+
     // Verify deposit proof
     let deposit_valid = deposit_proof.verify();
-    
+
     // Check deposit covers bid amount
     // TODO: Verify deposit_proof.range_max >= bid_commitment.amount
     let sufficient_deposit = false;
-    
+
     bid_range_valid & deposit_valid & sufficient_deposit
 }
 
@@ -346,13 +340,13 @@ fn create_private_transfer_proof(
 ) -> (AmountCommitment, RangeProof) {
     // Create proof for private transfer without revealing amounts
     // Hint: Create commitment and range proof for transfer amount
-    
+
     let blinding = random_blinding();
     let transfer_commitment = AmountCommitment::new(transfer_amount, blinding);
-    
+
     // Prove transfer amount is valid (positive and <= sender balance)
     let range_proof = RangeProof::generate(transfer_amount, blinding, 1, sender_balance);
-    
+
     (transfer_commitment, range_proof)
 }
 
@@ -363,11 +357,11 @@ fn verify_auction_bid(
 ) -> bool {
     // Comprehensive auction bid verification
     // Hint: Verify all components of the bid proof
-    
+
     let bid_valid = bid_proof.bid_commitment.verify();
     let range_valid = bid_proof.range_proof.verify();
     let deposit_valid = bid_proof.deposit_proof.verify();
-    
+
     // TODO: Add additional auction-specific constraints
     bid_valid & range_valid & deposit_valid
 }
@@ -376,14 +370,14 @@ fn verify_auction_bid(
 fn test_basic_amount_commitments() {
     let amount = 1000;
     let blinding = 12345;
-    
+
     let commitment = AmountCommitment::new(amount, blinding);
     assert(commitment.verify());
-    
+
     // Test homomorphic addition
     let commitment2 = AmountCommitment::new(500, 54321);
     let sum = commitment.add(commitment2);
-    
+
     assert(sum.amount == 1500);
     assert(sum.verify());
 }
@@ -392,17 +386,17 @@ fn test_basic_amount_commitments() {
 fn test_binary_decomposition() {
     let value = 42; // Binary: 101010
     let bits = decompose_to_bits(value, 8);
-    
+
     // Verify specific bit pattern for 42
     assert(bits[1] == 1); // 2^1 bit
-    assert(bits[3] == 1); // 2^3 bit  
+    assert(bits[3] == 1); // 2^3 bit
     assert(bits[5] == 1); // 2^5 bit
     assert(bits[0] == 0); // 2^0 bit
-    
+
     // Test reconstruction
     let reconstructed = bits_to_value(bits);
     assert(reconstructed == value);
-    
+
     // Test bit constraints
     for i in 0..8 {
         assert(verify_bit_constraint(bits[i]));
@@ -415,17 +409,17 @@ fn test_range_proof_generation_and_verification() {
     let blinding = 98765;
     let range_min = 100;
     let range_max = 1000;
-    
+
     // Generate range proof
     let proof = RangeProof::generate(amount, blinding, range_min, range_max);
-    
+
     // Verify proof
     assert(proof.verify());
-    
+
     // Test edge cases
     let min_proof = RangeProof::generate(range_min, blinding, range_min, range_max);
     assert(min_proof.verify());
-    
+
     let max_proof = RangeProof::generate(range_max, blinding, range_min, range_max);
     assert(max_proof.verify());
 }
@@ -435,14 +429,14 @@ fn test_balance_verification() {
     let input_amount = 1000;
     let output_amount = 800;
     let fee = 200;
-    
+
     let input_commitment = AmountCommitment::new(input_amount, 111);
     let output_commitment = AmountCommitment::new(output_amount, 222);
-    
+
     // Should verify: 1000 = 800 + 200
     let balance_valid = prove_balance(input_commitment, output_commitment, fee);
     assert(balance_valid);
-    
+
     // Should fail with incorrect fee
     let invalid_balance = prove_balance(input_commitment, output_commitment, 100);
     assert(!invalid_balance);
@@ -455,10 +449,10 @@ fn test_batch_verification() {
         RangeProof::generate(150, 222, 100, 200),
         RangeProof::generate(250, 333, 0, 200) // Should fail: 250 > 200
     ];
-    
+
     let results = batch_verify_range_proofs(proofs);
     assert(results[0]); // Valid
-    assert(results[1]); // Valid  
+    assert(results[1]); // Valid
     assert(!results[2]); // Invalid - exceeds range
 }
 
@@ -468,13 +462,13 @@ fn test_auction_bidding() {
     let deposit_amount = 1000;
     let auction_min = 100;
     let auction_max = 800;
-    
+
     let bid_commitment = AmountCommitment::new(bid_amount, 123);
     let deposit_proof = RangeProof::generate(deposit_amount, 456, 0, 2000);
-    
+
     let bid_valid = verify_bid_constraints(bid_commitment, auction_min, auction_max, deposit_proof);
     assert(bid_valid);
-    
+
     // Test insufficient deposit
     let small_deposit = RangeProof::generate(300, 789, 0, 400);
     let insufficient_bid = verify_bid_constraints(bid_commitment, auction_min, auction_max, small_deposit);
@@ -486,19 +480,19 @@ fn test_private_transfers() {
     let sender_balance = 2000;
     let transfer_amount = 500;
     let receiver_commitment = AmountCommitment::new(1000, 999);
-    
+
     let (transfer_commitment, range_proof) = create_private_transfer_proof(
         sender_balance,
         transfer_amount,
         receiver_commitment
     );
-    
+
     // Verify transfer commitment
     assert(transfer_commitment.verify());
-    
+
     // Verify transfer amount is within valid range
     assert(range_proof.verify());
-    
+
     // Verify transfer amount consistency
     assert(transfer_commitment.amount == transfer_amount);
 }
@@ -509,7 +503,7 @@ fn test_private_transfers() {
 Run `nargo test` to verify your implementation. The tests progress through:
 
 1. **Foundation Tests**: Basic commitment schemes and homomorphic operations
-2. **Basic Tests**: Binary decomposition and bit constraint verification  
+2. **Basic Tests**: Binary decomposition and bit constraint verification
 3. **Intermediate Tests**: Complete range proof generation and verification
 4. **Advanced Tests**: Real-world applications like auctions and private transfers
 
@@ -531,6 +525,6 @@ Run `nargo test` to verify your implementation. The tests progress through:
 ## Extensions
 
 1. Implement Bulletproofs for logarithmic proof sizes
-2. Add support for multiple range constraints simultaneously  
+2. Add support for multiple range constraints simultaneously
 3. Create aggregated proofs for improved efficiency
 4. Build complete privacy-preserving payment systems

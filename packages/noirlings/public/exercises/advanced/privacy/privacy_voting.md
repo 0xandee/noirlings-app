@@ -220,11 +220,11 @@ locales:
       }
 
       ```
-
-      #### Docs
     docLink: "https://noir-lang.org/docs/noir/standard_library/cryptographic_primitives"
     description: >-
       Privacy-preserving voting systems enable democratic processes while protecting voter privacy. Learn to implement zero-knowledge voting using commitment schemes, nullifiers, and membership proofs to ensure both privacy and integrity in electronic voting systems.
+
+      #### Docs
 ---
 
 ```noir
