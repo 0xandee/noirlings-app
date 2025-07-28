@@ -61,8 +61,8 @@ export default defineConfig(({ mode }: { mode: string }) => {
         insertTypesEntry: true,
       }),
       nodePolyfills({
-        // Enable specific polyfills needed for Supabase client
-        include: ['buffer', 'process', 'util', 'stream', 'events', 'url', 'querystring'],
+        // Minimal polyfills for Supabase compatibility
+        include: ['buffer', 'process'],
         globals: {
           Buffer: true,
           global: true,
@@ -72,9 +72,6 @@ export default defineConfig(({ mode }: { mode: string }) => {
     ],
     define: {
       global: 'globalThis',
-      'process.env': {},
-      // Add additional global definitions for Supabase compatibility
-      __SUPABASE_CLIENT_DEBUG__: false,
     },
     envPrefix: ['VITE_'],
     server: {

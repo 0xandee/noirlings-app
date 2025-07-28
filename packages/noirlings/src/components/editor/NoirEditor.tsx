@@ -157,7 +157,12 @@ function NoirEditor(props: PlaygroundProps) {
   const loadProgress = async () => {
     if (user) {
       try {
-        const { data, error } = await supabase.from('user_progress').select('*').eq('user_id', user!.id).single();
+        const client = supabase();
+        if (!client) {
+          console.warn('Supabase client not available for progress loading');
+          return;
+        }
+        const { data, error } = await client.from('user_progress').select('*').eq('user_id', user!.id).single();
         if (error) {
           console.error('Error loading progress:', error);
           return;
@@ -191,8 +196,13 @@ function NoirEditor(props: PlaygroundProps) {
     if (user) {
       (async () => {
         try {
+          const client = supabase();
+          if (!client) {
+            console.warn('Supabase client not available for progress sync');
+            return;
+          }
           // First, load current DB progress
-          const { data: dbData, error: loadError } = await supabase.from('user_progress').select('*').eq('user_id', user!.id).single();
+          const { data: dbData, error: loadError } = await client.from('user_progress').select('*').eq('user_id', user!.id).single();
           if (loadError && loadError.code !== 'PGRST116') { // Ignore if no row exists
             console.error('Error loading DB progress for merge:', loadError);
             return;
@@ -230,7 +240,7 @@ function NoirEditor(props: PlaygroundProps) {
           }
 
           if (shouldUpsert) {
-            const { error } = await supabase.from('user_progress').upsert(mergedData, { onConflict: 'user_id' });
+            const { error } = await client.from('user_progress').upsert(mergedData, { onConflict: 'user_id' });
             if (error) {
               console.error('Error syncing progress:', error);
               return;
@@ -257,7 +267,12 @@ function NoirEditor(props: PlaygroundProps) {
     const saveProgress = debounce(async () => {
       if (user) {
         try {
-          const { error } = await supabase.from('user_progress').update({
+          const client = supabase();
+          if (!client) {
+            console.warn('Supabase client not available for progress saving');
+            return;
+          }
+          const { error } = await client.from('user_progress').update({
             finished_exercises: finishedExercises.map(normalizePath),
             last_exercise: currentExercise,
             theme: theme,
