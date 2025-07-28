@@ -106,7 +106,7 @@ locales:
 
       #### Docs
     docLink: >-
-      https://noir-lang.org/docs/noir/standard_library/merkle
+      https://noir-lang.org/docs/noir/standard_library/cryptographic_primitives
 ---
 
 ```noir

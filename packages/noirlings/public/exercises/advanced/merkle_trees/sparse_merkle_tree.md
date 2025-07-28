@@ -194,7 +194,7 @@ locales:
       Sparse Merkle trees are optimized data structures for large, mostly empty sets. Learn to implement efficient sparse trees that store only non-default values, enabling scalable membership proofs and state management in blockchain applications.
 
       #### Docs
-    docLink: "https://noir-lang.org/docs/noir/standard_library/merkle_trees"
+    docLink: "https://noir-lang.org/docs/noir/standard_library/cryptographic_primitives"
 ---
 
 ```noir

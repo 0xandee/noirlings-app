@@ -266,6 +266,6 @@ fn test_deterministic_verification() {
 
 ## Documentation
 
-- [Noir ECDSA Documentation](https://noir-lang.org/docs/noir/standard_library/cryptographic_primitives/ecdsa)
+- [Noir ECDSA Documentation](https://noir-lang.org/docs/noir/standard_library/cryptographic_primitives/ecdsa_sig_verification)
 - [RFC 6979: Deterministic ECDSA](https://tools.ietf.org/html/rfc6979)
 - [SEC 1: Elliptic Curve Cryptography](https://www.secg.org/sec1-v2.pdf)

@@ -120,7 +120,7 @@ locales:
       }
 
       ```
-    docLink: "https://noir-lang.org/docs/noir/standard_library/merkle_trees"
+    docLink: "https://noir-lang.org/docs/noir/standard_library/cryptographic_primitives"
     description: >-
       Indexed Merkle trees extend basic Merkle trees by adding an index that maps values to their positions. Learn to implement indexed trees for efficient membership proofs, non-membership proofs, and dynamic tree updates in privacy-preserving systems.
 

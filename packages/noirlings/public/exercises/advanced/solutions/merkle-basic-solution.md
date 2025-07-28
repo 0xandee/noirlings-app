@@ -228,4 +228,4 @@ Where:
 
 ## Documentation
 
-- [Noir Merkle Documentation](https://noir-lang.org/docs/noir/standard_library/merkle)
+- [Noir Merkle Documentation](https://noir-lang.org/docs/noir/standard_library/merkle_trees)

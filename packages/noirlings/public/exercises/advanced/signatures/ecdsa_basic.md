@@ -70,7 +70,7 @@ locales:
 
       #### Docs
     docLink: >-
-      https://noir-lang.org/docs/noir/standard_library/cryptographic_primitives/ecdsa
+      https://noir-lang.org/docs/noir/standard_library/cryptographic_primitives/ecdsa_sig_verification
 ---
 
 ```noir
