@@ -48,21 +48,18 @@ export default defineConfig(({ mode }: { mode: string }) => {
             // Ultra-aggressive chunking to reduce memory per chunk
             manualChunks: (id) => {
               if (id.includes('node_modules')) {
-                // Split each major dependency into its own chunk
-                if (id.includes('@noir-lang/noir_wasm')) return 'noir-wasm';
-                if (id.includes('@noir-lang/noir_js')) return 'noir-js';  
-                if (id.includes('@noir-lang/backend_barretenberg')) return 'noir-backend';
-                if (id.includes('monaco-editor/esm/vs/editor')) return 'monaco-editor';
-                if (id.includes('monaco-editor/esm/vs/language')) return 'monaco-language';
-                if (id.includes('monaco-editor')) return 'monaco-core';
-                if (id.includes('react-dom')) return 'react-dom';
-                if (id.includes('react')) return 'react';
+                // Less aggressive chunking to avoid module initialization issues
+                if (id.includes('@noir-lang')) return 'noir';
+                if (id.includes('monaco-editor')) return 'monaco';
+                if (id.includes('react')) return 'react-vendor';
                 return 'vendor';
               }
             },
             // Reduce chunk size to minimize memory per build step
             maxParallelFileOps: 1, // Process one file at a time
-            chunkFileNames: '[name]-[hash].js'
+            chunkFileNames: '[name]-[hash].js',
+            // Ensure proper module loading order
+            inlineDynamicImports: false
           }
         }
       } : {
