@@ -38,6 +38,7 @@
     "@supabase/supabase-js": "^2.50.5",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
+    "buffer": "^6.0.3",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "fflate": "^0.8.1",

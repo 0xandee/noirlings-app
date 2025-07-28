@@ -1,6 +1,12 @@
 import { File } from "../types";
 import { encodeSnippet } from "./shareSnippet";
 import matter from 'gray-matter';
+import { Buffer } from 'buffer';
+
+// Make Buffer available globally for gray-matter
+if (typeof window !== 'undefined' && !window.Buffer) {
+  window.Buffer = Buffer;
+}
 // For browser, we'll assume exercises are served statically, so use fetch to list and read files.
 // But since Vite serves /exercises/, we need to fetch directory listings (not standard), so perhaps pre-generate index.json during build.
 // For now, hardcode or assume.
