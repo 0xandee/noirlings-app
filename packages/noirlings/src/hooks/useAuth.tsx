@@ -1,7 +1,26 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { createClient, User } from '@supabase/supabase-js';
 
-const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
+// Initialize Supabase with environment variable validation
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+// Create a safe Supabase client that handles missing environment variables
+let supabase: ReturnType<typeof createClient> | null = null;
+
+try {
+  // Only create client if both URL and key are properly configured
+  if (supabaseUrl && supabaseAnonKey && 
+      typeof supabaseUrl === 'string' && 
+      typeof supabaseAnonKey === 'string' &&
+      supabaseUrl.length > 0 && 
+      supabaseAnonKey.length > 0) {
+    supabase = createClient(supabaseUrl, supabaseAnonKey);
+  }
+} catch (error) {
+  console.warn('Failed to initialize Supabase client:', error);
+  supabase = null;
+}
 
 interface AuthContextType {
     user: User | null;
@@ -15,6 +34,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
+        if (!supabase) return; // Skip if Supabase is not configured
+        
         const { data: authListener } = supabase.auth.onAuthStateChange((_, session) => { // Remove unused event
             setUser(session?.user ?? null);
         });
@@ -22,6 +43,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, []);
 
     const login = async () => {
+        if (!supabase) {
+            console.warn('Supabase not configured - login unavailable');
+            return;
+        }
+        
         try {
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'github',
@@ -37,6 +63,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const logout = async () => {
+        if (!supabase) {
+            console.warn('Supabase not configured - logout unavailable');
+            return;
+        }
+        
         try {
             const { error } = await supabase.auth.signOut();
             if (error) throw error;
@@ -61,4 +92,5 @@ export const useAuth = (): AuthContextType => {
     return context;
 };
 
+// Export the supabase client (may be null if not configured)
 export { supabase };

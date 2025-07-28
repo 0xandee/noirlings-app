@@ -5,7 +5,9 @@
   "framework": "vite",
   "build": {
     "env": {
-      "NODE_OPTIONS": "--max-old-space-size=8192"
+      "NODE_OPTIONS": "--max-old-space-size=8192",
+      "VITE_SUPABASE_URL": "",
+      "VITE_SUPABASE_ANON_KEY": ""
     }
   },
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]

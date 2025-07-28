@@ -20,8 +20,7 @@ import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { formatExerciseName } from "../../utils/formatExerciseName";
-import { useAuth } from "../../hooks/useAuth";
-import { supabase } from "../../hooks/useAuth";
+import { useAuth, supabase } from "../../hooks/useAuth";
 import debounce from 'lodash/debounce';
 import { Header } from '../Header';
 

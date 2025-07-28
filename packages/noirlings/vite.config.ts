@@ -65,6 +65,7 @@ export default defineConfig(({ mode }: { mode: string }) => {
       global: 'globalThis',
       'process.env': {}
     },
+    envPrefix: ['VITE_'],
     server: {
       proxy: {
         "/api": "http://localhost:5173",
