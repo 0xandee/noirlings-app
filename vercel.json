@@ -6,8 +6,8 @@
   "build": {
     "env": {
       "NODE_OPTIONS": "--max-old-space-size=8192",
-      "VITE_SUPABASE_URL": "",
-      "VITE_SUPABASE_ANON_KEY": ""
+      "VITE_SUPABASE_URL": "https://ajzoulspsdzrjxffqvoi.supabase.co",
+      "VITE_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFqem91bHNwc2R6cmp4ZmZxdm9pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIzMDYzMDMsImV4cCI6MjA2Nzg4MjMwM30.iHTW9lmLwlq3nWsz1NYeQJg-ZKYgrOaN6SBMHNyndLg"
     }
   },
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
