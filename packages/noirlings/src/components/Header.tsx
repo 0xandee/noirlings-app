@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Moon, Sun } from 'lucide-react';
+import { Moon, Sun, ExternalLink } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
 import { Auth } from './Auth';
 
@@ -53,6 +53,19 @@ export const Header: React.FC<HeaderProps> = ({
           >
             Advanced
           </Link>
+          <a
+            href="https://www.noir-playground.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: 'var(--header-text)'
+            }}
+            className="hover:opacity-80 transition-opacity no-underline flex items-center gap-1"
+            aria-label="Open Noir Playground in new tab"
+          >
+            Playground
+            <ExternalLink size={14} />
+          </a>
           {/* <Minus size={18} style={{ color: 'var(--header-text)',  transform: 'rotate(90deg)', opacity: 0.6   }} /> */}
         </div>
       </div>
