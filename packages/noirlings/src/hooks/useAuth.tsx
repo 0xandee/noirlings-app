@@ -2,24 +2,24 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { createClient, User } from '@supabase/supabase-js';
 
 // Initialize Supabase with environment variable validation
-const supabaseUrl = "https://ajzoulspsdzrjxffqvoi.supabase.co";
-const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFqem91bHNwc2R6cmp4ZmZxdm9pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIzMDYzMDMsImV4cCI6MjA2Nzg4MjMwM30.iHTW9lmLwlq3nWsz1NYeQJg-ZKYgrOaN6SBMHNyndLg";
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 // Create a safe Supabase client that handles missing environment variables
 let supabase: ReturnType<typeof createClient> | null = null;
 
 try {
-    // Only create client if both URL and key are properly configured
-    if (supabaseUrl && supabaseAnonKey &&
-        typeof supabaseUrl === 'string' &&
-        typeof supabaseAnonKey === 'string' &&
-        supabaseUrl.length > 0 &&
-        supabaseAnonKey.length > 0) {
-        supabase = createClient(supabaseUrl, supabaseAnonKey);
-    }
+  // Only create client if both URL and key are properly configured
+  if (supabaseUrl && supabaseAnonKey && 
+      typeof supabaseUrl === 'string' && 
+      typeof supabaseAnonKey === 'string' &&
+      supabaseUrl.length > 0 && 
+      supabaseAnonKey.length > 0) {
+    supabase = createClient(supabaseUrl, supabaseAnonKey);
+  }
 } catch (error) {
-    console.warn('Failed to initialize Supabase client:', error);
-    supabase = null;
+  console.warn('Failed to initialize Supabase client:', error);
+  supabase = null;
 }
 
 interface AuthContextType {
@@ -35,7 +35,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     useEffect(() => {
         if (!supabase) return; // Skip if Supabase is not configured
-
+        
         const { data: authListener } = supabase.auth.onAuthStateChange((_, session) => { // Remove unused event
             setUser(session?.user ?? null);
         });
@@ -47,7 +47,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             console.warn('Supabase not configured - login unavailable');
             return;
         }
-
+        
         try {
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'github',
@@ -67,7 +67,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             console.warn('Supabase not configured - logout unavailable');
             return;
         }
-
+        
         try {
             const { error } = await supabase.auth.signOut();
             if (error) throw error;
