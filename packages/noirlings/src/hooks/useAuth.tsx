@@ -5,6 +5,106 @@ import { createClient, User } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "https://ajzoulspsdzrjxffqvoi.supabase.co";
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFqem91bHNwc2R6cmp4ZmZxdm9pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIzMDYzMDMsImV4cCI6MjA2Nzg4MjMwM30.iHTW9lmLwlq3nWsz1NYeQJg-ZKYgrOaN6SBMHNyndLg";
 
+// Custom fetch wrapper with enhanced error handling and required properties
+function createEnhancedFetch() {
+    console.log('[useAuth] Creating enhanced fetch wrapper...');
+    
+    if (typeof fetch === 'undefined') {
+        console.error('[useAuth] Native fetch is not available');
+        return null;
+    }
+    
+    return async (input: RequestInfo | URL, init?: RequestInit) => {
+        console.log('[useAuth] Enhanced fetch called:', { 
+            url: typeof input === 'string' ? input : input.toString(),
+            method: init?.method || 'GET',
+            hasHeaders: !!init?.headers
+        });
+        
+        try {
+            // Ensure headers object exists and has required properties
+            const enhancedInit = {
+                ...init,
+                headers: new Headers(init?.headers || {}),
+            };
+            
+            // Ensure the headers object has all required methods
+            if (!enhancedInit.headers.get) {
+                console.error('[useAuth] Headers object missing required methods');
+                enhancedInit.headers = new Headers(init?.headers || {});
+            }
+            
+            const response = await fetch(input, enhancedInit);
+            
+            console.log('[useAuth] Enhanced fetch response:', {
+                status: response.status,
+                ok: response.ok,
+                url: response.url
+            });
+            
+            return response;
+        } catch (error) {
+            console.error('[useAuth] Enhanced fetch error:', {
+                error: error instanceof Error ? error.message : String(error),
+                stack: error instanceof Error ? error.stack : undefined
+            });
+            throw error;
+        }
+    };
+}
+
+// Polyfill missing global objects that Supabase client expects
+function polyfillGlobals() {
+    console.log('[useAuth] Polyfilling globals for Supabase compatibility...');
+    
+    // Ensure globalThis has all required properties
+    if (typeof globalThis !== 'undefined') {
+        // Ensure Headers constructor is available
+        if (typeof globalThis.Headers === 'undefined' && typeof Headers !== 'undefined') {
+            globalThis.Headers = Headers;
+        }
+        
+        // Ensure Request constructor is available
+        if (typeof globalThis.Request === 'undefined' && typeof Request !== 'undefined') {
+            globalThis.Request = Request;
+        }
+        
+        // Ensure Response constructor is available
+        if (typeof globalThis.Response === 'undefined' && typeof Response !== 'undefined') {
+            globalThis.Response = Response;
+        }
+        
+        // Ensure URL constructor is available
+        if (typeof globalThis.URL === 'undefined' && typeof URL !== 'undefined') {
+            globalThis.URL = URL;
+        }
+        
+        // Add process polyfill if missing
+        if (typeof globalThis.process === 'undefined') {
+            globalThis.process = {
+                env: {},
+                version: '16.0.0',
+                versions: { node: '16.0.0' }
+            } as NodeJS.Process;
+        }
+        
+        // Add Buffer polyfill if missing (though this should come from vite plugin)
+        if (typeof globalThis.Buffer === 'undefined' && typeof Buffer !== 'undefined') {
+            globalThis.Buffer = Buffer;
+        }
+    }
+    
+    console.log('[useAuth] Global polyfill status:', {
+        hasHeaders: typeof Headers !== 'undefined',
+        hasRequest: typeof Request !== 'undefined',
+        hasResponse: typeof Response !== 'undefined',
+        hasURL: typeof URL !== 'undefined',
+        hasProcess: typeof process !== 'undefined',
+        hasBuffer: typeof Buffer !== 'undefined',
+        hasGlobalThis: typeof globalThis !== 'undefined'
+    });
+}
+
 // Check browser API availability
 function checkBrowserAPIs() {
     const apiChecks = {
@@ -87,6 +187,9 @@ function initializeSupabaseClient(retryCount = 0): ReturnType<typeof createClien
         return null;
     }
     
+    // Polyfill globals before doing anything else
+    polyfillGlobals();
+    
     // Check browser API availability
     if (!checkBrowserAPIs()) {
         console.error('[useAuth] Required browser APIs not available - cannot create Supabase client');
@@ -101,28 +204,51 @@ function initializeSupabaseClient(retryCount = 0): ReturnType<typeof createClien
     }
     
     try {
-        console.log('[useAuth] Creating Supabase client with configuration...');
+        console.log('[useAuth] Creating Supabase client with enhanced configuration...');
         
-        // Create client with explicit configuration for better browser compatibility
+        // Create enhanced fetch function
+        const enhancedFetch = createEnhancedFetch();
+        if (!enhancedFetch) {
+            throw new Error('Failed to create enhanced fetch wrapper');
+        }
+        
+        // Create client with comprehensive configuration for maximum browser compatibility
         const client = createClient(supabaseUrl, supabaseAnonKey, {
             auth: {
                 autoRefreshToken: true,
                 persistSession: true,
-                detectSessionInUrl: true
+                detectSessionInUrl: true,
+                storage: typeof localStorage !== 'undefined' ? localStorage : undefined,
+                flowType: 'pkce'
             },
             global: {
-                // Ensure we're using the browser's native fetch
-                fetch: fetch.bind(globalThis)
+                // Use our enhanced fetch wrapper
+                fetch: enhancedFetch,
+                // Ensure Headers constructor is available
+                headers: typeof Headers !== 'undefined' ? Headers : undefined,
+            },
+            // Add additional configuration to handle edge cases
+            db: {
+                schema: 'public'
+            },
+            // Disable automatic retries that might cause issues
+            realtime: {
+                params: {
+                    eventsPerSecond: 2
+                }
             }
         });
         
         console.log('[useAuth] Supabase client initialized successfully');
         
-        // Test client connectivity
+        // Test client connectivity with comprehensive error handling
         client.auth.getSession().then(() => {
             console.log('[useAuth] Supabase client connectivity test passed');
         }).catch((error) => {
-            console.warn('[useAuth] Supabase client connectivity test failed:', error);
+            console.warn('[useAuth] Supabase client connectivity test failed (non-fatal):', {
+                error: error instanceof Error ? error.message : String(error),
+                timestamp: new Date().toISOString()
+            });
         });
         
         return client;
@@ -133,19 +259,25 @@ function initializeSupabaseClient(retryCount = 0): ReturnType<typeof createClien
             stack: error instanceof Error ? error.stack : undefined,
             timestamp: new Date().toISOString(),
             userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
-            retryCount
+            retryCount,
+            // Additional debugging info
+            globalThisType: typeof globalThis,
+            fetchType: typeof fetch,
+            headersType: typeof Headers,
+            processEnv: typeof process !== 'undefined' ? Object.keys(process.env || {}).length : 0
         });
         
-        // Retry logic
+        // Retry logic with progressive backoff
         if (retryCount < MAX_RETRY_ATTEMPTS - 1) {
-            console.log(`[useAuth] Retrying Supabase client initialization in ${RETRY_DELAY}ms...`);
+            const backoffDelay = RETRY_DELAY * (retryCount + 1); // Progressive backoff
+            console.log(`[useAuth] Retrying Supabase client initialization in ${backoffDelay}ms...`);
             setTimeout(() => {
                 const retryClient = initializeSupabaseClient(retryCount + 1);
                 if (retryClient) {
                     supabase = retryClient;
                     console.log('[useAuth] Supabase client retry successful');
                 }
-            }, RETRY_DELAY);
+            }, backoffDelay);
         } else {
             console.error('[useAuth] All Supabase client initialization attempts failed');
         }
@@ -154,21 +286,150 @@ function initializeSupabaseClient(retryCount = 0): ReturnType<typeof createClien
     }
 }
 
-// Lazy getter for Supabase client
+// Build-time environment detection
+const isProduction = import.meta.env.PROD;
+const isVercelBuild = import.meta.env.VERCEL === '1';
+const isDevelopment = import.meta.env.DEV;
+
+console.log('[useAuth] Build environment detected:', {
+    isProduction,
+    isVercelBuild,
+    isDevelopment,
+    mode: import.meta.env.MODE
+});
+
+// Lazy getter for Supabase client with fallback support
 function getSupabaseClient(): ReturnType<typeof createClient> | null {
     if (supabase) {
         return supabase;
     }
     
-    // Attempt lazy initialization
     console.log('[useAuth] Lazy initializing Supabase client...');
-    supabase = initializeSupabaseClient();
-    return supabase;
+    
+    // In production builds, be more aggressive about fallbacks
+    if (isProduction || isVercelBuild) {
+        try {
+            supabase = initializeSupabaseClient();
+            if (!supabase) {
+                console.warn('[useAuth] Production build: falling back to mock client');
+                return createMockSupabaseClient();
+            }
+            return supabase;
+        } catch (error) {
+            console.error('[useAuth] Production initialization failed, using mock client:', error);
+            return createMockSupabaseClient();
+        }
+    } else {
+        // In development, allow more retries
+        supabase = initializeSupabaseClient();
+        return supabase;
+    }
 }
+
+// Create fallback mock client for graceful degradation
+function createMockSupabaseClient() {
+    console.warn('[useAuth] Creating mock Supabase client for fallback');
+    
+    const mockAuth = {
+        getSession: async () => {
+            console.warn('[useAuth] Mock getSession called');
+            return { data: { session: null }, error: null };
+        },
+        signInWithOAuth: async () => {
+            console.warn('[useAuth] Mock signInWithOAuth called - authentication unavailable');
+            return { data: { provider: null, url: null }, error: { message: 'Authentication unavailable in fallback mode' } };
+        },
+        signOut: async () => {
+            console.warn('[useAuth] Mock signOut called');
+            return { error: null };
+        },
+        onAuthStateChange: () => {
+            console.warn('[useAuth] Mock onAuthStateChange called');
+            return {
+                data: {
+                    subscription: {
+                        unsubscribe: () => console.warn('[useAuth] Mock unsubscribe called')
+                    }
+                }
+            };
+        }
+    };
+    
+    return { auth: mockAuth } as ReturnType<typeof createClient>;
+}
+
+// Dynamic import strategy with progressive loading
+async function dynamicInitializeSupabaseClient(): Promise<ReturnType<typeof createClient> | null> {
+    console.log('[useAuth] Starting dynamic Supabase client initialization...');
+    
+    // Wait for window to be fully loaded
+    if (typeof window === 'undefined') {
+        console.log('[useAuth] No window object - skipping dynamic initialization');
+        return null;
+    }
+    
+    // Ensure DOM is fully loaded
+    if (document.readyState !== 'complete') {
+        console.log('[useAuth] Waiting for DOM to be ready...');
+        await new Promise(resolve => {
+            if (document.readyState === 'complete') {
+                resolve(void 0);
+            } else {
+                const handler = () => {
+                    if (document.readyState === 'complete') {
+                        document.removeEventListener('readystatechange', handler);
+                        resolve(void 0);
+                    }
+                };
+                document.addEventListener('readystatechange', handler);
+            }
+        });
+    }
+    
+    // Add small delay to ensure all polyfills are loaded
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    console.log('[useAuth] DOM ready, attempting dynamic client creation...');
+    return initializeSupabaseClient();
+}
+
+// Enhanced client getter with dynamic loading and fallback (async version for future use)
+async function getSupabaseClientAsync(): Promise<ReturnType<typeof createClient> | null> {
+    if (supabase) {
+        return supabase;
+    }
+    
+    console.log('[useAuth] No existing client, attempting dynamic initialization...');
+    const dynamicClient = await dynamicInitializeSupabaseClient();
+    
+    if (dynamicClient) {
+        supabase = dynamicClient;
+        console.log('[useAuth] Dynamic client initialization successful');
+        return dynamicClient;
+    }
+    
+    console.warn('[useAuth] Dynamic client initialization failed, using mock client');
+    return createMockSupabaseClient();
+}
+
+// Export for potential future use
+export { getSupabaseClientAsync };
 
 // Initial attempt to create client (but don't fail if it doesn't work)
 if (typeof window !== 'undefined') {
-    supabase = initializeSupabaseClient();
+    // Use setTimeout to ensure this runs after all other initialization
+    setTimeout(() => {
+        dynamicInitializeSupabaseClient().then(client => {
+            if (client) {
+                supabase = client;
+                console.log('[useAuth] Initial dynamic client creation successful');
+            } else {
+                console.warn('[useAuth] Initial dynamic client creation failed - will use lazy loading');
+            }
+        }).catch(error => {
+            console.warn('[useAuth] Initial dynamic client creation error:', error);
+        });
+    }, 0);
 }
 
 interface AuthContextType {
