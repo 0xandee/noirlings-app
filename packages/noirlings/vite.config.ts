@@ -10,29 +10,45 @@ export default defineConfig(({ mode }: { mode: string }) => {
   const isVercel = process.env.VERCEL === "1" || mode === "vercel";
 
   const base = {
-    optimizeDeps: {
-      include: ['buffer'],
-      exclude: [
-        "@noir-lang/noir_wasm",
-        "@noir-lang/backend_barretenberg",
-        "@noir-lang/noir_js",
-        "@noir-lang/types"
-      ],
-      esbuildOptions: {
-        target: "esnext",
+    // Disable optimization for Vercel builds to save memory
+    ...(isVercel ? {} : {
+      optimizeDeps: {
+        include: ['buffer'],
+        exclude: [
+          "@noir-lang/noir_wasm",
+          "@noir-lang/backend_barretenberg",
+          "@noir-lang/noir_js",
+          "@noir-lang/types"
+        ],
+        esbuildOptions: {
+          target: "esnext",
+        },
       },
-    },
+    }),
     build: {
       target: "esnext",
       // Memory optimization for Vercel builds
       ...(isVercel ? {
         outDir: "../../dist",
         chunkSizeWarningLimit: 1000,
+        sourcemap: false, // Disable sourcemaps to save memory
+        minify: 'esbuild', // Use esbuild for faster, lower memory minification
         rollupOptions: {
           output: {
-            manualChunks: {
-              vendor: ['react', 'react-dom'],
-              noir: ['@noir-lang/noir_wasm', '@noir-lang/noir_js']
+            manualChunks: (id) => {
+              // More aggressive chunking for memory optimization
+              if (id.includes('node_modules')) {
+                if (id.includes('@noir-lang')) {
+                  return 'noir';
+                }
+                if (id.includes('react') || id.includes('react-dom')) {
+                  return 'react-vendor';
+                }
+                if (id.includes('monaco')) {
+                  return 'monaco';
+                }
+                return 'vendor';
+              }
             }
           }
         }
@@ -57,16 +73,17 @@ export default defineConfig(({ mode }: { mode: string }) => {
     },
     plugins: [
       react(),
-      dts({
+      // Only generate TypeScript declarations for non-Vercel builds to save memory
+      ...(isVercel ? [] : [dts({
         insertTypesEntry: true,
-      }),
+      })]),
+      // Use minimal polyfills for Vercel builds
       nodePolyfills({
-        // Minimal polyfills for Supabase compatibility
-        include: ['buffer', 'process'],
+        include: isVercel ? ['buffer'] : ['buffer', 'process'],
         globals: {
           Buffer: true,
           global: true,
-          process: true,
+          process: !isVercel,
         },
       }),
     ],
