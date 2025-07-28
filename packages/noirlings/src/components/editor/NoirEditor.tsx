@@ -17,6 +17,8 @@ import AdvancedExercisesSidebar from "../advancedExercisesSidebar/AdvancedExerci
 import type { OrderedExercise } from "../exercisesSidebar/ExercisesSidebar";
 import { BASIC_CATEGORIES, ADVANCED_CATEGORIES, loadExerciseData, getOrderedExercises, getAdvancedExercises } from "../../utils/exerciseLoader";
 import ReactMarkdown from "react-markdown";
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { oneDark, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { formatExerciseName } from "../../utils/formatExerciseName";
 import { useAuth } from "../../hooks/useAuth";
 import { supabase } from "../../hooks/useAuth";
@@ -33,6 +35,52 @@ import { CompiledCircuit } from "@noir-lang/types";
 import { createFileFromExercise } from "../../utils/exerciseLoader";
 
 type editorType = editor.IStandaloneCodeEditor;
+
+// Custom code block component for syntax highlighting
+interface CodeBlockProps {
+  node?: any;
+  inline?: boolean;
+  className?: string;
+  children?: React.ReactNode;
+  theme: string;
+  [key: string]: any;
+}
+
+const CodeBlock = ({ node, inline, className, children, theme, ...props }: CodeBlockProps) => {
+  const match = /language-(\w+)/.exec(className || '');
+  const language = match ? match[1] : '';
+  
+  if (!inline && language) {
+    return React.createElement(
+      SyntaxHighlighter as any,
+      {
+        style: theme === 'dark' ? oneDark : oneLight,
+        language: language === 'noir' ? 'rust' : language, // Use Rust syntax for Noir
+        PreTag: "div",
+        customStyle: {
+          margin: '0.5em 0',
+          borderRadius: '4px',
+          backgroundColor: theme === 'dark' ? 'var(--hint-bg)' : 'var(--code-bg)',
+        },
+        codeTagProps: {
+          style: {
+            fontFamily: '"Fira Code Variable", "Fira Code", monospace',
+            fontSize: '0.9em',
+          }
+        },
+        ...props
+      },
+      String(children || '').replace(/\n$/, '')
+    );
+  }
+  
+  // For inline code, use the existing styling
+  return (
+    <code className={className} {...props}>
+      {children}
+    </code>
+  );
+};
 
 function NoirEditor(props: PlaygroundProps) {
   const editorRef = useRef<HTMLDivElement>(null);
@@ -638,7 +686,13 @@ function NoirEditor(props: PlaygroundProps) {
                     <div style={{ color: 'var(--color-primary)' }} className="mb-6">
                       {/* <span className="font-bold">Description</span> */}
                       <div className="markdown-body">
-                        <ReactMarkdown>{currentExerciseDescription}</ReactMarkdown>
+                        <ReactMarkdown
+                          components={{
+                            code: (props) => <CodeBlock {...props} theme={theme} />
+                          }}
+                        >
+                          {currentExerciseDescription}
+                        </ReactMarkdown>
                       </div>
                       <div className="mt-3 break-words" style={{ borderColor: 'var(--border-color)' }}>
                         <span style={{ color: 'var(--color-primary)' }}>
@@ -652,7 +706,13 @@ function NoirEditor(props: PlaygroundProps) {
                     <div className="whitespace-pre-line rounded flex flex-col gap-2" style={{ color: 'var(--color-secondary)' }}>
                       <span className="font-bold text-base" >Hint</span>
                       <div className="markdown-body markdown-body-hint">
-                        <ReactMarkdown>{currentExerciseHint.trim() !== "No hint this time" ? currentExerciseHint : ""}</ReactMarkdown>
+                        <ReactMarkdown
+                          components={{
+                            code: (props) => <CodeBlock {...props} theme={theme} />
+                          }}
+                        >
+                          {currentExerciseHint.trim() !== "No hint this time" ? currentExerciseHint : ""}
+                        </ReactMarkdown>
                       </div>
                     </div>
                   )}

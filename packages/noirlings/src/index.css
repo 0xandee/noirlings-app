@@ -123,3 +123,23 @@ body:not(#editor) {
 .exercise-nav-button:hover {
   background-color: var(--bg-toolbar-btn);
 }
+
+/* Syntax highlighter integration with themes */
+.markdown-body pre[class*="language-"] {
+  background: transparent !important;
+  margin: 0.5em 0 !important;
+}
+
+.markdown-body code[class*="language-"] {
+  background: transparent !important;
+  font-family: "Fira Code Variable", "Fira Code", monospace !important;
+}
+
+/* Override syntax highlighter background to use theme variables */
+[data-theme="dark"] .markdown-body pre > div {
+  background: var(--hint-bg) !important;
+}
+
+.markdown-body pre > div {
+  background: var(--code-bg) !important;
+}
