@@ -1,0 +1,36 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://noirlings.app/sitemap.xml
+
+# Crawl-delay for polite crawling
+Crawl-delay: 1
+
+# Allow important pages
+Allow: /
+Allow: /advanced
+
+# Block admin or non-public paths if any exist
+# Disallow: /admin/
+# Disallow: /api/
+
+# Allow search engines to index all exercise content
+Allow: /exercises/
+
+# Social media crawler agents
+User-agent: facebookexternalhit/*
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+# Allow OpenGraph crawlers
+User-agent: WhatsApp
+Allow: /
+
+User-agent: SkypeUriPreview
+Allow: /
