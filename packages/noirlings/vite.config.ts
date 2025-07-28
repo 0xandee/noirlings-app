@@ -2,7 +2,7 @@ import react from "@vitejs/plugin-react";
 import { LibraryFormats, defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 import path from "path";
-// import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import fs from 'fs';
 
 export default defineConfig(({ mode }: { mode: string }) => {
@@ -11,6 +11,7 @@ export default defineConfig(({ mode }: { mode: string }) => {
 
   const base = {
     optimizeDeps: {
+      include: ['buffer'],
       exclude: [
         "@noir-lang/noir_wasm",
         "@noir-lang/backend_barretenberg",
@@ -56,13 +57,13 @@ export default defineConfig(({ mode }: { mode: string }) => {
     },
     plugins: [
       react(),
-      // nodePolyfills({ globals: { Buffer: true } }),
       dts({
         insertTypesEntry: true,
       }),
     ],
     define: {
       global: 'globalThis',
+      'process.env': {}
     },
     server: {
       proxy: {
