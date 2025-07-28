@@ -31,25 +31,28 @@ export default defineConfig(({ mode }: { mode: string }) => {
       ...(isVercel ? {
         outDir: "../../dist",
         chunkSizeWarningLimit: 1000,
-        sourcemap: false, // Disable sourcemaps to save memory
-        minify: 'esbuild', // Use esbuild for faster, lower memory minification
+        sourcemap: false,
+        minify: 'esbuild',
         rollupOptions: {
           output: {
+            // Ultra-aggressive chunking to reduce memory per chunk
             manualChunks: (id) => {
-              // More aggressive chunking for memory optimization
               if (id.includes('node_modules')) {
-                if (id.includes('@noir-lang')) {
-                  return 'noir';
-                }
-                if (id.includes('react') || id.includes('react-dom')) {
-                  return 'react-vendor';
-                }
-                if (id.includes('monaco')) {
-                  return 'monaco';
-                }
+                // Split each major dependency into its own chunk
+                if (id.includes('@noir-lang/noir_wasm')) return 'noir-wasm';
+                if (id.includes('@noir-lang/noir_js')) return 'noir-js';  
+                if (id.includes('@noir-lang/backend_barretenberg')) return 'noir-backend';
+                if (id.includes('monaco-editor/esm/vs/editor')) return 'monaco-editor';
+                if (id.includes('monaco-editor/esm/vs/language')) return 'monaco-language';
+                if (id.includes('monaco-editor')) return 'monaco-core';
+                if (id.includes('react-dom')) return 'react-dom';
+                if (id.includes('react')) return 'react';
                 return 'vendor';
               }
-            }
+            },
+            // Reduce chunk size to minimize memory per build step
+            maxParallelFileOps: 1, // Process one file at a time
+            chunkFileNames: '[name]-[hash].js'
           }
         }
       } : {
