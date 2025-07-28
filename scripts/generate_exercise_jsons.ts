@@ -3,7 +3,7 @@ import path from 'path';
 import matter from 'gray-matter';
 
 // Use __dirname directly instead of import.meta.url
-const EXERCISES_DIR = path.join(__dirname, '../packages/playground/public/exercises');
+const EXERCISES_DIR = path.join(__dirname, '../packages/noirlings/public/exercises');
 
 // Define the order of exercise categories
 const BASIC_CATEGORIES = [
