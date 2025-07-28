@@ -9,13 +9,11 @@ import { verifyProof } from "../../utils/generateProof";
 export const ResultBox = ({
   proof,
   setProof,
-  compiledCode,
-  threads = 1
+  compiledCode
 }: {
   proof: ProofData;
   setProof: React.Dispatch<React.SetStateAction<ProofData | null>>;
   compiledCode?: CompiledCircuit | null;
-  threads?: number;
 }) => {
   const [verifying, setVerifying] = useState(false);
   const [verificationResult, setVerificationResult] = useState<boolean | null>(null);
@@ -74,7 +72,6 @@ export const ResultBox = ({
         circuit: compiledCode,
         proof: proofArray,
         publicInputs: proof.publicInputs,
-        threads: threads
       });
       
       setVerificationResult(isValid);

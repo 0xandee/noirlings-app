@@ -3,5 +3,10 @@
   "buildCommand": "yarn vercel-build",
   "outputDirectory": "dist",
   "framework": "vite",
+  "build": {
+    "env": {
+      "NODE_OPTIONS": "--max-old-space-size=8192"
+    }
+  },
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }

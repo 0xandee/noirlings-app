@@ -2,6 +2,7 @@
 - Removed all references to these variables and function, including event handlers and commented-out tooltip JSX in the draggable separator.
 - This resolves TypeScript errors TS6133 and allows the build to proceed successfully.
 - Removed the unused function 'toggleExercisesSidebar' from NoirEditor.tsx to resolve a lingering TS6133 error reported by TypeScript.
+  /d
 
 # Summary of Fixes for Vercel Build Error
 

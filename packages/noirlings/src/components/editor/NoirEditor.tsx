@@ -9,8 +9,7 @@ import {
 } from "../../utils/shareSnippet";
 import examples from "../../syntax/examples.json";
 import { ActionsBox } from "../actionsBox/actions";
-import { File, PlaygroundProps, ProofData } from "../../types";
-import { ResultBox } from "../resultBox/result";
+import { File, PlaygroundProps } from "../../types";
 import { editor } from "monaco-editor";
 import { FileSystem } from "../../utils/fileSystem";
 import ExercisesSidebar from "../exercisesSidebar/ExercisesSidebar";
@@ -22,10 +21,10 @@ import { formatExerciseName } from "../../utils/formatExerciseName";
 import { useAuth } from "../../hooks/useAuth";
 import { supabase } from "../../hooks/useAuth";
 import debounce from 'lodash/debounce';
-import { Link, useLocation } from "react-router-dom";
+import { Header } from '../Header';
 
 // Add icons for theme toggle
-import { Moon, Sun, Github, Copy, RotateCcw, Play, Lightbulb, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Copy, RotateCcw, Play, Lightbulb, ChevronLeft, ChevronRight } from 'lucide-react';
 
 // Add new imports
 import { compileCode } from "../../utils/generateProof";
@@ -39,11 +38,10 @@ function NoirEditor(props: PlaygroundProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const separatorRef = useRef<HTMLDivElement>(null);
 
-  const { theme, toggleTheme, setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const { monaco, loaded } = useMonaco(theme);
 
   const [monacoEditor, setMonacoEditor] = useState<editorType | null>(null); // To track the editor instance
-  const [proof, setProof] = useState<ProofData | null>(null);
   const [compiledCode, setCompiledCode] = useState<CompiledCircuit | null>(null);
   const [compileError, setCompileError] = useState<string | null>(null);
   const [pending, setPending] = useState<boolean>(false);
@@ -76,7 +74,7 @@ function NoirEditor(props: PlaygroundProps) {
   const [showHint, setShowHint] = useState(false);
 
   // Add after other useState hooks
-  const { user, login, logout } = useAuth();
+  const { user } = useAuth();
   const [finishedExercises, setFinishedExercises] = useState<string[]>(() => {
     const saved = localStorage.getItem("noir_finished_exercises");
     return saved ? JSON.parse(saved) : [];
@@ -478,7 +476,6 @@ function NoirEditor(props: PlaygroundProps) {
     setFilesystem(new FileSystem(exerciseFile));
     monacoEditor.setValue(initialExerciseContent);
     setCodeInBuffer(initialExerciseContent);
-    setProof(null);
     setShowHint(false);
     toast.success('Code reset to initial state!');
   };
@@ -523,7 +520,6 @@ function NoirEditor(props: PlaygroundProps) {
     setCompileError(null);
   }, [fileSystem]);
 
-  const location = useLocation();
 
   const currentCategories = props.isAdvancedMode ? ADVANCED_CATEGORIES : BASIC_CATEGORIES;
   const currentFinished = finishedExercises.filter(ex => {
@@ -533,138 +529,11 @@ function NoirEditor(props: PlaygroundProps) {
 
   return (
     <div className="h-screen w-full flex flex-col">
-      {/* Top toolbar */}
-      <div
-        className="px-4 py-2 flex justify-between items-center border-b"
-        style={{ backgroundColor: 'var(--bg-toolbar)', borderColor: 'var(--border-color)' }}
-      >
-        <div className="flex items-center gap-3 ml-2">
-          <Link
-            to="/"
-            style={{
-              color: location.pathname === "/" ? 'var(--color-accent)' : 'var(--color-secondary)',
-              textDecoration: 'none',
-            }}
-          >
-            {theme === 'light' ? (
-              <img src="/noirlingsapplogo-white.png" alt="Noirlings Logo" className="h-4 w-auto" style={{ maxHeight: 32 }} />
-            ) : (
-              <img src="/noirlingsapplogo-white.png" alt="Noirlings Logo" className="h-4 w-auto" style={{ maxHeight: 32 }} />
-            )}
-          </Link>
-          <div className="ml-4 flex gap-4 items-center">
-            <Link
-              to="/"
-              style={{
-                color: location.pathname === "/" ? 'var(--subheader-text)' : 'var(--header-text)',
-                textDecoration: 'none',
-              }}
-            >
-              Basic
-            </Link>
-            <Link
-              to="/advanced"
-              style={{
-                color: location.pathname === "/advanced" ? 'var(--subheader-text)' : 'var(--header-text)',
-                textDecoration: 'none',
-              }}
-            >
-              Advanced
-            </Link>
-          </div>
-          {/* <a
-            href="https://x.com/andeebtceth"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Follow @andeebtceth on X (Twitter)"
-            className="flex items-center gap-1 text-xs px-2 py-1 rounded hover:opacity-80 transition-opacity ml-2"
-            style={{ color: 'var(--finished-counter)', backgroundColor: 'transparent', textDecoration: 'none' }}
-          >
-            <span>Follow</span>
-          </a> */}
-        </div>
-        <div className="flex items-center gap-4">
-          {/* Theme toggle button */}
-          <button
-            onClick={toggleTheme}
-            className="flex items-center justify-center w-10 h-10 rounded-full hover:opacity-80 transition-opacity cursor-pointer"
-            style={{ backgroundColor: 'transparent', }}
-            aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-          >
-            {theme === 'light' ? (
-              <Sun size={18} color="var(--header-text)" />
-            ) : (
-              <Moon size={18} color="var(--header-text)" />
-            )}
-          </button>
-
-          <div className="text-base " style={{ color: "var(--header-text)" }}>
-            Finished: {currentFinished}/{orderedExercises.length}
-          </div>
-          <div>
-            <div className="flex items-center">
-              {user ? (
-                <img
-                  src={user.user_metadata.avatar_url}
-                  alt="User avatar"
-                  className="w-10 h-10 rounded-l object-cover ml-3 border border-r-0"
-                  style={{ color: "var(--header-text)", borderColor: 'var(--border-color)', backgroundColor: 'transparent' }}
-                />
-              ) : (
-                <div className="ml-3" />
-              )}
-
-              <button
-                className={`text-base px-4 py-2 ${user ? 'rounded-r border-l-0 ' : 'rounded'} hover:opacity-80 transition-opacity border flex items-center gap-2 cursor-pointer`}
-                style={{ color: "var(--header-text)", borderColor: 'var(--border-color)', backgroundColor: 'transparent' }}
-                onClick={user ? logout : login}
-              >
-                {user ? (
-                  <div className="group flex items-center gap-2">
-                    <span className="group-hover:hidden">{user.user_metadata.user_name || 'User'}</span>
-                    <span className="hidden group-hover:block">Logout</span>
-                  </div>
-                ) : (
-                  <>
-                    <Github size={16} color="var(--header-text)" />
-                    <span>Login with GitHub</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-
-          {/* <button
-            className="text-sm px-3 py-1 rounded hover:opacity-80 transition-opacity border flex items-center gap-1 cursor-pointer ml-3"
-            style={{ color: "var(--finished-counter)", borderColor: 'var(--border-color)', backgroundColor: 'transparent' }}
-            onClick={() => {
-              const template = shareTemplates[Math.floor(Math.random() * shareTemplates.length)];
-              const text = template
-                .replace('{finished}', finishedExercises.length.toString())
-                .replace('{total}', orderedExercises.length.toString());
-              const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
-              window.open(url, '_blank', 'noopener,noreferrer');
-            }}
-            aria-label="Share your Noirlings progress on X (Twitter)"
-          >
-            <span>Share on</span>
-            <FaXTwitter size={16} color="var(--finished-counter)" />
-          </button> */}
-
-          {/* <a
-            href="http://x.com/andeebtceth/"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Follow on X (Twitter)"
-            className="flex items-center justify-center w-10 h-10 rounded-full hover:opacity-80 transition-opacity cursor-pointer ml-2"
-            style={{ backgroundColor: 'transparent' }}
-          >
-            <FaXTwitter size={18} color="var(--finished-counter)" />
-          </a> */}
-
-
-        </div>
-      </div>
+      <Header 
+        showProgress={true} 
+        completedCount={currentFinished} 
+        totalCount={orderedExercises.length} 
+      />
 
       {/* Main content area */}
       <div className="flex flex-1 overflow-hidden flex-col md:flex-row">
@@ -790,8 +659,8 @@ function NoirEditor(props: PlaygroundProps) {
                 </div>
               </div>
 
-              {/* Fixed bottom ActionsBox */}
-              {loaded && !proof && (
+              {/* Fixed bottom ActionsBox - Compilation only, no proof generation */}
+              {loaded && (
                 <div className="flex-shrink-0 mt-4">
                   <ActionsBox
                     project={fileSystem}
@@ -805,8 +674,6 @@ function NoirEditor(props: PlaygroundProps) {
                     compileError={compileError}
                     pending={pending}
                     compile={compile}
-                    setProof={setProof}
-                    threads={navigator.hardwareConcurrency || 1}
                   />
                 </div>
               )}
@@ -873,7 +740,7 @@ function NoirEditor(props: PlaygroundProps) {
           {/* Editor area */}
           <div
             className={`flex-1 flex flex-col min-h-0 box-border text-sm font-fira-code w-full h-auto`}
-            id="noir__playground"
+            id="noir__editor"
             style={{
               backgroundColor: 'var(--bg-secondary)',
               minWidth: 0,
@@ -881,7 +748,7 @@ function NoirEditor(props: PlaygroundProps) {
               userSelect: isDragging ? "none" : "auto",
             }}
           >
-            <div className="px-4 py-4 gap-4 flex justify-end items-center" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+            <div className="px-4 py-4 gap-4 flex justify-end items-center" style={{ backgroundColor: 'var(--monaco-editor-bg)' }}>
               <div className="relative">
                 <button
                   onClick={() => {
@@ -962,10 +829,6 @@ function NoirEditor(props: PlaygroundProps) {
               <div ref={editorRef} id="editor" className="w-full h-64 md:h-full min-h-0 flex-1" style={{ minHeight: 0 }}></div>
             </section>
 
-            <div className="w-full shadow rounded-br-lg flex flex-col md:flex-row flex-wrap sticky bottom-0 z-10"
-              style={{ backgroundColor: 'var(--bg-secondary)' }}>
-              {loaded && proof && <ResultBox proof={proof} setProof={setProof} compiledCode={compiledCode} threads={navigator.hardwareConcurrency || 1} />}
-            </div>
           </div>
         </div>
       </div>

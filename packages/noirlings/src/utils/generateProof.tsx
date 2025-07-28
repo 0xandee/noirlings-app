@@ -1,7 +1,6 @@
-import { CompiledCircuit } from "@noir-lang/types";
-import { BarretenbergBackend } from "@noir-lang/backend_barretenberg";
+import { CompiledCircuit, InputMap } from "@noir-lang/types";
+import { BarretenbergBackend, BarretenbergVerifier } from "@noir-lang/backend_barretenberg";
 import { Noir } from "@noir-lang/noir_js";
-import { InputMap } from "@noir-lang/noirc_abi";
 
 import { compile, createFileManager } from "@noir-lang/noir_wasm";
 import { FileSystem } from "./fileSystem";
@@ -13,20 +12,48 @@ const stringToStream = (data: string) => {
 
 export const compileCode = async (fileSystem: FileSystem) => {
   console.log("Starting compilation...");
+  // Create a fresh FileManager for each compilation to avoid file accumulation
   const fm = createFileManager("/");
 
   try {
-    // Write all files to the file manager
+    // Create Nargo.toml for newer Noir versions (they expect it to exist)
+    const nargoToml = `[package]
+name = "noirlings"
+type = "bin"
+authors = [""]
+
+[dependencies]`;
+    
+    console.log("Writing Nargo.toml...");
+    await fm.writeFile("Nargo.toml", stringToStream(nargoToml));
+    
+    // Process files from the file system
     const files = fileSystem.flatten().filter((item) => item.type === "file");
     console.log("Writing files:", files.map(f => f.name));
     
     for (const file of files) {
-      const data = decodeSnippet(file.content as string);
-      await fm.writeFile(`./${file.name}`, stringToStream(data));
+      let data: string;
+      try {
+        // Try to decode the content first (in case it's encoded like examples)
+        data = decodeSnippet(file.content as string);
+      } catch {
+        // If decoding fails, use the content as-is (for playground text)
+        data = file.content as string;
+      }
+      
+      // Extract just the filename from the full path (file.name already includes path)
+      const fileName = file.name.split('/').pop() || file.name;
+      // Put main files in src directory for proper Noir project structure
+      const filePath = fileName === 'main.nr' ? `src/${fileName}` : `./${fileName}`;
+      
+      console.log(`Writing file: ${filePath} with content:`, data.substring(0, 100) + "...");
+      
+      // Write file with correct path structure
+      await fm.writeFile(filePath, stringToStream(data));
     }
 
-    console.log("Compiling circuit...");
-    const compiled = await compile(fm, "/root");
+    console.log("Starting Noir compilation...");
+    const compiled = await compile(fm, "/");
     
     // Enhanced error checking
     if (!compiled) {
@@ -79,25 +106,48 @@ export const compileCode = async (fileSystem: FileSystem) => {
 export async function generateProof({
   circuit,
   input,
-  threads,
 }: {
   circuit: CompiledCircuit;
   input: InputMap;
-  threads: number;
 }) {
   try {
-    console.log("Initializing Noir circuit...");
+    console.log("Creating backend and Noir instance...");
+    // Use working BarretenbergBackend with beta.6 compatibility
+    // Type assertion to handle version compatibility between packages
+    const backend = new BarretenbergBackend(circuit as any);
     const noir = new Noir(circuit);
-    const backend = new BarretenbergBackend(circuit as any, { threads });
+    
+    console.log("Backend and Noir instance created successfully");
 
     console.log("Executing circuit with inputs:", input);
-    const { witness } = await noir.execute(input);
+    // Format inputs properly - ensure they're the right type
+    const formattedInput = Object.entries(input).reduce((acc, [key, value]) => {
+      // Convert string inputs to numbers if they're numeric
+      const numValue = typeof value === 'string' ? (isNaN(Number(value)) ? value : Number(value)) : value;
+      acc[key] = numValue;
+      return acc;
+    }, {} as InputMap);
     
-    console.log("Generating proof...");
-    const proof = await backend.generateProof(witness);
+    console.log("Formatted inputs:", formattedInput);
     
-    console.log("Proof generation successful");
-    return proof;
+    // Validate that all required inputs are provided
+    if (Object.keys(formattedInput).length === 0) {
+      throw new Error("No inputs provided. Please provide values for all circuit parameters.");
+    }
+    
+    // Follow tutorial pattern exactly: execute to get witness, then generate proof
+    console.log("Executing circuit to generate witness...");
+    try {
+      const { witness } = await noir.execute(formattedInput);
+      console.log("Witness generated successfully, generating proof...");
+      
+      const proof = await backend.generateProof(witness);
+      console.log("Proof generation successful");
+      return proof;
+    } catch (proofError) {
+      console.error("Proof generation failed:", proofError);
+      throw new Error(`Proof generation failed: ${proofError}`);
+    }
   } catch (error) {
     console.error("Proof generation error:", error);
     
@@ -105,7 +155,13 @@ export async function generateProof({
       let message = error.message;
       
       // Add helpful tips for common proof generation errors
-      if (message.includes("execution error") || message.includes("constraint")) {
+      if (message.includes("Cannot satisfy constraint")) {
+        message = "Circuit constraint failed during witness generation. An assertion in your code is not satisfied with the provided inputs.";
+        message += "\n\nTip: Check that your assertions are satisfied with the input values. For example, if you have 'assert(x != y)', make sure x and y are actually different.";
+      } else if (message.includes("unreachable")) {
+        message = "Backend error during proof generation. This can happen due to constraint violations or backend issues.";
+        message += "\n\nTip: Try different input values, reduce circuit complexity, or check for constraint violations.";
+      } else if (message.includes("execution error") || message.includes("constraint")) {
         message += "\n\nTip: Check that your circuit logic is correct and all constraints are satisfied.";
       } else if (message.includes("input") || message.includes("parameter")) {
         message += "\n\nTip: Verify that all required inputs are provided and have correct types.";
@@ -126,26 +182,28 @@ export async function verifyProof({
   circuit,
   proof,
   publicInputs,
-  threads,
 }: {
   circuit: CompiledCircuit;
   proof: Uint8Array;
   publicInputs: string[];
-  threads: number;
 }) {
   try {
-    console.log("Initializing backend for verification...");
-    const backend = new BarretenbergBackend(circuit as any, { threads });
+    console.log("Initializing backend and verifier...");
+    // Use working BarretenbergBackend with beta.6 compatibility
+    // Type assertion to handle version compatibility between packages
+    const backend = new BarretenbergBackend(circuit as any);
+    const verifier = new BarretenbergVerifier();
     
-    // Convert public inputs to the format expected by the backend
-    console.log("Formatting public inputs for verification:", publicInputs);
-    const formattedPublicInputs = publicInputs.map(input => input);
+    console.log("Getting verification key...");
+    const verificationKey = await backend.getVerificationKey();
     
     console.log("Verifying proof...");
-    const isValid = await backend.verifyProof({
+    // Use the working verifier pattern
+    const proofData = {
       proof,
-      publicInputs: formattedPublicInputs
-    });
+      publicInputs
+    };
+    const isValid = await verifier.verifyProof(proofData, verificationKey);
 
     console.log("Verification result:", isValid);
     return isValid;

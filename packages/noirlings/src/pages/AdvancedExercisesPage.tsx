@@ -7,7 +7,7 @@ const AdvancedExercisesPage: React.FC = () => {
             baseUrl={
                 process.env.NODE_ENV === "development"
                     ? window.location.host
-                    : "https://noir-playground.netlify.app"
+                    : "https://noirlings.app"
             }
             isAdvancedMode={true}
         />

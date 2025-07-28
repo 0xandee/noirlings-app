@@ -1,23 +1,25 @@
 {
-  "name": "noir-playground-root",
+  "name": "noirlings-app-root",
   "private": true,
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "build": "yarn generate-exercises && NODE_OPTIONS=--max-old-space-size=8192 && yarn workspace @andeebtceth/noirlings-app run build",
+    "build": "yarn generate-exercises && NODE_OPTIONS=--max-old-space-size=8192 yarn workspace @andeebtceth/noirlings-app run build",
     "dev": "yarn generate-exercises && yarn workspace @andeebtceth/noirlings-app run dev",
+    "dev-no-exercises": "yarn workspace @andeebtceth/noirlings-app run dev",
     "start": "yarn generate-exercises && yarn workspace @andeebtceth/noirlings-app run start",
     "serve": "yarn workspace @andeebtceth/noirlings-app run preview",
     "publish": "yarn generate-exercises && yarn workspace @andeebtceth/noirlings-app run publish",
     "server": "yarn workspace @andeebtceth/noirlings-app run server",
-    "vercel-build": "yarn generate-exercises && NODE_OPTIONS=--max-old-space-size=8192 && yarn workspace @andeebtceth/noirlings-app build",
+    "vercel-build": "yarn generate-exercises && VERCEL=1 yarn workspace @andeebtceth/noirlings-app run build:vercel",
     "generate-exercises": "yarn generate-exercises:ts",
     "generate-exercises:ts": "ts-node --project scripts/tsconfig.json scripts/generate_exercise_jsons.ts"
   },
   "version": "0.8.0",
   "packageManager": "yarn@4.8.1+sha512.bc946f2a022d7a1a38adfc15b36a66a3807a67629789496c3714dd1703d2e6c6b1c69ff9ec3b43141ac7a1dd853b7685638eb0074300386a59c18df351ef8ff6",
   "dependencies": {
+    "@esbuild/darwin-x64": "^0.25.8",
     "gray-matter": "^4.0.3",
     "js-yaml": "^4.1.0",
     "react-icons": "^5.5.0",

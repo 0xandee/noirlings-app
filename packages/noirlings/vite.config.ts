@@ -2,11 +2,12 @@ import react from "@vitejs/plugin-react";
 import { LibraryFormats, defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 import path from "path";
-import { nodePolyfills } from 'vite-plugin-node-polyfills';
+// import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import fs from 'fs';
 
 export default defineConfig(({ mode }: { mode: string }) => {
   console.log("Building in mode:", mode);
-  const isVercel = process.env.VERCEL === "1";
+  const isVercel = process.env.VERCEL === "1" || mode === "vercel";
 
   const base = {
     optimizeDeps: {
@@ -22,9 +23,18 @@ export default defineConfig(({ mode }: { mode: string }) => {
     },
     build: {
       target: "esnext",
-      // If we're building for Vercel, disable library mode and use the default dist directory
+      // Memory optimization for Vercel builds
       ...(isVercel ? {
-        outDir: "dist",
+        outDir: "../../dist",
+        chunkSizeWarningLimit: 1000,
+        rollupOptions: {
+          output: {
+            manualChunks: {
+              vendor: ['react', 'react-dom'],
+              noir: ['@noir-lang/noir_wasm', '@noir-lang/noir_js']
+            }
+          }
+        }
       } : {
         lib: {
           entry: path.resolve("src/index.tsx"),
@@ -46,11 +56,14 @@ export default defineConfig(({ mode }: { mode: string }) => {
     },
     plugins: [
       react(),
-      nodePolyfills({ globals: { Buffer: true } }),
+      // nodePolyfills({ globals: { Buffer: true } }),
       dts({
         insertTypesEntry: true,
       }),
     ],
+    define: {
+      global: 'globalThis',
+    },
     server: {
       proxy: {
         "/api": "http://localhost:5173",

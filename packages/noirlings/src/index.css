@@ -17,30 +17,32 @@
   --code-bg: #f1f5f9; /* Muted */
   --code-color: #0f172a; /* Primary */
   --hint-bg: #f1f5f9; /* Muted */
+  --monaco-editor-bg: #ffffff; /* Monaco editor background - light theme */
   --finished-text: #4CAF50; /* Derived */
   --header-text: #d5d5d5; /* Foreground */
   --subheader-text: #ffffff; /* Foreground */
 }
 
 [data-theme="dark"] {
-  /* Dark theme variables */
-  --bg-primary: #09090b; /* Background */
-  --bg-secondary: #1C2021; /* Secondary */
-  --bg-sidebar: #0f172a; /* Sidebar Dark Background */
-  --bg-toolbar: #0f172a; /* Background */
-  --bg-toolbar-btn: #27272a; /* Accent */
+  /* Dark theme variables - Updated with noir-playground background colors */
+  --bg-primary: hsl(222.2, 84%, 4.9%); /* Main app background - noir-playground style */
+  --bg-secondary: hsl(222.2, 84%, 4.9%); /* Card backgrounds - noir-playground style */
+  --bg-sidebar: hsl(222.2, 84%, 4.9%); /* Sidebar background - same as main app background */
+  --bg-toolbar: hsl(222.2, 84%, 4.9%); /* Toolbar background - noir-playground style */
+  --bg-toolbar-btn: hsl(217.2, 32.6%, 17.5%); /* Button backgrounds */
   --bg-toolbar-btn-hover: #3b82f6; /* Sidebar Dark Accent for hover */
-  --color-primary: #f8fafc; /* Foreground */
-  --color-secondary: #99afd0; /* Primary */
-  --color-accent: #f8fafc; /* Sidebar Dark Accent */
-  --border-color: #334255; /* Border/Input */
-  --code-bg: #27272a; /* Muted */
-  --code-color: #f8fafc; /* Primary */
-  --hint-bg: #27272a; /* Muted */
-  --separator-color: #09090b; /* Background */
+  --color-primary: hsl(210, 40%, 98%); /* Foreground text - noir-playground style */
+  --color-secondary: #99afd0; /* Secondary text */
+  --color-accent: hsl(195, 100%, 65%); /* Primary accent - noir-playground style */
+  --border-color: hsl(217.2, 32.6%, 17.5%); /* Border colors - noir-playground style */
+  --code-bg: hsl(217.2, 32.6%, 17.5%); /* Code background */
+  --code-color: hsl(210, 40%, 98%); /* Code text color */
+  --hint-bg: hsl(217.2, 32.6%, 17.5%); /* Hint background */
+  --monaco-editor-bg: #1E1E1E; /* Monaco editor background - dark theme */
+  --separator-color: hsl(222.2, 84%, 4.9%); /* Separator color */
   --finished-text: #4CAF50; /* Keep green for finished */
-  --header-text: #99afd0; /* Foreground */
-  --subheader-text: #f8fafc; /* Foreground */
+  --header-text: #99afd0; /* Header text */
+  --subheader-text: hsl(210, 40%, 98%); /* Subheader text */
 }
 
 body {
@@ -55,7 +57,7 @@ body:not(#editor) {
 }
 
 *,
-#noir__playground {
+#noir__editor {
   border-width: 0;
   border-style: solid;
 }
