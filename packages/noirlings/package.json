@@ -20,6 +20,8 @@
     "build": "NODE_OPTIONS=--max-old-space-size=8192 tsc && NODE_OPTIONS=--max-old-space-size=8192 vite build",
     "build:vercel": "NODE_OPTIONS=--max-old-space-size=2048 vite build --mode vercel",
     "vercel-build": "yarn build:vercel",
+    "build:netlify": "NODE_OPTIONS=--max-old-space-size=6144 vite build --mode netlify",
+    "build:railway": "NODE_OPTIONS=--max-old-space-size=8192 yarn install && vite build --mode railway",
     "build:watch": "tsc && vite build -w",
     "dev": "vite",
     "preview": "vite preview",

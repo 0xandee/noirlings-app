@@ -1,0 +1,14 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS",
+    "buildCommand": "cd packages/noirlings && yarn install && NODE_OPTIONS=--max-old-space-size=8192 vite build --mode railway"
+  },
+  "deploy": {
+    "startCommand": "cd packages/noirlings && yarn preview",
+    "healthcheckPath": "/",
+    "healthcheckTimeout": 300,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+  }
+}
