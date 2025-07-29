@@ -137,18 +137,20 @@ yarn generate-exercises
 yarn serve
 ```
 
-### Deployment (Vercel)
+### Deployment (Railway)
 
-This project is optimized for [Vercel](https://vercel.com/):
+This project is optimized for [Railway](https://railway.app/):
 
-- Build command: `yarn vercel-build`
+- Build command: `yarn build`
 - Output directory: `dist`
 - Framework: Vite
 
-You can deploy instantly by clicking the Vercel button above or by running:
+You can deploy by connecting your GitHub repository to Railway or by using the Railway CLI:
 
 ```bash
-vercel --prod
+railway login
+railway link
+railway up
 ```
 
 ---
