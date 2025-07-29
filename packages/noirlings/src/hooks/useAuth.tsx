@@ -51,39 +51,17 @@ function createSupabaseClient(): SupabaseClient | null {
     }
     
     try {
-        console.log('[useAuth] Creating Supabase client...');
+        console.log('[useAuth] Creating Supabase client with version 2.39.0...');
         
-        // Log current API availability
-        console.log('[useAuth] API availability before setup:', {
-            Headers: typeof Headers,
-            fetch: typeof fetch,
-            globalThisHeaders: typeof globalThis.Headers,
-            globalThisFetch: typeof globalThis.fetch,
-        });
-        
-        // Create a comprehensive polyfill environment for Supabase
-        const supabaseGlobals = {
-            Headers: globalThis.Headers || Headers,
-            fetch: globalThis.fetch || fetch,
-            Request: globalThis.Request || Request,
-            Response: globalThis.Response || Response,
-        };
-        
-        // Temporarily assign to globalThis
-        Object.assign(globalThis, supabaseGlobals);
-        
-        // Create client with explicit global configuration
-        const clientConfig: Parameters<typeof createClient>[2] = {
+        // Simple client creation with minimal configuration
+        const client = createClient(supabaseUrl, supabaseAnonKey, {
             auth: {
                 autoRefreshToken: true,
                 persistSession: true,
                 detectSessionInUrl: true,
                 flowType: 'pkce'
-            },
-            global: supabaseGlobals
-        };
-        
-        const client = createClient(supabaseUrl, supabaseAnonKey, clientConfig);
+            }
+        });
         
         console.log('[useAuth] Supabase client created successfully');
         return client;
