@@ -86,11 +86,11 @@ export default defineConfig(({ mode }: { mode: string }) => {
       })]),
       // Use minimal polyfills for deployment builds
       nodePolyfills({
-        include: (isVercel || isNetlify || isRailway) ? ['buffer'] : ['buffer', 'process'],
+        include: (isVercel || isNetlify || isRailway) ? ['buffer', 'process'] : ['buffer', 'process'],
         globals: {
           Buffer: true,
-          global: false, // Disable global polyfill to avoid globalThis export issues
-          process: !(isVercel || isNetlify || isRailway),
+          global: true, // Re-enable for Railway since Supabase needs it
+          process: true,
         },
       }),
     ],

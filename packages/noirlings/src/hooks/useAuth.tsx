@@ -53,12 +53,18 @@ function createSupabaseClient(): SupabaseClient | null {
     try {
         console.log('[useAuth] Creating Supabase client...');
         
+        // Ensure fetch is available with fallback
+        const globalFetch = globalThis.fetch || fetch;
+        
         const client = createClient(supabaseUrl, supabaseAnonKey, {
             auth: {
                 autoRefreshToken: true,
                 persistSession: true,
                 detectSessionInUrl: true,
                 flowType: 'pkce'
+            },
+            global: {
+                fetch: globalFetch,
             }
         });
         
@@ -72,7 +78,10 @@ function createSupabaseClient(): SupabaseClient | null {
             environment: {
                 hasWindow: typeof window !== 'undefined',
                 hasHeaders: typeof Headers !== 'undefined',
-                hasFetch: typeof fetch !== 'undefined'
+                hasFetch: typeof fetch !== 'undefined',
+                hasGlobalThis: typeof globalThis !== 'undefined',
+                globalThisFetch: typeof globalThis.fetch !== 'undefined',
+                isRailway: !!process.env.RAILWAY_ENVIRONMENT
             }
         });
         return null;
