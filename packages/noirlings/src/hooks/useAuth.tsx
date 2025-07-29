@@ -53,20 +53,24 @@ function createSupabaseClient(): SupabaseClient | null {
     try {
         console.log('[useAuth] Creating Supabase client...');
         
-        // Ensure fetch is available with fallback
-        const globalFetch = globalThis.fetch || fetch;
-        
-        const client = createClient(supabaseUrl, supabaseAnonKey, {
+        // For Railway/server environments, use minimal global configuration
+        const clientConfig: Parameters<typeof createClient>[2] = {
             auth: {
                 autoRefreshToken: true,
                 persistSession: true,
                 detectSessionInUrl: true,
                 flowType: 'pkce'
-            },
-            global: {
-                fetch: globalFetch,
             }
-        });
+        };
+        
+        // Only add global fetch config if we're in a browser environment that needs it
+        if (typeof window !== 'undefined' && (!globalThis.fetch || !fetch)) {
+            clientConfig.global = {
+                fetch: globalThis.fetch || fetch,
+            };
+        }
+        
+        const client = createClient(supabaseUrl, supabaseAnonKey, clientConfig);
         
         console.log('[useAuth] Supabase client created successfully');
         return client;

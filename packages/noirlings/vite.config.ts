@@ -89,7 +89,7 @@ export default defineConfig(({ mode }: { mode: string }) => {
         include: (isVercel || isNetlify || isRailway) ? ['buffer', 'process'] : ['buffer', 'process'],
         globals: {
           Buffer: true,
-          global: true, // Re-enable for Railway since Supabase needs it
+          global: isRailway ? false : true, // Disable global polyfill for Railway to avoid conflicts
           process: true,
         },
       }),
