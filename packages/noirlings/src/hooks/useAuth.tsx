@@ -53,7 +53,25 @@ function createSupabaseClient(): SupabaseClient | null {
     try {
         console.log('[useAuth] Creating Supabase client...');
         
-        // For Railway/server environments, use minimal global configuration
+        // Log current API availability
+        console.log('[useAuth] API availability before setup:', {
+            Headers: typeof Headers,
+            fetch: typeof fetch,
+            globalThisHeaders: typeof globalThis.Headers,
+            globalThisFetch: typeof globalThis.fetch,
+        });
+        
+        // Ensure global APIs are available for Supabase
+        if (!globalThis.Headers && typeof Headers !== 'undefined') {
+            globalThis.Headers = Headers;
+            console.log('[useAuth] Added Headers to globalThis');
+        }
+        if (!globalThis.fetch && typeof fetch !== 'undefined') {
+            globalThis.fetch = fetch;
+            console.log('[useAuth] Added fetch to globalThis');
+        }
+        
+        // Create client with basic configuration
         const clientConfig: Parameters<typeof createClient>[2] = {
             auth: {
                 autoRefreshToken: true,
@@ -62,13 +80,6 @@ function createSupabaseClient(): SupabaseClient | null {
                 flowType: 'pkce'
             }
         };
-        
-        // Only add global fetch config if we're in a browser environment that needs it
-        if (typeof window !== 'undefined' && (!globalThis.fetch || !fetch)) {
-            clientConfig.global = {
-                fetch: globalThis.fetch || fetch,
-            };
-        }
         
         const client = createClient(supabaseUrl, supabaseAnonKey, clientConfig);
         

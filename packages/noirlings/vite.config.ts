@@ -89,7 +89,7 @@ export default defineConfig(({ mode }: { mode: string }) => {
         include: (isVercel || isNetlify || isRailway) ? ['buffer', 'process'] : ['buffer', 'process'],
         globals: {
           Buffer: true,
-          global: isRailway ? false : true, // Disable global polyfill for Railway to avoid conflicts
+          global: false, // Disable global polyfill for all deployments to avoid conflicts
           process: true,
         },
       }),
