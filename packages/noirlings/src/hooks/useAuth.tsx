@@ -61,24 +61,26 @@ function createSupabaseClient(): SupabaseClient | null {
             globalThisFetch: typeof globalThis.fetch,
         });
         
-        // Ensure global APIs are available for Supabase
-        if (!globalThis.Headers && typeof Headers !== 'undefined') {
-            globalThis.Headers = Headers;
-            console.log('[useAuth] Added Headers to globalThis');
-        }
-        if (!globalThis.fetch && typeof fetch !== 'undefined') {
-            globalThis.fetch = fetch;
-            console.log('[useAuth] Added fetch to globalThis');
-        }
+        // Create a comprehensive polyfill environment for Supabase
+        const supabaseGlobals = {
+            Headers: globalThis.Headers || Headers,
+            fetch: globalThis.fetch || fetch,
+            Request: globalThis.Request || Request,
+            Response: globalThis.Response || Response,
+        };
         
-        // Create client with basic configuration
+        // Temporarily assign to globalThis
+        Object.assign(globalThis, supabaseGlobals);
+        
+        // Create client with explicit global configuration
         const clientConfig: Parameters<typeof createClient>[2] = {
             auth: {
                 autoRefreshToken: true,
                 persistSession: true,
                 detectSessionInUrl: true,
                 flowType: 'pkce'
-            }
+            },
+            global: supabaseGlobals
         };
         
         const client = createClient(supabaseUrl, supabaseAnonKey, clientConfig);
