@@ -2,7 +2,7 @@
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "cd packages/noirlings && yarn install && NODE_OPTIONS=--max-old-space-size=8192 vite build --mode railway"
+    "buildCommand": "cd packages/noirlings && yarn install && VITE_SUPABASE_URL=https://ajzoulspsdzrjxffqvoi.supabase.co VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFqem91bHNwc2R6cmp4ZmZxdm9pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIzMDYzMDMsImV4cCI6MjA2Nzg4MjMwM30.iHTW9lmLwlq3nWsz1NYeQJg-ZKYgrOaN6SBMHNyndLg NODE_OPTIONS=--max-old-space-size=8192 vite build --mode railway"
   },
   "deploy": {
     "startCommand": "npx serve dist -s -n -L -p $PORT",
