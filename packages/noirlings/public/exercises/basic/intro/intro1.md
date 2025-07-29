@@ -21,7 +21,7 @@ locales:
 
       Welcome to Noirlings! This is a project based on the original [Noirlings](https://github.com/raven-house/noirlings) by [@satyambnsal](https://x.com/satyambnsal).
 
-      Like what you see? Contribute to [Noirlings.app](https://github.com/0xandee/noirlings-app) and follow [@andeebtceth](https://x.com/andeebtceth)!
+       Contribute to [Noirlings.app](https://github.com/0xandee/noirlings-app) and follow [@andeebtceth](https://x.com/andeebtceth)!
 
 
       #### Docs

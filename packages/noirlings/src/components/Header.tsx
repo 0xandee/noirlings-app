@@ -36,7 +36,7 @@ export const Header: React.FC<HeaderProps> = ({
             <img src="/noirlingsapplogo-white.png" alt="Noirlings Logo" className="h-4 w-auto" style={{ maxHeight: 32 }} />
           )}
         </Link>
-        <div className="ml-4 flex gap-4 items-center">
+        <div className="ml-4 flex gap-6 items-center">
           <Link
             to="/"
             style={{
