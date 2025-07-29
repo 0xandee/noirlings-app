@@ -157,28 +157,40 @@ function NoirEditor(props: PlaygroundProps) {
   const loadProgress = async () => {
     if (user) {
       try {
-        const { data, error } = await supabase.from('user_progress').select('*').eq('user_id', user!.id).single();
+        const client = supabase();
+        if (!client) {
+          console.warn('Supabase client not available for progress loading');
+          return;
+        }
+        const { data, error } = await client.from('user_progress').select('*').eq('user_id', user!.id).single();
         if (error) {
           console.error('Error loading progress:', error);
           return;
         }
         if (data) {
-          setFinishedExercises((data.finished_exercises as string[] || []).map(normalizePath));
-          if (data.last_exercise) {
+          const finishedExercises = data.finished_exercises;
+          const lastExercise = data.last_exercise;
+          const theme = data.theme;
+          
+          setFinishedExercises((Array.isArray(finishedExercises) ? finishedExercises : []).map(normalizePath));
+          
+          if (lastExercise && typeof lastExercise === 'string') {
             // Check if last exercise belongs to current mode
-            const lastExerciseCategory = normalizePath(data.last_exercise).split('/')[0];
+            const lastExerciseCategory = normalizePath(lastExercise).split('/')[0];
             const currentModeCategories = props.isAdvancedMode ? ADVANCED_CATEGORIES : BASIC_CATEGORIES;
             const lastExerciseInMode = currentModeCategories.includes(lastExerciseCategory);
 
             if (lastExerciseInMode) {
               // Load last exercise only if it belongs to current mode
               const exercises = props.isAdvancedMode ? await getAdvancedExercises() : await getOrderedExercises();
-              const toLoad = exercises.find((ex: OrderedExercise) => `${ex.category}/${ex.id}` === normalizePath(data.last_exercise)) || exercises[0];
+              const toLoad = exercises.find((ex: OrderedExercise) => `${ex.category}/${ex.id}` === normalizePath(lastExercise)) || exercises[0];
               handleExerciseSelect(`${toLoad.category}/${toLoad.id}`);
             }
             // If last exercise doesn't belong to current mode, let the mode switch useEffect handle it
           }
-          if (data.theme) setTheme(data.theme);
+          if (theme && (theme === 'light' || theme === 'dark')) {
+            setTheme(theme);
+          }
         }
       } catch (err) {
         console.error('Unexpected error loading progress:', err);
@@ -191,8 +203,13 @@ function NoirEditor(props: PlaygroundProps) {
     if (user) {
       (async () => {
         try {
+          const client = supabase();
+          if (!client) {
+            console.warn('Supabase client not available for progress sync');
+            return;
+          }
           // First, load current DB progress
-          const { data: dbData, error: loadError } = await supabase.from('user_progress').select('*').eq('user_id', user!.id).single();
+          const { data: dbData, error: loadError } = await client.from('user_progress').select('*').eq('user_id', user!.id).single();
           if (loadError && loadError.code !== 'PGRST116') { // Ignore if no row exists
             console.error('Error loading DB progress for merge:', loadError);
             return;
@@ -204,16 +221,17 @@ function NoirEditor(props: PlaygroundProps) {
 
           // Prepare merged data
           let shouldUpsert = false;
+          const dbFinishedExercises = Array.isArray(dbData?.finished_exercises) ? dbData.finished_exercises : [];
           const mergedData = {
             user_id: user!.id,
-            finished_exercises: dbData?.finished_exercises || [],
+            finished_exercises: dbFinishedExercises,
             last_exercise: dbData?.last_exercise || null,
-            theme: dbData?.theme || 'dark',
+            theme: (dbData?.theme === 'light' || dbData?.theme === 'dark') ? dbData.theme : 'dark',
           };
 
           // Merge finished_exercises if local has any
           if (localFinished.length > 0) {
-            mergedData.finished_exercises = [...new Set([...mergedData.finished_exercises, ...localFinished])];
+            mergedData.finished_exercises = [...new Set([...dbFinishedExercises, ...localFinished])];
             shouldUpsert = true;
           }
 
@@ -230,7 +248,7 @@ function NoirEditor(props: PlaygroundProps) {
           }
 
           if (shouldUpsert) {
-            const { error } = await supabase.from('user_progress').upsert(mergedData, { onConflict: 'user_id' });
+            const { error } = await client.from('user_progress').upsert(mergedData, { onConflict: 'user_id' });
             if (error) {
               console.error('Error syncing progress:', error);
               return;
@@ -257,7 +275,12 @@ function NoirEditor(props: PlaygroundProps) {
     const saveProgress = debounce(async () => {
       if (user) {
         try {
-          const { error } = await supabase.from('user_progress').update({
+          const client = supabase();
+          if (!client) {
+            console.warn('Supabase client not available for progress saving');
+            return;
+          }
+          const { error } = await client.from('user_progress').update({
             finished_exercises: finishedExercises.map(normalizePath),
             last_exercise: currentExercise,
             theme: theme,

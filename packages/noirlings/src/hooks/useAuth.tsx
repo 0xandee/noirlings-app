@@ -1,25 +1,101 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { createClient, User } from '@supabase/supabase-js';
+import { createClient, User, SupabaseClient } from '@supabase/supabase-js';
 
-// Initialize Supabase with environment variable validation
+// Validate and get environment variables
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Create a safe Supabase client that handles missing environment variables
-let supabase: ReturnType<typeof createClient> | null = null;
+// Validate environment variables
+if (!supabaseUrl || !supabaseAnonKey) {
+    console.warn('[useAuth] Missing Supabase environment variables. Authentication will be disabled.');
+}
 
-try {
-  // Only create client if both URL and key are properly configured
-  if (supabaseUrl && supabaseAnonKey && 
-      typeof supabaseUrl === 'string' && 
-      typeof supabaseAnonKey === 'string' &&
-      supabaseUrl.length > 0 && 
-      supabaseAnonKey.length > 0) {
-    supabase = createClient(supabaseUrl, supabaseAnonKey);
-  }
-} catch (error) {
-  console.warn('Failed to initialize Supabase client:', error);
-  supabase = null;
+console.log('[useAuth] Environment variables status:', {
+    hasSupabaseUrl: !!supabaseUrl,
+    hasSupabaseAnonKey: !!supabaseAnonKey,
+    urlLength: supabaseUrl?.length || 0,
+    keyLength: supabaseAnonKey?.length || 0,
+    isProduction: import.meta.env.PROD
+});
+
+// Create Supabase client with simple, reliable configuration
+let supabase: SupabaseClient | null = null;
+let clientInitializationAttempted = false;
+
+function createSupabaseClient(): SupabaseClient | null {
+    // Skip client creation if we don't have valid credentials
+    if (!supabaseUrl || !supabaseAnonKey) {
+        console.warn('[useAuth] Cannot create Supabase client - missing credentials');
+        return null;
+    }
+    
+    // Skip client creation in server-side environments
+    if (typeof window === 'undefined') {
+        console.log('[useAuth] Server-side environment detected - skipping client creation');
+        return null;
+    }
+    
+    // Validate URL format
+    try {
+        new URL(supabaseUrl);
+    } catch (error) {
+        console.error('[useAuth] Invalid Supabase URL format:', supabaseUrl);
+        return null;
+    }
+    
+    // Validate anon key format (basic JWT check)
+    const jwtPattern = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]*$/;
+    if (!jwtPattern.test(supabaseAnonKey)) {
+        console.error('[useAuth] Invalid Supabase anon key format');
+        return null;
+    }
+    
+    try {
+        console.log('[useAuth] Creating Supabase client with version 2.39.0...');
+        
+        // Simple client creation with minimal configuration
+        const client = createClient(supabaseUrl, supabaseAnonKey, {
+            auth: {
+                autoRefreshToken: true,
+                persistSession: true,
+                detectSessionInUrl: true,
+                flowType: 'pkce'
+            }
+        });
+        
+        console.log('[useAuth] Supabase client created successfully');
+        return client;
+        
+    } catch (error) {
+        console.error('[useAuth] Failed to create Supabase client:', {
+            error: error instanceof Error ? error.message : String(error),
+            stack: error instanceof Error ? error.stack : undefined,
+            environment: {
+                hasWindow: typeof window !== 'undefined',
+                hasHeaders: typeof Headers !== 'undefined',
+                hasFetch: typeof fetch !== 'undefined',
+                hasGlobalThis: typeof globalThis !== 'undefined',
+                globalThisFetch: typeof globalThis.fetch !== 'undefined',
+                isRailway: !!process.env.RAILWAY_ENVIRONMENT
+            }
+        });
+        return null;
+    }
+}
+
+// Lazy getter for Supabase client with single initialization attempt
+function getSupabaseClient(): SupabaseClient | null {
+    if (supabase) {
+        return supabase;
+    }
+    
+    if (clientInitializationAttempted) {
+        return null;
+    }
+    
+    clientInitializationAttempted = true;
+    supabase = createSupabaseClient();
+    return supabase;
 }
 
 interface AuthContextType {
@@ -34,46 +110,86 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
-        if (!supabase) return; // Skip if Supabase is not configured
-        
-        const { data: authListener } = supabase.auth.onAuthStateChange((_, session) => { // Remove unused event
+        const client = getSupabaseClient();
+        if (!client) {
+            console.warn('[useAuth] Supabase client not available - authentication disabled');
+            return;
+        }
+
+        console.log('[useAuth] Setting up auth state listener');
+
+        const { data: authListener } = client.auth.onAuthStateChange((event, session) => {
+            console.log(`[useAuth] Auth state change: ${event}`, {
+                hasSession: !!session,
+                hasUser: !!session?.user
+            });
+
             setUser(session?.user ?? null);
         });
-        return () => authListener.subscription.unsubscribe();
+
+        // Check for existing session
+        client.auth.getSession().then(({ data: { session }, error }) => {
+            if (error) {
+                console.error('[useAuth] Error getting initial session:', error);
+            } else if (session) {
+                console.log('[useAuth] Found existing session');
+                setUser(session.user);
+            }
+        });
+
+        return () => {
+            authListener.subscription.unsubscribe();
+        };
     }, []);
 
     const login = async () => {
-        if (!supabase) {
-            console.warn('Supabase not configured - login unavailable');
+        const client = getSupabaseClient();
+        if (!client) {
+            console.warn('[useAuth] Cannot login - Supabase client not available');
             return;
         }
-        
+
         try {
-            const { error } = await supabase.auth.signInWithOAuth({
+            console.log('[useAuth] Starting GitHub OAuth login');
+            const { error } = await client.auth.signInWithOAuth({
                 provider: 'github',
                 options: {
                     redirectTo: window.location.origin,
                 },
             });
-            if (error) throw error;
+
+            if (error) {
+                console.error('[useAuth] OAuth login failed:', error);
+                throw error;
+            }
+
+            console.log('[useAuth] OAuth login initiated successfully');
         } catch (error) {
-            console.error('Error during login:', error);
-            // TODO: Implement user-friendly message display if needed (e.g., via toast or state)
+            console.error('[useAuth] Login error:', error);
+            throw error;
         }
     };
 
     const logout = async () => {
-        if (!supabase) {
-            console.warn('Supabase not configured - logout unavailable');
+        const client = getSupabaseClient();
+        if (!client) {
+            console.warn('[useAuth] Cannot logout - Supabase client not available');
             return;
         }
-        
+
         try {
-            const { error } = await supabase.auth.signOut();
-            if (error) throw error;
+            console.log('[useAuth] Starting logout');
+            const { error } = await client.auth.signOut();
+
+            if (error) {
+                console.error('[useAuth] Logout failed:', error);
+                throw error;
+            }
+
+            console.log('[useAuth] Logout completed successfully');
         } catch (error) {
-            console.error('Error during logout:', error);
-            // TODO: Implement user-friendly message display if needed (e.g., via toast or state)
+            console.error('[useAuth] Logout error:', error);
+            throw error;
         }
     };
 
@@ -92,5 +208,5 @@ export const useAuth = (): AuthContextType => {
     return context;
 };
 
-// Export the supabase client (may be null if not configured)
-export { supabase };
+// Export the supabase client getter
+export { getSupabaseClient as supabase };

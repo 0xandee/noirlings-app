@@ -8,33 +8,56 @@ import fs from 'fs';
 export default defineConfig(({ mode }: { mode: string }) => {
   console.log("Building in mode:", mode);
   const isVercel = process.env.VERCEL === "1" || mode === "vercel";
+  const isNetlify = process.env.NETLIFY === "true" || mode === "netlify";
+  const isRailway = process.env.RAILWAY_ENVIRONMENT || mode === "railway";
 
   const base = {
-    optimizeDeps: {
-      include: ['buffer'],
-      exclude: [
-        "@noir-lang/noir_wasm",
-        "@noir-lang/backend_barretenberg",
-        "@noir-lang/noir_js",
-        "@noir-lang/types"
-      ],
-      esbuildOptions: {
-        target: "esnext",
+    // Disable optimization for deployment builds to save memory
+    ...((isVercel || isNetlify || isRailway) ? {} : {
+      optimizeDeps: {
+        include: ['buffer'],
+        exclude: [
+          "@noir-lang/noir_wasm",
+          "@noir-lang/backend_barretenberg",
+          "@noir-lang/noir_js",
+          "@noir-lang/types"
+        ],
+        esbuildOptions: {
+          target: "esnext",
+        },
       },
-    },
+    }),
     build: {
       target: "esnext",
-      // Memory optimization for Vercel builds
-      ...(isVercel ? {
+      // Memory optimization for deployment builds
+      ...((isVercel || isNetlify || isRailway) ? {
         outDir: "../../dist",
         chunkSizeWarningLimit: 1000,
-        rollupOptions: {
-          output: {
-            manualChunks: {
-              vendor: ['react', 'react-dom'],
-              noir: ['@noir-lang/noir_wasm', '@noir-lang/noir_js']
-            }
+        sourcemap: false,
+        minify: 'esbuild',
+        // Add esbuild options for Railway to handle TypeScript more leniently
+        ...(isRailway ? {
+          esbuild: {
+            logOverride: { 'this-is-undefined-in-esm': 'silent' }
           }
+        } : {}),
+        rollupOptions: {
+          // Suppress warnings for Railway builds
+          ...(isRailway ? { onwarn: () => {} } : {}),
+          // For Railway builds, use minimal chunking to avoid initialization issues
+          ...(isRailway ? {} : {
+            output: {
+              manualChunks: (id) => {
+                if (id.includes('node_modules')) {
+                  if (id.includes('@noir-lang')) return 'noir';
+                  if (id.includes('react-dom')) return 'react';
+                  return 'vendor';
+                }
+              },
+              maxParallelFileOps: 1,
+              chunkFileNames: '[name]-[hash].js'
+            }
+          })
         }
       } : {
         lib: {
@@ -57,13 +80,22 @@ export default defineConfig(({ mode }: { mode: string }) => {
     },
     plugins: [
       react(),
-      dts({
+      // Disable TypeScript declarations for deployment builds to save memory and avoid strict type checking
+      ...((isVercel || isNetlify || isRailway) ? [] : [dts({
         insertTypesEntry: true,
+      })]),
+      // Use minimal polyfills for deployment builds
+      nodePolyfills({
+        include: (isVercel || isNetlify || isRailway) ? ['buffer', 'process'] : ['buffer', 'process'],
+        globals: {
+          Buffer: true,
+          global: false, // Disable global polyfill for all deployments to avoid conflicts
+          process: true,
+        },
       }),
     ],
     define: {
       global: 'globalThis',
-      'process.env': {}
     },
     envPrefix: ['VITE_'],
     server: {
