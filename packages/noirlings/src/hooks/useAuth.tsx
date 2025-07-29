@@ -179,7 +179,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         try {
             console.log('[useAuth] Starting logout');
-            const { error } = await client.auth.signOut();
+            const { error } = await client.auth.signOut({ scope: 'local' });
 
             if (error) {
                 console.error('[useAuth] Logout failed:', error);
