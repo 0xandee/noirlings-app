@@ -44,23 +44,20 @@ export default defineConfig(({ mode }: { mode: string }) => {
         rollupOptions: {
           // Suppress warnings for Railway builds
           ...(isRailway ? { onwarn: () => {} } : {}),
-          output: {
-            // Ultra-aggressive chunking to reduce memory per chunk
-            manualChunks: (id) => {
-              if (id.includes('node_modules')) {
-                // Less aggressive chunking to avoid module initialization issues
-                if (id.includes('@noir-lang')) return 'noir';
-                if (id.includes('monaco-editor')) return 'monaco';
-                if (id.includes('react')) return 'react-vendor';
-                return 'vendor';
-              }
-            },
-            // Reduce chunk size to minimize memory per build step
-            maxParallelFileOps: 1, // Process one file at a time
-            chunkFileNames: '[name]-[hash].js',
-            // Ensure proper module loading order
-            inlineDynamicImports: false
-          }
+          // For Railway builds, use minimal chunking to avoid initialization issues
+          ...(isRailway ? {} : {
+            output: {
+              manualChunks: (id) => {
+                if (id.includes('node_modules')) {
+                  if (id.includes('@noir-lang')) return 'noir';
+                  if (id.includes('react-dom')) return 'react';
+                  return 'vendor';
+                }
+              },
+              maxParallelFileOps: 1,
+              chunkFileNames: '[name]-[hash].js'
+            }
+          })
         }
       } : {
         lib: {

@@ -13,14 +13,19 @@ import * as monacoEditor from "monaco-editor";
 
 import editorWorker from "monaco-editor/esm/vs/editor/editor.worker.js?worker&inline";
 
-self.MonacoEnvironment = {
-  getWorker(_, label) {
-    console.log(label);
-    return new editorWorker();
-  },
-};
-
-loader.config({ monaco: monacoEditor });
+// Safely configure Monaco environment
+try {
+  self.MonacoEnvironment = {
+    getWorker(_, label) {
+      console.log(label);
+      return new editorWorker();
+    },
+  };
+  
+  loader.config({ monaco: monacoEditor });
+} catch (error) {
+  console.error('Monaco environment setup failed:', error);
+}
 
 export const useMonaco = (theme: 'light' | 'dark' = 'light') => {
   const [monaco, setMonaco] = useState<typeof import("monaco-editor")>();
@@ -64,17 +69,25 @@ export const useMonaco = (theme: 'light' | 'dark' = 'light') => {
     );
     promArray.push(
       loader.init().then((monaco) => {
-        const { darkTheme, lightTheme } = themes;
-        monaco.editor.defineTheme(
-          "dark",
-          darkTheme as monacoEditor.editor.IStandaloneThemeData
-        );
-        monaco.editor.defineTheme(
-          "light",
-          lightTheme as monacoEditor.editor.IStandaloneThemeData
-        );
-        monaco.languages.register({ id: "noir" });
-        setMonaco(monaco);
+        try {
+          const { darkTheme, lightTheme } = themes;
+          monaco.editor.defineTheme(
+            "dark",
+            darkTheme as monacoEditor.editor.IStandaloneThemeData
+          );
+          monaco.editor.defineTheme(
+            "light",
+            lightTheme as monacoEditor.editor.IStandaloneThemeData
+          );
+          monaco.languages.register({ id: "noir" });
+          setMonaco(monaco);
+        } catch (themeError) {
+          console.error('Monaco theme setup failed:', themeError);
+          // Still set Monaco even if themes fail
+          setMonaco(monaco);
+        }
+      }).catch((monacoError) => {
+        console.error('Monaco loader initialization failed:', monacoError);
       })
     );
     setPromises(promArray);
