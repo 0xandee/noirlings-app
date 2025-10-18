@@ -13,14 +13,21 @@ export const Umami = () => {
     const websiteId = import.meta.env.VITE_UMAMI_WEBSITE_ID;
     const umamiUrl = import.meta.env.VITE_UMAMI_URL;
 
+    // Debug logging
+    console.log('[Umami] Initializing...', {
+      websiteId: websiteId ? `${websiteId.substring(0, 8)}...` : 'NOT SET',
+      umamiUrl: umamiUrl || 'NOT SET',
+    });
+
     // Only load Umami if both environment variables are set
     if (!websiteId || !umamiUrl) {
-      console.warn('Umami analytics not configured. Set VITE_UMAMI_WEBSITE_ID and VITE_UMAMI_URL environment variables.');
+      console.warn('[Umami] Analytics not configured. Set VITE_UMAMI_WEBSITE_ID and VITE_UMAMI_URL environment variables.');
       return;
     }
 
     // Check if script is already loaded
     if (document.querySelector(`script[data-website-id="${websiteId}"]`)) {
+      console.log('[Umami] Script already loaded');
       return;
     }
 
@@ -31,7 +38,17 @@ export const Umami = () => {
     script.src = `${umamiUrl}/script.js`;
     script.setAttribute('data-website-id', websiteId);
 
+    script.onload = () => {
+      console.log('[Umami] Script loaded successfully');
+    };
+
+    script.onerror = (error) => {
+      console.error('[Umami] Failed to load script:', error);
+      console.error('[Umami] Check that your Umami server is running at:', umamiUrl);
+    };
+
     document.head.appendChild(script);
+    console.log('[Umami] Script added to page');
 
     // Cleanup function
     return () => {
