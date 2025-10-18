@@ -140,7 +140,6 @@ function NoirEditor(props: PlaygroundProps) {
   // Note: currentExercise is set from last_exercise
 
   // Add new state after existing states
-  const [initialExerciseContent, setInitialExerciseContent] = useState<string>('');
   const [currentDocLink, setCurrentDocLink] = useState<string | null>(null);
 
   // Default documentation URL
@@ -427,7 +426,6 @@ function NoirEditor(props: PlaygroundProps) {
 
       // Load exercise with new function
       const exerciseData = await loadExerciseData(exercisePath);
-      setInitialExerciseContent(exerciseData.code);
 
       // Create file system with just the code
       const exerciseFile = createFileFromExercise(exercisePath, exerciseData.code);
