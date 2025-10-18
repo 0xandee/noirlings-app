@@ -25,7 +25,7 @@ import debounce from 'lodash/debounce';
 import { Header } from '../Header';
 
 // Add icons for theme toggle
-import { Copy, RotateCcw, Play, Lightbulb, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Lightbulb, ChevronLeft, ChevronRight } from 'lucide-react';
 
 // Add new imports
 import { compileCode } from "../../utils/generateProof";
@@ -142,10 +142,6 @@ function NoirEditor(props: PlaygroundProps) {
   // Add new state after existing states
   const [initialExerciseContent, setInitialExerciseContent] = useState<string>('');
   const [currentDocLink, setCurrentDocLink] = useState<string | null>(null);
-
-  const [copyTooltip, setCopyTooltip] = useState<{ visible: boolean; text: string; isClicked: boolean }>({ visible: false, text: 'Copy', isClicked: false });
-  const [resetTooltip, setResetTooltip] = useState<{ visible: boolean; text: string; isClicked: boolean }>({ visible: false, text: 'Reset', isClicked: false });
-  const [compileTooltip, setCompileTooltip] = useState<{ visible: boolean; text: string; isClicked: boolean }>({ visible: false, text: 'Compile', isClicked: false });
 
   // Default documentation URL
   const DEFAULT_DOC_URL = "https://noir-lang.org/docs";
@@ -532,24 +528,6 @@ function NoirEditor(props: PlaygroundProps) {
     }
   };
 
-  // Add handlers before return
-  const handleCopy = async () => {
-    if (monacoEditor) {
-      await navigator.clipboard.writeText(monacoEditor.getValue());
-      toast.success('Code copied to clipboard!');
-    }
-  };
-
-  const handleReset = () => {
-    if (!currentExercise || !initialExerciseContent || !monacoEditor) return;
-    const exerciseFile = createFileFromExercise(currentExercise, initialExerciseContent);
-    setFilesystem(new FileSystem(exerciseFile));
-    monacoEditor.setValue(initialExerciseContent);
-    setCodeInBuffer(initialExerciseContent);
-    setShowHint(false);
-    toast.success('Code reset to initial state!');
-  };
-
   // Move compile function from ActionsBox
   const compile = async (project: FileSystem) => {
     setCompileError(null);
@@ -577,12 +555,6 @@ function NoirEditor(props: PlaygroundProps) {
       setPending(false);
     }
   };
-
-  // Update handleRun to use the new compile
-  const handleRun = async () => {
-    await compile(fileSystem);
-  };
-
 
   // Add useEffect to reset states when fileSystem changes (like in ActionsBox)
   useEffect(() => {
