@@ -5,7 +5,7 @@
 <h1 align="center">Noirlings.app</h1>
 
 <p align="center">
-  <strong>Learn Noir, fast ⚡️</strong>
+  <strong>Learn Noir on browser</strong>
 </p>
 
 <p align="center">

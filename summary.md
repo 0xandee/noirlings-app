@@ -20,7 +20,7 @@ You can now reinstall dependencies and redeploy the app on Vercel.
 
 - Added Open Graph and Twitter Card meta tags to `packages/playground/index.html` for rich link previews.
 - Used `/public/noirlingsapp-preview-image.png` as the preview image.
-- Set preview title to `NOIRLINGS.APP` and description to `Learn Noir, fast ⚡️`.
+- Set preview title to `NOIRLINGS.APP` and description to `Learn Noir on browser`.
 - These changes ensure that sharing the site link will display the custom image and text on social platforms and messaging apps.
 
 - Moved the X (Twitter) logo button to appear next to the Noirlings logo on the left side of the toolbar for better branding and visibility.
@@ -57,7 +57,7 @@ You can now reinstall dependencies and redeploy the app on Vercel.
 
 - Created a comprehensive, production-ready README.md for the Noirlings.app monorepo.
 - The README includes:
-  - Project overview and tagline ("Learn Noir, fast ⚡️")
+  - Project overview and tagline ("Learn Noir on browser")
   - Feature highlights (interactive playground, guided exercises, sharing, analytics, modern UI)
   - Monorepo structure with explanation of packages
   - Getting started instructions (prerequisites, installation, development, build)
