@@ -25,7 +25,7 @@ export const baseSEO: SEOData = {
     'noir lang',
     'zk programming'
   ],
-  image: 'https://opengraph.b-cdn.net/production/images/62488971-bd71-48ba-ad5c-bebc490cce57.png?token=t2C8imb5PNGz_PlWYzd9bMJ5hGzqv_VLyjCAIw90wmw&height=630&width=1200&expires=33282143125',
+  image: 'https://noirlings.app/noirlingsapp-preview-image.png',
   url: 'https://noirlings.app',
   type: 'website'
 };
@@ -46,7 +46,7 @@ export const advancedSEO: SEOData = {
     'blockchain privacy',
     'noir advanced tutorials'
   ],
-  image: 'https://opengraph.b-cdn.net/production/images/62488971-bd71-48ba-ad5c-bebc490cce57.png?token=t2C8imb5PNGz_PlWYzd9bMJ5hGzqv_VLyjCAIw90wmw&height=630&width=1200&expires=33282143125',
+  image: 'https://noirlings.app/noirlingsapp-preview-image.png',
   url: 'https://noirlings.app/advanced',
   type: 'website'
 };
