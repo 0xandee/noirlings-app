@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NoirEditor from "./src/index";
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/react"
+import { Umami } from "./src/components/Analytics/Umami";
 import { AuthProvider } from "./src/hooks/useAuth";
 import { ThemeProvider } from "./src/hooks/useTheme";
 import AdvancedExercisesPage from "./src/pages/AdvancedExercisesPage";
@@ -29,6 +30,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       </ThemeProvider>
       <Analytics />
       <SpeedInsights />
+      <Umami />
     </AuthProvider>
   </>
 );
