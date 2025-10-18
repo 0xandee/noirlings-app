@@ -113,7 +113,7 @@ const AdvancedExercisesSidebar: React.FC<AdvancedExercisesSidebarProps> = ({
     return (
         <div className="w-auto h-auto overflow-y-auto" style={{ color: 'var(--color-primary)' }}>
             {exercises.length === 0 ? (
-                <div className="p-4" style={{ color: 'var(--color-secondary)' }}>No advanced exercises available</div>
+                <div className="p-4" style={{ color: 'var(--sidebar-text-color, var(--color-secondary))' }}>No advanced exercises available</div>
             ) : (
                 <div className="space-y-0">
                     {Object.entries(groupedExercises).map(([category, categoryExercises]) => {
@@ -128,7 +128,7 @@ const AdvancedExercisesSidebar: React.FC<AdvancedExercisesSidebarProps> = ({
                                     onClick={() => toggleCategory(category)}
                                     style={{
                                         backgroundColor: theme === 'dark' ? '#ffffff05' : '#00000005',
-                                        color: 'var(--color-secondary)',
+                                        color: 'var(--sidebar-text-color, var(--color-secondary))',
                                         fontWeight: 'normal',
                                     }}
                                 >
@@ -144,7 +144,7 @@ const AdvancedExercisesSidebar: React.FC<AdvancedExercisesSidebarProps> = ({
                                             transition: 'transform 0.2s ease',
                                             fontSize: '14px'
                                         }}>
-                                            <ChevronDown size={16} color="var(--color-secondary)" />
+                                            <ChevronDown size={16} color="var(--sidebar-text-color, var(--color-secondary))" />
                                         </span>
                                     </div>
                                 </div>
@@ -163,7 +163,7 @@ const AdvancedExercisesSidebar: React.FC<AdvancedExercisesSidebarProps> = ({
                                                         backgroundColor: currentExercise === exerciseKey
                                                             ? (theme === 'dark' ? '#ffffff10' : '#00000010')
                                                             : 'transparent',
-                                                        color: isFinished ? 'var(--finished-text)' : (currentExercise === exerciseKey ? 'var(--color-primary)' : 'var(--color-secondary)'),
+                                                        color: isFinished ? 'var(--finished-text)' : (currentExercise === exerciseKey ? 'var(--color-primary)' : 'var(--sidebar-text-color, var(--color-secondary))'),
                                                         fontWeight: 'normal'
                                                     }}
                                                     onClick={() => selectExercise(exerciseKey)}

@@ -31,16 +31,16 @@ export const Header: React.FC<HeaderProps> = ({
           }}
         >
           {theme === 'light' ? (
-            <img src="/noirlingsapplogo-white.png" alt="Noirlings Logo" className="h-4 w-auto" style={{ maxHeight: 32 }} />
+            <img src="/noirlingsapplogo-white.png" alt="Noirlings Logo" className="h-6 w-auto pt-1" style={{ maxHeight: 40 }} />
           ) : (
-            <img src="/noirlingsapplogo-white.png" alt="Noirlings Logo" className="h-4 w-auto" style={{ maxHeight: 32 }} />
+            <img src="/noirlingsapplogo-white.png" alt="Noirlings Logo" className="h-6 w-auto pt-1" style={{ maxHeight: 40 }} />
           )}
         </Link>
         <div className="ml-4 flex gap-6 items-center">
           <Link
             to="/"
             style={{
-              color: location.pathname === "/" ? 'var(--subheader-text)' : 'var(--header-text)'
+              color: location.pathname === "/" ? 'var(--subheader-text)' : 'var(--sidebar-text-color, var(--header-text))'
             }}
             className="hover:opacity-80 transition-opacity no-underline"
           >
@@ -49,7 +49,7 @@ export const Header: React.FC<HeaderProps> = ({
           <Link
             to="/advanced"
             style={{
-              color: location.pathname === "/advanced" ? 'var(--subheader-text)' : 'var(--header-text)'
+              color: location.pathname === "/advanced" ? 'var(--subheader-text)' : 'var(--sidebar-text-color, var(--header-text))'
             }}
             className="hover:opacity-80 transition-opacity no-underline"
           >
@@ -60,7 +60,7 @@ export const Header: React.FC<HeaderProps> = ({
             target="_blank"
             rel="noopener noreferrer"
             style={{
-              color: 'var(--header-text)'
+              color: 'var(--sidebar-text-color, var(--header-text))'
             }}
             className="hover:opacity-80 transition-opacity no-underline flex items-center gap-1"
             aria-label="Open Noir Playground in new tab"

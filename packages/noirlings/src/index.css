@@ -7,11 +7,12 @@
   --bg-primary: #ffffff; /* Background */
   --bg-secondary: #ffffff; /* Secondary */
   --bg-sidebar: #fafafa; /* Sidebar Light Background */
-  --bg-toolbar: #0f172a; /* Primary */
+  --bg-toolbar: #161616; /* Primary */
   --bg-toolbar-btn: #f1f5f9; /* Accent */
   --bg-toolbar-btn-hover: #e4e4e7; /* Derived hover */
   --color-primary: #09090b; /* Foreground */
   --color-secondary: #09090ba5; /* Primary */
+  --sidebar-text-color: #696969; /* Sidebar text color - same as secondary in light mode */
   --color-accent: #3b82f6; /* Sidebar Dark Accent for vibrancy */
   --border-color: #e4e4e7; /* Border/Input */
   --code-bg: #f1f5f9; /* Muted */
@@ -25,23 +26,24 @@
 
 [data-theme="dark"] {
   /* Dark theme variables - Updated with noir-playground background colors */
-  --bg-primary: hsl(222.2, 84%, 4.9%); /* Main app background - noir-playground style */
-  --bg-secondary: hsl(222.2, 84%, 4.9%); /* Card backgrounds - noir-playground style */
-  --bg-sidebar: hsl(222.2, 84%, 4.9%); /* Sidebar background - same as main app background */
-  --bg-toolbar: hsl(222.2, 84%, 4.9%); /* Toolbar background - noir-playground style */
-  --bg-toolbar-btn: hsl(217.2, 32.6%, 17.5%); /* Button backgrounds */
-  --bg-toolbar-btn-hover: #3b82f6; /* Sidebar Dark Accent for hover */
-  --color-primary: hsl(210, 40%, 98%); /* Foreground text - noir-playground style */
-  --color-secondary: #99afd0; /* Secondary text */
+  --bg-primary: #161616; /* Main app background - noir-playground style */
+  --bg-secondary: #161616; /* Card backgrounds - noir-playground style */
+  --bg-sidebar: #161616; /* Sidebar background - same as main app background */
+  --bg-toolbar: #161616; /* Toolbar background - noir-playground style */
+  --bg-toolbar-btn: #1f1f1f; /* Button backgrounds */
+  --bg-toolbar-btn-hover: #1f1f1f; /* Sidebar Dark Accent for hover */
+  --color-primary: #E5E8EB; /* Foreground text - noir-playground style */
+  --color-secondary: #E5E8EB; /* Secondary text */
+  --sidebar-text-color: #696969; /* Sidebar text color */
   --color-accent: hsl(195, 100%, 65%); /* Primary accent - noir-playground style */
-  --border-color: hsl(217.2, 32.6%, 17.5%); /* Border colors - noir-playground style */
+  --border-color: #212121; /* Border colors - noir-playground style */
   --code-bg: hsl(217.2, 32.6%, 17.5%); /* Code background */
   --code-color: hsl(210, 40%, 98%); /* Code text color */
   --hint-bg: hsl(217.2, 32.6%, 17.5%); /* Hint background */
   --monaco-editor-bg: #1E1E1E; /* Monaco editor background - dark theme */
-  --separator-color: hsl(222.2, 84%, 4.9%); /* Separator color */
+  --separator-color: #161616; /* Separator color */
   --finished-text: #4CAF50; /* Keep green for finished */
-  --header-text: #99afd0; /* Header text */
+  --header-text: #E5E8EB; /* Header text */
   --subheader-text: hsl(210, 40%, 98%); /* Subheader text */
 }
 

@@ -821,7 +821,7 @@ function NoirEditor(props: PlaygroundProps) {
 
           {/* Editor area */}
           <div
-            className={`flex-1 flex flex-col min-h-0 box-border text-sm font-fira-code w-full h-auto`}
+            className={`flex-1 flex flex-col min-h-0 box-border text-sm font-fira-code w-full h-auto relative`}
             id="noir__editor"
             style={{
               backgroundColor: 'var(--bg-secondary)',
@@ -830,7 +830,7 @@ function NoirEditor(props: PlaygroundProps) {
               userSelect: isDragging ? "none" : "auto",
             }}
           >
-            <div className="px-4 py-4 gap-4 flex justify-end items-center" style={{ backgroundColor: 'var(--monaco-editor-bg)' }}>
+            {/* <div className="absolute top-0 right-0 px-4 py-4 gap-4 flex justify-end items-center z-10" style={{ backgroundColor: 'transparent' }}>
               <div className="relative">
                 <button
                   onClick={() => {
@@ -906,7 +906,8 @@ function NoirEditor(props: PlaygroundProps) {
                   {compileTooltip.text}
                 </span>
               </div>
-            </div>
+            </div> */}
+            <div className="pt-4" style={{ backgroundColor: 'var(--monaco-editor-bg)' }}></div>
             <section className="flex-1 min-h-0 w-full">
               <div ref={editorRef} id="editor" className="w-full h-64 md:h-full min-h-0 flex-1" style={{ minHeight: 0 }}></div>
             </section>
