@@ -159,9 +159,9 @@ Noirlings.app directly addresses a critical gap in Noir's developer ecosystem: t
 
 Since its launch at **NoirHack 2025**, Noirlings.app demonstrated strong initial traction:
 - 200 early sign-ups within the first week.
-- 25 daily active users (DAU) sustained post-hackathon.
+- 10+ daily active users (DAU) sustained post-hackathon.
 
-![statistics](https://github.com/user-attachments/assets/0631c180-fdca-44bc-a77a-d8e4f74f179c)
+![statistics](https://github.com/user-attachments/assets/86d907f9-3dfc-4f37-96c2-8e26ff2507c1)
 
 Shared and recognized across the Noir, Aztec, and ZK developer communities.
 
