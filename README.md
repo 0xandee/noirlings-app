@@ -1,8 +1,6 @@
 <p align="center">
- <img width="240" alt="noirlings-app-logo" src="https://github.com/user-attachments/assets/5b7f5676-54a2-4399-a022-b637078dc7d7" />
+ <img width="240" height="95" alt="noirlingsapplogo-white" src="https://github.com/user-attachments/assets/91816735-6249-4761-92c5-137a42c15c6c" />
 </p>
-
-<h1 align="center">Noirlings.app</h1>
 
 <p align="center">
   <strong>Learn Noir in your browser</strong>
@@ -15,11 +13,11 @@
 </p>
 
 <p align="center">
-  <a href="https://www.noirlings.app">🚀 Live Demo</a>
+  <a href="https://www.noirlings.app">Live App</a>
 </p>
 
 <p align="center">
-  <img src="packages/noirlings/public/noirlings-screenshot.png" alt="Noirlings.app Interface" width="800" />
+ <img width="1406" height="912" alt="image" src="https://github.com/user-attachments/assets/84ce4f10-cfdf-4766-9ddf-df9ba7837b23" />
 </p>
 
 Noirlings.app is a modern, interactive playground for the [Noir](https://noir-lang.org/) programming language. It's designed to help you learn Noir quickly and intuitively, with hands-on exercises, instant feedback, and a beautiful, responsive UI.
