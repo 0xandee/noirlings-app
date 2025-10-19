@@ -153,6 +153,27 @@ railway up
 
 ---
 
+## Impact
+
+Noirlings.app directly addresses a critical gap in Noir's developer ecosystem: the lack of an interactive, beginner-friendly learning platform.
+
+Since its launch at **NoirHack 2025**, Noirlings.app demonstrated strong initial traction:
+- 200 early sign-ups within the first week.
+- 25 daily active users (DAU) sustained post-hackathon.
+
+![statistics](https://github.com/user-attachments/assets/0631c180-fdca-44bc-a77a-d8e4f74f179c)
+
+Shared and recognized across the Noir, Aztec, and ZK developer communities.
+
+![testimonials](https://github.com/user-attachments/assets/667c1648-2628-438f-9654-28361f643652)
+
+Noirlings also earned the Developer Onboarding Excellence Award and Technical Excellence Award at NoirHack 2025, judged by Worldcoin, StarkWare, and Paradigm.
+This recognition underscores how major infrastructure and research teams view Noirlings as critical developer onboarding tool for ecosystem growth — reducing the average onboarding time from 30 minutes to just 1 minute.
+
+![proof-of-winning](https://github.com/user-attachments/assets/704a668c-e06e-4b81-acfe-fa22db5412dd)
+
+---
+
 ## 🤝 Contributing
 
 We welcome contributions! Here's how you can help:
